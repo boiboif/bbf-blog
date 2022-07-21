@@ -1,0 +1,37 @@
+generator client {
+    provider        = "prisma-client-js"
+    previewFeatures = ["referentialIntegrity"]
+}
+
+datasource db {
+    provider             = "mysql"
+    referentialIntegrity = "prisma"
+    url                  = env("DATABASE_URL")
+    shadowDatabaseUrl    = env("SHADOW_DATABASE_URL")
+}
+
+model post {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    title     String   @db.VarChar(255)
+    content   String?
+    author    user     @relation(fields: [authorId], references: [id])
+    authorId  Int
+    imageUrl  String?
+    tags      String
+
+    @@index(authorId)
+}
+
+model user {
+    id           Int      @id @default(autoincrement())
+    email        String   @unique
+    passwordHash String
+    name         String
+    nickName     String?
+    gender       String?
+    posts        post[]
+    desc         String?
+    roles        Json
+}
