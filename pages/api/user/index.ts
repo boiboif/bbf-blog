@@ -7,8 +7,11 @@ export default async function index(req: NextApiRequest, res: NextApiResponse) {
     switch (req.method) {
         case 'GET':
             prisma = new PrismaClient()
-            const allUsers = await prisma.user.findMany()
-            res.status(200).json(allUsers)
+            const allUsers = await prisma.user.findMany({ include: { contactInfo: true } })
+            res.status(200).json({
+                data: allUsers,
+                success: true,
+            })
             await prisma.$disconnect()
             break
 

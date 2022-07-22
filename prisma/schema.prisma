@@ -6,8 +6,9 @@ generator client {
 datasource db {
     provider             = "mysql"
     referentialIntegrity = "prisma"
-    url                  = env("DATABASE_URL")
-    shadowDatabaseUrl    = env("SHADOW_DATABASE_URL")
+    // url                  = env("DATABASE_URL")
+    url                  = env("DEV_DATABASE_URL")
+    // shadowDatabaseUrl    = env("SHADOW_DATABASE_URL")
 }
 
 model post {
@@ -20,18 +21,33 @@ model post {
     authorId  Int
     imageUrl  String?
     tags      String
+    desc      String?
+    cover     String?
+    viewCount Int?
+    enabled   Boolean
 
     @@index(authorId)
 }
 
 model user {
-    id           Int      @id @default(autoincrement())
-    email        String   @unique
+    id           Int          @id @default(autoincrement())
+    email        String       @unique
     passwordHash String
     name         String
     nickName     String?
     gender       String?
     posts        post[]
-    desc         String?
+    introduce    String?
     roles        Json
+    birthDate    String?
+    experience   String?
+    contactInfo  contactInfo?
+}
+
+model contactInfo {
+    id     Int     @id @default(autoincrement())
+    user   user    @relation(fields: [userId], references: [id])
+    userId Int     @unique
+    tel    String?
+    wechat String?
 }

@@ -19,14 +19,30 @@ export default async function regiter(req: NextApiRequest, res: NextApiResponse)
                         // 密码是经过 bcrypt 加密的
                         passwordHash: bcrypt.hashSync(req.body.password, 8),
                         name: req.body.name,
+                        nickName: req.body.nickName,
                         roles: req.body.roles,
+                        gender: req.body.gender,
+                        introduce: req.body.introduce,
+                        birthDate: req.body.birthDate,
+                        experience: req.body.experience,
+                    },
+                })
+
+                await prisma.contactInfo.create({
+                    data: {
+                        userId: user.id,
+                        tel: req.body.tel,
+                        wechat: req.body.webchat,
                     },
                 })
 
                 setCookie(res, 'token', await signToken(user.id))
 
                 // 把建立成功的用户数据（不包含密码）和 JWT 回传给前端
-                res.status(201).json({ ...user, passwordHash: undefined })
+                res.status(201).json({
+                    data: { ...user, passwordHash: undefined },
+                    success: true,
+                })
 
                 // 处理完请求以后记得断开数据库链接
                 await prisma.$disconnect()
