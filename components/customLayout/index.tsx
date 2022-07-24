@@ -1,12 +1,60 @@
-import React, { PropsWithChildren } from 'react'
+import { useDebounceFn } from 'ahooks'
+import React, { PropsWithChildren, useEffect, useState } from 'react'
 import style from './index.module.scss'
+import cn from 'classnames'
+import variables from '@/styles/variables.module.scss'
+import Menu from '../menu'
+import { useSpring, animated } from 'react-spring'
+import MenuButton from '../menuButton'
 
 const CustomLayout = (props: PropsWithChildren) => {
+    const [menuVis, setMenuVis] = useState(false)
+    const [isHidden, setIsHidden] = useState(false)
+    const springProps = useSpring({
+        from: {
+            opacity: 0,
+        },
+        to: {
+            opacity: 1,
+        },
+        config: { duration: 500 },
+    })
+
+    const setHidden = useDebounceFn(
+        () => {
+            setIsHidden(false)
+        },
+        {
+            wait: 2000,
+        }
+    )
+    useEffect(() => {
+        const scollFn = () => {
+            setIsHidden(true)
+            setHidden.run()
+        }
+
+        document.addEventListener('wheel', scollFn)
+
+        return () => {
+            document.removeEventListener('wheel', scollFn)
+        }
+    }, [setHidden])
+
     return (
-        <div className={style['layout-container']}>
-            <div className='text-red-500'>头部</div>
+        <div
+            className={cn([style['layout-container'], 'lg:mr-20 mr-0'])}
+            style={{ '--bg': isHidden ? variables.primaryColor : '#fff' } as React.CSSProperties}
+        >
+            <Menu visible={menuVis} />
+            <animated.div
+                className='fixed right-0 top-0 lg:h-full lg:w-20 h-14 w-14 z-20 cursor-pointer flex justify-center items-center'
+                style={{ background: variables.primaryColor, ...springProps }}
+                onClick={() => setMenuVis(!menuVis)}
+            >
+                <MenuButton></MenuButton>
+            </animated.div>
             {props.children}
-            <div>脚步</div>
         </div>
     )
 }

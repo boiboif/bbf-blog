@@ -1,0 +1,23 @@
+.menu-wrap {
+    position: fixed;
+    display: none;
+    height: 100%;
+    width: 100%;
+    z-index: 10;
+    .bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        transition: opacity 0.4s cubic-bezier(0.5, 1, 0.89, 1);
+        background: url('~@/public/img/bg_menu.jpg') repeat 0 0;
+        background-size: 288px auto;
+    }
+}
+
+@media (max-width: 1024px) {
+    .bg {
+        background-size: 144px auto !important;
+    }
+}
