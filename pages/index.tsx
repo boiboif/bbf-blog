@@ -1,14 +1,25 @@
+import Banner from '@/components/banner'
 import { Button } from 'antd'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 
 const Home: NextPage = () => {
     const router = useRouter()
+
     return (
         <div style={{ height: '300vh' }}>
-            <Button style={{ position: 'sticky', top: 0 }} type='primary' onClick={() => router.push('/test')}>
-                按钮
-            </Button>
+            <div>
+                <div className='w-full lg:w-3/5 lg:flex lg:flex-row-reverse'>
+                    <div className='flex-1'>
+                        <Banner />
+                    </div>
+                    <div className=' w-full lg:w-[11.409%] lg:max-w-[85px]'>123</div>
+                </div>
+
+                <div className='w-full lg:w-2/5'>
+                    <Button onClick={() => router.push('/test')}>跳转</Button>
+                </div>
+            </div>
         </div>
     )
 }

@@ -24,9 +24,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
     return getLayout(
         <ConfigProvider locale={zhCN}>
-            <>
-                <Component {...pageProps} />
-            </>
+            <Component {...pageProps} />
         </ConfigProvider>
     )
 }

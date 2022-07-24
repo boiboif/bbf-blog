@@ -1,0 +1,71 @@
+.button-wrap {
+    width: 40px;
+    height: 28px;
+
+    .button-open {
+        position: relative;
+        height: 100%;
+
+        .button-open-item1,
+        .button-open-item2,
+        .button-open-item3 {
+            position: absolute;
+            width: 100%;
+            height: 4px;
+            background: transparent;
+            .button-open-deco {
+                width: 100%;
+                height: 100%;
+                background: transparent;
+                transform: translateX(100%);
+                transition: all 0.4s;
+                &.active {
+                    transform: translateX(0);
+                    &::before,
+                    &::after {
+                        width: 100%;
+                        transition: width 0.4s cubic-bezier(0.87, 0, 0.13, 1) 0.1s;
+                    }
+                    &::after {
+                        transition-delay: 0.3s, 0s;
+                    }
+                }
+                &::before {
+                    width: 0;
+                    display: block;
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    border-radius: 50px;
+                    background: #00b4aa;
+                    height: 100%;
+                    content: '';
+                    transition: width 0.4s cubic-bezier(0.87, 0, 0.13, 1);
+                }
+                &::after {
+                    border-radius: 50px;
+                    display: block;
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    background: #fff;
+                    width: 0;
+                    height: 100%;
+                    content: '';
+                    transition: width 0.1s cubic-bezier(0.87, 0, 0.13, 1) 0.1s;
+                }
+            }
+        }
+
+        .button-open-item1 {
+            top: 0;
+        }
+        .button-open-item2 {
+            top: 50%;
+            transform: translate(0, -50%);
+        }
+        .button-open-item3 {
+            bottom: 0;
+        }
+    }
+}
