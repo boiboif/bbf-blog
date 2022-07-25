@@ -1,33 +1,59 @@
-import React, { useState } from 'react'
-import styles from './index.module.scss'
-import cn from 'classnames'
+import classNames from 'classnames'
+import { useControllableValue } from 'ahooks'
+
+type Status = 'open' | 'close'
 
 interface MenuButtonProps {
+    status?: Status
+    defaultStatus?: Status
+    onStatusChange?: (status: Status) => void
     size?: 'middle' | 'large' | 'small'
 }
 
 const MenuButton = (props: MenuButtonProps) => {
-    const [status, setStatue] = useState<'open' | 'close'>('open')
+    const { size = 'middle' } = props
+
+    const [status, setStatus] = useControllableValue(props, {
+        valuePropName: 'status',
+        defaultValue: 'close',
+        defaultValuePropName: 'defaultStatus',
+        trigger: 'onStatusChange',
+    })
 
     const handleClick = () => {
-        setStatue(status === 'open' ? 'close' : 'open')
+        setStatus(status === 'open' ? 'close' : 'open')
     }
 
     return (
-        <div className={styles['button-wrap']}>
-            <div className={styles['button-open']} onClick={handleClick}>
-                <div className={styles['button-open-item1']}>
-                    <div className={cn([styles['button-open-deco'], { [styles.active]: status === 'open' }])}></div>
+        <div
+            className={classNames(['menu-button-wrap'], {
+                open: status === 'open',
+                close: status === 'close',
+                large: size === 'large',
+                small: size === 'small',
+            })}
+            onClick={handleClick}
+        >
+            <div className='menu-button-open'>
+                <div className='menu-button-open-item item1'>
+                    <div className='menu-button-open-deco' />
                 </div>
-                <div className={styles['button-open-item2']}>
-                    <div className={cn([styles['button-open-deco'], { [styles.active]: status === 'open' }])}></div>
+                <div className='menu-button-open-item item2'>
+                    <div className='menu-button-open-deco' />
                 </div>
-                <div className={styles['button-open-item3']}>
-                    <div className={cn([styles['button-open-deco'], { [styles.active]: status === 'open' }])}></div>
+                <div className='menu-button-open-item item3'>
+                    <div className='menu-button-open-deco' />
                 </div>
             </div>
 
-            {/* <div>close</div> */}
+            <div className='menu-button-close'>
+                <div className='menu-button-close-item item1'>
+                    <div className='menu-button-close-deco' />
+                </div>
+                <div className='menu-button-close-item item2'>
+                    <div className='menu-button-close-deco' />
+                </div>
+            </div>
         </div>
     )
 }

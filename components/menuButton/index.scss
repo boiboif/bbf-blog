@@ -1,0 +1,216 @@
+.menubar:hover {
+    .menu-button-close {
+        > .menu-button-close-item.item1 {
+            transform: translate(-50%, -50%) rotate(45deg);
+        }
+        > .menu-button-close-item.item2 {
+            transform: translate(-50%, -50%) rotate(-45deg);
+        }
+    }
+
+    .menu-button-open {
+        > .menu-button-open-item.item1 {
+            transform: translateY(3px);
+        }
+        > .menu-button-open-item.item3 {
+            transform: translateY(-3px);
+        }
+    }
+}
+
+.menu-button-wrap {
+    position: relative;
+    width: 40px;
+    height: 28px;
+    cursor: pointer;
+
+    &.large {
+        width: 50px;
+        height: 36px;
+        .menu-button-open-item,
+        .menu-button-close-item {
+            height: 6px !important;
+        }
+    }
+
+    &.small {
+        width: 34px;
+        height: 22px;
+        .menu-button-open-item,
+        .menu-button-close-item {
+            height: 2px !important;
+        }
+    }
+
+    &.close {
+        .menu-button-open > .menu-button-open-item {
+            .menu-button-open-deco {
+                transform: translateX(0);
+                transition: transform 0.5s cubic-bezier(0.5, 1, 0.89, 1) 0.4s;
+                &::before,
+                &::after {
+                    width: 100%;
+                }
+                &::before {
+                    transition: width 0.4s cubic-bezier(0.87, 0, 0.13, 1) 0.1s;
+                }
+                &::after {
+                    transition: width 0.6s cubic-bezier(0.87, 0, 0.13, 1) 0.1s;
+                    transition-delay: 0.3s, 0s;
+                }
+            }
+            &.item1 .menu-button-open-deco {
+                transition-delay: 0.1s;
+            }
+            &.item2 .menu-button-open-deco {
+                transition-delay: 0.15s;
+            }
+            &.item3 .menu-button-open-deco {
+                transition-delay: 0.2s;
+            }
+
+            &.item2 .menu-button-open-deco {
+                &::after {
+                    transition-delay: 0.35s, 0s;
+                }
+            }
+            &.item3 .menu-button-open-deco {
+                &::after {
+                    transition-delay: 0.4s, 0s;
+                }
+            }
+        }
+    }
+
+    &.open {
+        .menu-button-close > .menu-button-close-item {
+            .menu-button-close-deco {
+                transform: translateX(0px);
+                &::before {
+                    width: 100%;
+                    transition: width 0.4s cubic-bezier(0.87, 0, 0.13, 1);
+                }
+                &::after {
+                    width: 100%;
+                    transition: width 0.4s cubic-bezier(0.87, 0, 0.13, 1) 0.1s;
+                }
+            }
+
+            &.item1,
+            &.item2 {
+                .menu-button-close-deco {
+                    &::after {
+                        transition: width 0.4s cubic-bezier(0.87, 0, 0.13, 1) 0.3s;
+                    }
+                }
+            }
+        }
+    }
+
+    .menu-button-open {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        width: 100%;
+        height: 100%;
+
+        .menu-button-open-item {
+            transition: transform 0.3s cubic-bezier(0.5, 1, 0.89, 1);
+            &.item2 .menu-button-open-deco {
+                transition-delay: 0.1s;
+            }
+            &.item3 .menu-button-open-deco {
+                transition-delay: 0.15s;
+            }
+
+            .menu-button-open-deco {
+                position: relative;
+                width: 100%;
+                height: 4px;
+                overflow: hidden;
+                background: transparent;
+                border-radius: 50px;
+                transform: translateX(100%);
+                transition: transform 0.3s cubic-bezier(0.5, 1, 0.89, 1) 0s;
+
+                &::before,
+                &::after {
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    width: 0;
+                    height: 100%;
+                    content: '';
+                }
+
+                &::before {
+                    background: #00b4aa;
+                    transition: width 0.4s cubic-bezier(0.87, 0, 0.13, 1);
+                }
+                &::after {
+                    background: #fff;
+                    transition: width 0.3s cubic-bezier(0.87, 0, 0.13, 1);
+                }
+            }
+        }
+    }
+
+    .menu-button-close {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        .menu-button-close-item {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            display: block;
+            width: 100%;
+            height: 4px;
+            backface-visibility: hidden;
+            transition: transform 0.3s cubic-bezier(0.5, 1, 0.89, 1);
+            &.item1 {
+                transform: translate(-50%, -50%) rotate(30deg);
+            }
+            &.item2 {
+                transform: translate(-50%, -50%) rotate(-30deg);
+            }
+
+            .menu-button-close-deco {
+                position: absolute;
+                top: 0;
+                right: 0;
+                display: block;
+                width: 100%;
+                height: 100%;
+                transform: translateX(100%);
+                transition: transform 0.6s cubic-bezier(0.5, 1, 0.89, 1) 0.1s;
+
+                &::before,
+                &::after {
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    display: block;
+                    width: 0;
+                    height: 100%;
+                    content: '';
+                }
+
+                &::before {
+                    background: #00b4aa;
+                    transition: width 0.6s cubic-bezier(0.87, 0, 0.13, 1) 0.1s;
+                }
+
+                &::after {
+                    background: #fff;
+                    transition: width 0.4s cubic-bezier(0.87, 0, 0.13, 1);
+                }
+            }
+        }
+    }
+}
