@@ -9,6 +9,7 @@ import MenuButton from '../menuButton'
 
 const CustomLayout = (props: PropsWithChildren) => {
     const [menuVis, setMenuVis] = useState(false)
+    const [status, setStatus] = useState<'close' | 'open'>('close')
     const [isHidden, setIsHidden] = useState(false)
     const springProps = useSpring({
         from: {
@@ -48,11 +49,14 @@ const CustomLayout = (props: PropsWithChildren) => {
         >
             <Menu visible={menuVis} />
             <animated.div
-                className='fixed right-0 top-0 lg:h-full lg:w-20 h-14 w-14 z-20 cursor-pointer flex justify-center items-center'
+                className='menubar fixed right-0 top-0 lg:h-full lg:w-20 h-14 w-14 z-20 cursor-pointer flex justify-center items-center'
                 style={{ background: variables.primaryColor, ...springProps }}
-                onClick={() => setMenuVis(!menuVis)}
+                onClick={() => {
+                    setMenuVis(!menuVis)
+                    setStatus(status === 'open' ? 'close' : 'open')
+                }}
             >
-                <MenuButton></MenuButton>
+                <MenuButton status={status}></MenuButton>
             </animated.div>
             {props.children}
         </div>
