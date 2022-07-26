@@ -1,7 +1,4 @@
 import React, { useEffect, useRef } from 'react'
-import img0 from '@/public/img/img_main-00.jpg'
-import img1 from '@/public/img/img_main-01.jpg'
-import img2 from '@/public/img/img_main-02.jpg'
 import Image, { StaticImageData } from 'next/image'
 import styles from './index.module.scss'
 import classNames from 'classnames'
@@ -16,7 +13,7 @@ interface BannerProps {
 }
 
 const Banner = (props: BannerProps) => {
-    const { autoPlay = true, imgList = [img0, img1, img2], onTransitionEnd } = props
+    const { autoPlay = true, imgList, onTransitionEnd } = props
 
     const allowTransition = useRef(true)
 
@@ -41,7 +38,7 @@ const Banner = (props: BannerProps) => {
     return (
         <>
             <div className={styles['banner-wrap']}>
-                {imgList.map((img, index) => {
+                {imgList?.map((img, index) => {
                     return (
                         <div
                             key={index}

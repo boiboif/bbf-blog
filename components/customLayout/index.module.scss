@@ -1,9 +1,7 @@
 @import '/styles/variables.module.scss';
 
 .layout-container {
-    height: 100vh;
     background-color: #fefefe;
-    overflow: auto;
 
     &::-webkit-scrollbar {
         width: 10px;
