@@ -9,6 +9,7 @@ import 'moment/locale/zh-cn'
 import 'antd/dist/antd.css'
 import '@/components/menuButton/index.scss'
 import CustomLayout from '@/components/customLayout'
+import { useScrollRestoration } from '@/hook/useScrollRestoration'
 
 moment.locale('zh-cn')
 
@@ -20,7 +21,9 @@ type AppPropsWithLayout = AppProps & {
     Component: NextPageWithLayout
 }
 
-function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+function MyApp({ Component, pageProps, router }: AppPropsWithLayout) {
+    useScrollRestoration(router, 'custom-layout')
+
     const getLayout = Component.getLayout ?? ((page) => <CustomLayout>{page}</CustomLayout>)
 
     return getLayout(
