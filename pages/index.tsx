@@ -20,9 +20,9 @@ const Home: NextPage = () => {
     const readyChangeCover = useRef(true)
 
     const imgList = [
-        { on: img2_on, off: img2_off, cover: img0 },
+        { on: img0_on, off: img0_off, cover: img0 },
         { on: img1_on, off: img1_off, cover: img1 },
-        { on: img0_on, off: img0_off, cover: img2 },
+        { on: img2_on, off: img2_off, cover: img2 },
     ]
 
     return (
