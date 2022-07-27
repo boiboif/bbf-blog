@@ -16,7 +16,7 @@
             clip-path: polygon(0 -50%, 100% 0, 100% 100%, 0% 100%);
             transition: clip-path 1s cubic-bezier(0.65, 0, 0.35, 1);
             .scale {
-                animation: scale 1.25s;
+                animation: scale 1.4s;
             }
         }
     }
@@ -24,7 +24,7 @@
 
 @keyframes scale {
     0% {
-        transform: scale(1.05);
+        transform: scale(1.1);
         transform-origin: center center;
     }
     100% {

@@ -8,6 +8,10 @@
         background-color: #fff;
     }
 
+    &::-webkit-scrollbar-thumb:hover {
+        background-color: $primary-color !important;
+    }
+
     &::-webkit-scrollbar-track-piece {
         /*鼠标移动上去再显示滚动条*/
 
