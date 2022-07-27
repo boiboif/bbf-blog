@@ -32,7 +32,6 @@ const Banner = (props: BannerProps) => {
         return () => {
             clearInterval(timer)
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [activeIndex, autoPlay, setActiveIndex])
 
     return (
@@ -50,7 +49,7 @@ const Banner = (props: BannerProps) => {
                                 }
                             }}
                         >
-                            <Image layout='responsive' src={img} alt='' />
+                            <Image className={classNames([styles['scale']])} src={img} alt='' />
                         </div>
                     )
                 })}

@@ -38,6 +38,7 @@ const Home: NextPage = () => {
                                 readyChangeCover.current = false
                             }}
                             onTransitionEnd={() => (readyChangeCover.current = true)}
+                            autoPlay={false}
                         />
                     </div>
                     <div className='relative w-full lg:w-[11.409%] lg:max-w-[85px]'>
@@ -52,7 +53,7 @@ const Home: NextPage = () => {
                                         setActiveIndex(index)
                                     }
                                 }}
-                                className="w-1/4 lg:w-full"
+                                className='w-1/4 lg:w-full'
                             />
                         </div>
                     </div>

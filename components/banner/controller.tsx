@@ -19,6 +19,7 @@ const Controller = (props: ControllerProps) => {
     })
 
     const handleClick = (index: number) => {
+        if (index === activeIndex) return
         setActiveIndex(index)
     }
 

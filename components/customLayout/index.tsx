@@ -50,7 +50,7 @@ const CustomLayout = (props: PropsWithChildren) => {
         >
             <Menu visible={menuVis} />
             <animated.div
-                className='menubar fixed right-0 top-0 lg:h-full lg:w-20 h-14 w-14 z-20 cursor-pointer flex justify-center items-center'
+                className='menubar fixed right-0 top-0 lg:h-full lg:w-20 h-10 w-12 z-20 cursor-pointer flex justify-center items-center'
                 style={{ background: variables.primaryColor, ...springProps }}
                 onClick={() => {
                     setMenuVis(!menuVis)
