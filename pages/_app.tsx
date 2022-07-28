@@ -8,6 +8,7 @@ import moment from 'moment'
 import 'moment/locale/zh-cn'
 import 'antd/dist/antd.css'
 import '@/components/menuButton/index.scss'
+import 'animate.css';
 import CustomLayout from '@/components/customLayout'
 import { useScrollRestoration } from '@/hook/useScrollRestoration'
 

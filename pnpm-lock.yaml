@@ -9,6 +9,7 @@ specifiers:
   '@types/react': 18.0.15
   '@types/react-dom': 18.0.6
   ahooks: ^3.5.2
+  animate.css: ^4.1.1
   antd: ^4.21.7
   autoprefixer: ^10.4.7
   bcryptjs: ^2.4.3
@@ -33,6 +34,7 @@ dependencies:
   '@types/bcryptjs': registry.npmmirror.com/@types/bcryptjs/2.4.2
   '@types/jsonwebtoken': registry.npmmirror.com/@types/jsonwebtoken/8.5.8
   ahooks: registry.npmmirror.com/ahooks/3.5.2_react@18.2.0
+  animate.css: registry.npmmirror.com/animate.css/4.1.1
   antd: registry.npmmirror.com/antd/4.21.7_biqbaboplfbrettd7655fr4n2y
   bcryptjs: registry.npmmirror.com/bcryptjs/2.4.3
   classnames: registry.npmmirror.com/classnames/2.3.1
@@ -764,6 +766,12 @@ packages:
       json-schema-traverse: registry.npmmirror.com/json-schema-traverse/0.4.1
       uri-js: registry.npmmirror.com/uri-js/4.4.1
     dev: true
+
+  registry.npmmirror.com/animate.css/4.1.1:
+    resolution: {integrity: sha512-+mRmCTv6SbCmtYJCN4faJMNFVNN5EuCTTprDTAo7YzIGji2KADmakjVA3+8mVDkZ2Bf09vayB35lSQIex2+QaQ==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/animate.css/-/animate.css-4.1.1.tgz}
+    name: animate.css
+    version: 4.1.1
+    dev: false
 
   registry.npmmirror.com/ansi-regex/5.0.1:
     resolution: {integrity: sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/ansi-regex/-/ansi-regex-5.0.1.tgz}

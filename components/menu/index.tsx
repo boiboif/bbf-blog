@@ -1,12 +1,33 @@
 import classNames from 'classnames'
 import Image from 'next/image'
 import React, { useEffect } from 'react'
-import { useSpring, animated, easings, useSprings } from 'react-spring'
+import { useSpring, animated, easings } from 'react-spring'
 import style from './index.module.scss'
 import logo from '@/public/img/logo.png'
+import AnimateInViewport from '../animateInViewport'
 
 interface MenuProps {
     visible?: boolean
+}
+
+const getDelayMap = (length: number) => {
+    let current = 0
+    let obj: Record<number, number> = {}
+
+    obj = Array(length)
+        .fill(null)
+        .reduce((acc, cur, index) => {
+            if (index % 2 === 0 && index !== 0) {
+                current += 2
+            }
+            const delay = current * 100 + 200
+            return {
+                ...acc,
+                [index]: delay,
+            }
+        }, {})
+
+    return obj
 }
 
 const Menu = (props: MenuProps) => {
@@ -19,31 +40,7 @@ const Menu = (props: MenuProps) => {
     }))
 
     const menuList = ['首页', '分类', '文章', '留言', '关于我', '登录']
-    const getDelayMap = (length: number) => {
-        let current = 0
-        let obj: Record<number, number> = {}
-
-        obj = Array(length)
-            .fill(null)
-            .reduce((acc, cur, index) => {
-                if (index % 2 === 0 && index !== 0) {
-                    current += 2
-                }
-                const delay = current * 100 + 300
-                return {
-                    ...acc,
-                    [index]: delay,
-                }
-            }, {})
-
-        return obj
-    }
-
-    const menuSprings = useSprings(menuList.length, (i) => ({
-        opacity: 0,
-        x: 50,
-        y: 30,
-    }))
+    const delayMap = getDelayMap(menuList.length)
 
     useEffect(() => {
         if (visible) {
@@ -70,19 +67,6 @@ const Menu = (props: MenuProps) => {
                 },
                 delay: 50,
             })
-
-            menuSprings[1].set({
-                opacity: 0,
-                x: 50,
-                y: 30,
-            })
-
-            menuSprings[1].start((i) => ({
-                opacity: 1,
-                delay: getDelayMap(menuList.length)[i],
-                x: 0,
-                y: 0,
-            }))
         } else {
             api.start({
                 opacity: 0,
@@ -95,7 +79,7 @@ const Menu = (props: MenuProps) => {
                 },
             })
         }
-    }, [visible, api, menuSprings, menuList.length])
+    }, [visible, api])
 
     return (
         <animated.div className={classNames([style['menu-wrap']])} style={{ display: springProps.display, opacity: springProps.opacity }}>
@@ -106,20 +90,19 @@ const Menu = (props: MenuProps) => {
                 </div>
                 <div className='lg:flex-1'>
                     <ul className='flex flex-wrap'>
-                        {menuSprings[0].map((menu, index) => {
+                        {menuList.map((menu, index) => {
                             return (
-                                <animated.li
-                                    key={index}
+                                <li
                                     className='font-sans font-bold text-center lg:text-left text-4xl sm:text-6xl w-1/2 lg:w-1/3 mr-0 lg:mr-20 mb-16 cursor-pointer'
-                                    style={{
-                                        ...menu,
-                                    }}
+                                    key={menu}
                                 >
-                                    <span>
-                                        <span className='text-teal-500'>{menuList[index][0]}</span>
-                                        {menuList[index].slice(1)}
-                                    </span>
-                                </animated.li>
+                                    <AnimateInViewport delay={delayMap[index]} animateCssClass='animate__fadeInBottomRight'>
+                                        <span>
+                                            <span className='text-teal-500'>{menu[0]}</span>
+                                            {menu.slice(1)}
+                                        </span>
+                                    </AnimateInViewport>
+                                </li>
                             )
                         })}
                     </ul>
