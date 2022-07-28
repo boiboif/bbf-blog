@@ -85,7 +85,7 @@ const Menu = (props: MenuProps) => {
         <animated.div className={classNames([style['menu-wrap']])} style={{ display: springProps.display, opacity: springProps.opacity }}>
             <animated.div className={classNames([style.bg])} style={{ backgroundPosition: springProps.backgroundPosition }}></animated.div>
             <div className='z-10 relative h-full flex flex-col lg:flex-row items-center lg:justify-center w-[90%] mx-auto my-20 lg:my-0'>
-                <div className='mr-0 lg:mr-28 mb-10 lg:mb-0'>
+                <div className='mr-0 lg:mr-14 xl:mr-40 mb-10 lg:mb-0'>
                     <Image src={logo} alt=''></Image>
                 </div>
                 <div className='lg:flex-1'>
@@ -93,7 +93,7 @@ const Menu = (props: MenuProps) => {
                         {menuList.map((menu, index) => {
                             return (
                                 <li
-                                    className='font-sans font-bold text-center lg:text-left text-4xl sm:text-6xl w-1/2 lg:w-1/3 mr-0 lg:mr-20 mb-16 cursor-pointer'
+                                    className='font-sans font-bold text-center lg:text-left text-4xl sm:text-6xl w-1/2 lg:w-1/3 mr-0 lg:mr-16 xl:mr-16 mb-16 cursor-pointer'
                                     key={menu}
                                 >
                                     <AnimateInViewport delay={delayMap[index]} animateCssClass='animate__fadeInBottomRight'>

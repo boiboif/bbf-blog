@@ -1,6 +1,5 @@
 import Banner from '@/components/banner'
 import Controller from '@/components/banner/controller'
-import { Button } from 'antd'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import img0_on from '@/public/img/tab-00_on.jpg'
@@ -13,6 +12,7 @@ import img0 from '@/public/img/img_main-00.jpg'
 import img1 from '@/public/img/img_main-01.jpg'
 import img2 from '@/public/img/img_main-02.jpg'
 import { useRef, useState } from 'react'
+import ArticleListItem from '@/components/articleListItem'
 
 const Home: NextPage = () => {
     const router = useRouter()
@@ -27,8 +27,8 @@ const Home: NextPage = () => {
 
     return (
         <div style={{ height: '300vh' }}>
-            <div>
-                <div className='w-full lg:w-[62%] lg:flex lg:flex-row-reverse'>
+            <div className='lg:flex mx-auto max-w-[1600px]'>
+                <div className='w-full lg:w-[62%] lg:flex lg:flex-row-reverse lg:mb-12'>
                     <div className='flex-1'>
                         <Banner
                             activeIndex={activeIndex}
@@ -58,8 +58,26 @@ const Home: NextPage = () => {
                     </div>
                 </div>
 
-                <div className='w-full lg:w-[38%]'>
-                    <Button onClick={() => router.push('/test')}>跳转</Button>
+                <div>456</div>
+            </div>
+
+            <div className='w-[91%] mx-auto max-w-[1500px]'>
+                <div className='font-mono font-black tracking-wider mb-5 lg:mb-7'>
+                    <span className='text-4xl lg:text-8xl text-teal-500 font-serif font-semibold'>N</span>
+                    <span className='text-3xl lg:text-7xl font-sans'>ewly</span>
+                </div>
+                <div>
+                    <div className='h-[1px] bg-gray-300'></div>
+                    <ArticleListItem></ArticleListItem>
+                    <div className='h-[1px] bg-gray-300'></div>
+                </div>
+                <div>
+                    <ArticleListItem></ArticleListItem>
+                    <div className='h-[1px] bg-gray-300'></div>
+                </div>
+                <div>
+                    <ArticleListItem></ArticleListItem>
+                    <div className='h-[1px] bg-gray-300'></div>
                 </div>
             </div>
         </div>
