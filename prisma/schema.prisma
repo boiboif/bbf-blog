@@ -12,28 +12,39 @@ datasource db {
 }
 
 model post {
-    id        Int      @id @default(autoincrement())
-    createdAt DateTime @default(now())
-    updatedAt DateTime @updatedAt
-    title     String   @db.VarChar(255)
+    id        Int       @id @default(autoincrement())
+    createdAt DateTime  @default(now())
+    updatedAt DateTime  @updatedAt
+    title     String    @db.VarChar(255)
     content   String?
-    author    user     @relation(fields: [authorId], references: [id])
+    author    user      @relation(fields: [authorId], references: [id])
     authorId  Int
-    imageUrl  String?
-    tags      String
+    tags      String?
     desc      String?
     cover     String?
     viewCount Int?
-    enabled   Boolean
+    enabled   Boolean   @default(true)
+    cate      post_cate @relation(fields: [cateId], references: [id])
+    cateId    Int
 
     @@index(authorId)
 }
 
+model post_cate {
+    id        Int      @id @default(autoincrement())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    name      String
+    posts     post[]
+}
+
 model user {
     id           Int          @id @default(autoincrement())
-    email        String       @unique
+    createdAt    DateTime     @default(now())
+    updatedAt    DateTime     @updatedAt
+    email        String?
     passwordHash String
-    name         String
+    username     String       @unique
     nickName     String?
     gender       String?
     posts        post[]

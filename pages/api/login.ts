@@ -10,16 +10,18 @@ export default async function login(req: NextApiRequest, res: NextApiResponse) {
             try {
                 const prisma = new PrismaClient()
                 const user = await prisma.user.findUnique({
-                    where: { email: req.body.email },
+                    where: { username: req.body.username },
                 })
                 if (!user || !bcrypt.compareSync(req.body.password, user.passwordHash)) {
                     return res.status(401).json({
-                        message: 'Invalid email or password',
+                        message: 'Invalid username or password',
                     })
                 }
-                setCookie(res, 'token', await signToken(user.id))
 
-                res.status(200).json({ ...user, passwordHash: undefined })
+                const token = await signToken(user.id)
+                setCookie(res, 'token', token)
+
+                res.status(200).json({ ...user, passwordHash: undefined, token })
                 await prisma.$disconnect()
             } catch (error: any) {
                 res.status(500).json(error)

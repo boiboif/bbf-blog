@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 8010",
-    "build": "prisma generate && next build",
+    "build": "node init.js prisma generate && next build",
     "start": "next start",
     "lint": "next lint"
   },

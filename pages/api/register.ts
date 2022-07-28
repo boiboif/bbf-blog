@@ -18,7 +18,7 @@ export default async function regiter(req: NextApiRequest, res: NextApiResponse)
                         email: req.body.email,
                         // 密码是经过 bcrypt 加密的
                         passwordHash: bcrypt.hashSync(req.body.password, 8),
-                        name: req.body.name,
+                        username: req.body.username,
                         nickName: req.body.nickName,
                         roles: req.body.roles,
                         gender: req.body.gender,
