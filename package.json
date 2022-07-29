@@ -15,6 +15,7 @@
     "ahooks": "^3.5.2",
     "animate.css": "^4.1.1",
     "antd": "^4.21.7",
+    "bbf-tree-utils": "^0.1.0",
     "bcryptjs": "^2.4.3",
     "classnames": "^2.3.1",
     "cookie": "^0.5.0",

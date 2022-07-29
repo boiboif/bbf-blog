@@ -12,6 +12,7 @@ specifiers:
   animate.css: ^4.1.1
   antd: ^4.21.7
   autoprefixer: ^10.4.7
+  bbf-tree-utils: ^0.1.0
   bcryptjs: ^2.4.3
   classnames: ^2.3.1
   cookie: ^0.5.0
@@ -36,6 +37,7 @@ dependencies:
   ahooks: registry.npmmirror.com/ahooks/3.5.2_react@18.2.0
   animate.css: registry.npmmirror.com/animate.css/4.1.1
   antd: registry.npmmirror.com/antd/4.21.7_biqbaboplfbrettd7655fr4n2y
+  bbf-tree-utils: registry.npmmirror.com/bbf-tree-utils/0.1.0
   bcryptjs: registry.npmmirror.com/bcryptjs/2.4.3
   classnames: registry.npmmirror.com/classnames/2.3.1
   cookie: registry.npmmirror.com/cookie/0.5.0
@@ -976,6 +978,12 @@ packages:
     name: balanced-match
     version: 1.0.2
     dev: true
+
+  registry.npmmirror.com/bbf-tree-utils/0.1.0:
+    resolution: {integrity: sha512-djjxuQhNZyk1853idIsTVCO2P1zN/avCk2G72W7l0bt1tKThPZd6Wrk2Xh7kzKhmc+li2yk3xzu9XAYSSOlPpw==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/bbf-tree-utils/-/bbf-tree-utils-0.1.0.tgz}
+    name: bbf-tree-utils
+    version: 0.1.0
+    dev: false
 
   registry.npmmirror.com/bcryptjs/2.4.3:
     resolution: {integrity: sha512-V/Hy/X9Vt7f3BbPJEi8BdVFMByHi+jNXrYkW3huaybV/kQ0KJg0Y6PkEMbn+zeT+i+SiKZ/HMqJGIIt4LZDqNQ==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/bcryptjs/-/bcryptjs-2.4.3.tgz}
