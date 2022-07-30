@@ -5,6 +5,7 @@ import { useSpring, animated, easings } from 'react-spring'
 import style from './index.module.scss'
 import logo from '@/public/img/logo.png'
 import AnimateInViewport from '../animateInViewport'
+import { useRouter } from 'next/router'
 
 interface MenuProps {
     visible?: boolean
@@ -32,6 +33,7 @@ const getDelayMap = (length: number) => {
 
 const Menu = (props: MenuProps) => {
     const { visible } = props
+    const router = useRouter()
 
     const [springProps, api] = useSpring(() => ({
         opacity: 0,
@@ -39,7 +41,14 @@ const Menu = (props: MenuProps) => {
         display: 'none',
     }))
 
-    const menuList = ['首页', '分类', '文章', '留言', '关于我', '登录']
+    const menuList = [
+        { name: '首页', path: '/' },
+        { name: '分类', path: '' },
+        { name: '文章', path: '' },
+        { name: '留言', path: '' },
+        { name: '关于我', path: '' },
+        { name: '后台', path: '/manager' },
+    ]
     const delayMap = getDelayMap(menuList.length)
 
     useEffect(() => {
@@ -81,6 +90,12 @@ const Menu = (props: MenuProps) => {
         }
     }, [visible, api])
 
+    const handleClick = (menu: { name: string; path: string }) => {
+        if (menu.path) {
+            router.push(menu.path)
+        }
+    }
+
     return (
         <animated.div className={classNames([style['menu-wrap']])} style={{ display: springProps.display, opacity: springProps.opacity }}>
             <animated.div className={classNames([style.bg])} style={{ backgroundPosition: springProps.backgroundPosition }}></animated.div>
@@ -94,12 +109,12 @@ const Menu = (props: MenuProps) => {
                             return (
                                 <li
                                     className='font-sans font-bold text-center lg:text-left text-4xl sm:text-6xl w-1/2 lg:w-1/3 mr-0 lg:mr-16 xl:mr-16 mb-16 cursor-pointer'
-                                    key={menu}
+                                    key={menu.name + menu.path}
                                 >
                                     <AnimateInViewport delay={delayMap[index]} animateCssClass='animate__fadeInBottomRight'>
-                                        <span>
-                                            <span className='text-teal-500'>{menu[0]}</span>
-                                            {menu.slice(1)}
+                                        <span onClick={() => handleClick(menu)}>
+                                            <span className='text-teal-500'>{menu.name[0]}</span>
+                                            {menu.name.slice(1)}
                                         </span>
                                     </AnimateInViewport>
                                 </li>

@@ -19,13 +19,13 @@ export default async function index(req: NextApiRequest, res: NextApiResponse) {
         case 'POST':
             prisma = new PrismaClient()
 
-            if (!req.cookies?.token) {
+            if (!req.headers.authorization) {
                 return res.status(401).json({
                     message: 'Unauthorized',
                 })
             }
 
-            const authorId = (await verifyToken(req.cookies.token)).id
+            const authorId = (await verifyToken(req.headers.authorization)).id
 
             const post = await prisma.post.create({
                 data: {

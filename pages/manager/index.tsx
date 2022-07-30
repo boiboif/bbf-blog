@@ -1,5 +1,6 @@
+import { getUserAll } from '@/api'
 import ManagerLayout from '@/components/manager/layout'
-import Link from 'next/link'
+import { useRequest } from 'ahooks'
 import React from 'react'
 
 /**
@@ -7,6 +8,8 @@ import React from 'react'
  * @returns 后台管理 - 首页
  */
 const ManagerIndex = () => {
+    useRequest(() => getUserAll())
+
     return <div>ManagerIndex</div>
 }
 

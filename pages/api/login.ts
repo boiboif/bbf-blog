@@ -1,7 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
 import { signToken } from '@/utils/jwt'
-import { setCookie } from '@/utils/cookies'
 import { NextApiRequest, NextApiResponse } from 'next'
 
 export default async function login(req: NextApiRequest, res: NextApiResponse) {
@@ -19,7 +18,6 @@ export default async function login(req: NextApiRequest, res: NextApiResponse) {
                 }
 
                 const token = await signToken(user.id)
-                setCookie(res, 'token', token)
 
                 res.status(200).json({ ...user, passwordHash: undefined, token })
                 await prisma.$disconnect()

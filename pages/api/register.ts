@@ -1,4 +1,3 @@
-import { setCookie } from '@/utils/cookies'
 import { signToken } from '@/utils/jwt'
 import { PrismaClient } from '@prisma/client'
 import bcrypt from 'bcryptjs'
@@ -36,11 +35,11 @@ export default async function regiter(req: NextApiRequest, res: NextApiResponse)
                     },
                 })
 
-                setCookie(res, 'token', await signToken(user.id))
+                const token = await signToken(user.id)
 
                 // 把建立成功的用户数据（不包含密码）和 JWT 回传给前端
                 res.status(201).json({
-                    data: { ...user, passwordHash: undefined },
+                    data: { ...user, passwordHash: undefined, token },
                     success: true,
                 })
 
