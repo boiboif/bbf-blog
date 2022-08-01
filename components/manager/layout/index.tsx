@@ -24,7 +24,7 @@ const ManagerLayout = (props: PropsWithChildren) => {
 
     return (
         <div className='h-screen overflow-hidden flex-col'>
-            <Header className='!px-4 flex items-center justify-between !bg-[#1890ff] !text-white'>
+            <Header className='!px-4 flex items-center justify-between !text-white'>
                 <div className='text-2xl font-semibold'>后台管理</div>
                 <div className='cursor-pointer' onClick={() => router.push('/')}>
                     返回门户

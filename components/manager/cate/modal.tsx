@@ -1,18 +1,17 @@
-import { Button, Drawer, Form, Input, message, Space } from 'antd'
+import { Button, Modal, Form, Input, message, Space } from 'antd'
 import { useEffect } from 'react'
 import { addCate, putCate } from '@/api'
 
-interface APDrawerProps {
-    width?: number
+interface ModalProps {
     title?: string
     visible: boolean
-    onClose: () => void
+    onCancel: () => void
     record?: API.Cate | null
     callback?: () => void
 }
 
-const CateDrawer = (props: APDrawerProps) => {
-    const { visible, record, onClose, title, width = 500, callback } = props
+const CateModal = (props: ModalProps) => {
+    const { visible, record, onCancel, title, callback } = props
     const [form] = Form.useForm()
 
     useEffect(() => {
@@ -23,9 +22,9 @@ const CateDrawer = (props: APDrawerProps) => {
         }
     }, [visible, record, form])
 
-    const handleClose = () => {
+    const handleCancel = () => {
         form.resetFields()
-        onClose()
+        onCancel()
     }
 
     const handleSubmit = async () => {
@@ -39,34 +38,35 @@ const CateDrawer = (props: APDrawerProps) => {
         })
 
         message.success('提交成功！')
-        handleClose()
+        handleCancel()
         callback?.()
     }
 
     return (
-        <Drawer
-            width={width}
+        <Modal
+            className='!w-full lg:!w-[800px]'
             title={title ? title : record ? '编辑' : '新增'}
             visible={visible}
-            onClose={handleClose}
+            onCancel={handleCancel}
             footer={
                 <div className='flex justify-end'>
                     <Space>
-                        <Button>取消</Button>
+                        <Button onClick={handleCancel}>取消</Button>
                         <Button type='primary' onClick={handleSubmit}>
                             提交
                         </Button>
                     </Space>
                 </div>
             }
+            destroyOnClose
         >
-            <Form labelCol={{ span: 5 }} form={form}>
+            <Form form={form}>
                 <Form.Item name='name' label='分类名称' rules={[{ required: true }]}>
                     <Input />
                 </Form.Item>
             </Form>
-        </Drawer>
+        </Modal>
     )
 }
 
-export default CateDrawer
+export default CateModal

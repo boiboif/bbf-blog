@@ -8,6 +8,7 @@ declare namespace API {
 
     type Article = {
         id: number
+        content: string
         createdAt: string
         updatedAt: string
     }

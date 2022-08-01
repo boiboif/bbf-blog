@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
-import { delCate, getArticleAll } from '@/api'
+import { delArticle, getArticleAll, getCateAll } from '@/api'
 import CustomForm from '@/components/manager/customForm'
 import ManagerLayout from '@/components/manager/layout'
 import TableMoreAction from '@/components/manager/tableMoreAction'
 import { useRequest } from 'ahooks'
 import { Button, message, Space, Table } from 'antd'
 import { ColumnsType } from 'antd/lib/table'
-import ArticleDrawer from '@/components/manager/article/drawer'
+import ArticleModal from '@/components/manager/article/modal'
 import useRecord from '@/hook/useRecord'
 
 const Article = () => {
@@ -14,7 +14,8 @@ const Article = () => {
     const { data, refresh, loading } = useRequest(() => getArticleAll(searchParam).then((res) => res?.data), {
         refreshDeps: [searchParam],
     })
-    const articleDrawer = useRecord<API.Article>()
+    const articleModal = useRecord<API.Article>()
+    const { data: cateList } = useRequest(() => getCateAll().then((res) => res?.data))
 
     const columns: ColumnsType<API.Article> = [
         { title: '编号', dataIndex: 'id' },
@@ -24,7 +25,7 @@ const Article = () => {
             render: (_, record) => {
                 return (
                     <Space>
-                        <a onClick={() => articleDrawer.show(record)}>编辑</a>
+                        <a onClick={() => articleModal.show(record)}>编辑</a>
                         <TableMoreAction
                             record={record}
                             menuList={[
@@ -33,7 +34,7 @@ const Article = () => {
                                     className: 'text-red-500',
                                     confirmProps: {
                                         onOk: async () => {
-                                            await delCate({ id: record.id })
+                                            await delArticle({ id: record.id })
                                             message.success('删除成功！')
                                             refresh()
                                         },
@@ -49,11 +50,17 @@ const Article = () => {
 
     return (
         <div className='card'>
-            <ArticleDrawer width={1200} visible={articleDrawer.visible} record={articleDrawer.record} onClose={articleDrawer.hide} callback={refresh} />
+            <ArticleModal
+                cateList={cateList}
+                visible={articleModal.visible}
+                record={articleModal.record}
+                onCancel={articleModal.hide}
+                callback={refresh}
+            />
             <CustomForm items={[{ name: 'title', label: '文章标题' }]} formSearch={setSearchParams}></CustomForm>
 
             <div className='mb-4'>
-                <Button type='primary' onClick={() => articleDrawer.show()}>
+                <Button type='primary' onClick={() => articleModal.show()}>
                     新增
                 </Button>
             </div>

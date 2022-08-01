@@ -6,7 +6,7 @@ import TableMoreAction from '@/components/manager/tableMoreAction'
 import { useRequest } from 'ahooks'
 import { Button, message, Space, Table } from 'antd'
 import { ColumnsType } from 'antd/lib/table'
-import CateDrawer from '@/components/manager/cate/drawer'
+import CateModal from '@/components/manager/cate/modal'
 import useRecord from '@/hook/useRecord'
 
 const Cate = () => {
@@ -14,7 +14,7 @@ const Cate = () => {
     const { data, refresh, loading } = useRequest(() => getCateAll(searchParam).then((res) => res?.data), {
         refreshDeps: [searchParam],
     })
-    const cateDrawer = useRecord<API.Cate>()
+    const cateModal = useRecord<API.Cate>()
 
     const columns: ColumnsType<API.Cate> = [
         { title: '编号', dataIndex: 'id' },
@@ -24,7 +24,7 @@ const Cate = () => {
             render: (_, record) => {
                 return (
                     <Space>
-                        <a onClick={() => cateDrawer.show(record)}>编辑</a>
+                        <a onClick={() => cateModal.show(record)}>编辑</a>
                         <TableMoreAction
                             record={record}
                             menuList={[
@@ -49,11 +49,11 @@ const Cate = () => {
 
     return (
         <div className='card'>
-            <CateDrawer visible={cateDrawer.visible} record={cateDrawer.record} onClose={cateDrawer.hide} callback={refresh} />
+            <CateModal visible={cateModal.visible} record={cateModal.record} onCancel={cateModal.hide} callback={refresh} />
             <CustomForm items={[{ name: 'name', label: '分类名称' }]} formSearch={setSearchParams}></CustomForm>
 
             <div className='mb-4'>
-                <Button type='primary' onClick={() => cateDrawer.show()}>
+                <Button type='primary' onClick={() => cateModal.show()}>
                     新增
                 </Button>
             </div>

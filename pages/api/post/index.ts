@@ -1,5 +1,5 @@
 /* eslint-disable no-case-declarations */
-import { authMiddleware, verifyToken } from '@/utils/jwt'
+import { authMiddleware } from '@/utils/jwt'
 import { PrismaClient } from '@prisma/client'
 import { NextApiRequest, NextApiResponse } from 'next'
 
@@ -8,7 +8,7 @@ export default async function index(req: NextApiRequest, res: NextApiResponse) {
     switch (req.method) {
         case 'GET':
             prisma = new PrismaClient()
-            const allPost = await prisma.post.findMany({ include: { author: true, cate: true } })
+            const allPost = await prisma.post.findMany({ include: { author: { select: { username: true } }, cate: true } })
             res.status(200).json({
                 data: allPost,
                 success: true,
