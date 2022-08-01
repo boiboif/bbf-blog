@@ -49,7 +49,14 @@ const Banner = (props: BannerProps) => {
                                 }
                             }}
                         >
-                            <Image className={classNames([styles['scale']])} src={img} alt='' />
+                            <Image
+                                objectPosition='left top'
+                                objectFit='cover'
+                                layout='fill'
+                                className={classNames([styles['scale']])}
+                                src={img}
+                                alt=''
+                            />
                         </div>
                     )
                 })}

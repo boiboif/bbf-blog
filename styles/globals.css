@@ -18,3 +18,27 @@ a {
 * {
     box-sizing: border-box;
 }
+
+.card {
+    background-color: #fff;
+    min-height: 100%;
+    padding: 20px;
+}
+
+.bytemd {
+    height: calc(100vh - 250px) !important;
+}
+
+.markdown-body {
+    box-sizing: border-box;
+    min-width: 200px;
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 45px;
+}
+
+@media (max-width: 767px) {
+    .markdown-body {
+        padding: 15px;
+    }
+}

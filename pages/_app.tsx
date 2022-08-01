@@ -11,6 +11,7 @@ import '@/components/menuButton/index.scss'
 import 'animate.css'
 import CustomLayout from '@/components/customLayout'
 import { useScrollRestoration } from '@/hook/useScrollRestoration'
+import 'bytemd/dist/index.css'
 
 moment.locale('zh-cn')
 

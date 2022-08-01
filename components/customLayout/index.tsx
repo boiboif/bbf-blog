@@ -45,7 +45,7 @@ const CustomLayout = (props: PropsWithChildren) => {
     return (
         <div
             id='custom-layout'
-            className={cn([style['layout-container'], 'lg:h-screen lg:overflow-scroll lg:mr-20 mr-0'])}
+            className={cn([style['layout-container'], 'lg:h-screen lg:overflow-auto lg:mr-20 mr-0'])}
             style={{ '--bg': isHidden ? variables.primaryColor : '#fff' } as React.CSSProperties}
         >
             <Menu visible={menuVis} />

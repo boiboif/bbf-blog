@@ -1,4 +1,5 @@
 /* eslint-disable no-case-declarations */
+import { authMiddleware } from '@/utils/jwt'
 import { PrismaClient } from '@prisma/client'
 import { NextApiRequest, NextApiResponse } from 'next'
 
@@ -7,7 +8,16 @@ export default async function index(req: NextApiRequest, res: NextApiResponse) {
     switch (req.method) {
         case 'GET':
             prisma = new PrismaClient()
-            const allCate = await prisma.post_cate.findMany()
+            const allCate = await prisma.post_cate.findMany({
+                where: {
+                    name: {
+                        contains: req.query.name as string,
+                    },
+                },
+                orderBy: {
+                    createdAt: 'desc',
+                },
+            })
             res.status(200).json({
                 data: allCate,
                 success: true,
@@ -16,10 +26,32 @@ export default async function index(req: NextApiRequest, res: NextApiResponse) {
             break
 
         case 'POST':
+            await authMiddleware(req, res)
             prisma = new PrismaClient()
             const cate = await prisma.post_cate.create({ data: { name: req.body.name } })
             res.status(200).json({
                 data: cate,
+                success: true,
+            })
+            await prisma.$disconnect()
+            break
+
+        case 'PUT':
+            await authMiddleware(req, res)
+            prisma = new PrismaClient()
+            const updateData = await prisma.post_cate.update({ data: req.body, where: { id: req.body.id } })
+            res.status(200).json({
+                data: updateData,
+                success: true,
+            })
+            await prisma.$disconnect()
+            break
+
+        case 'DELETE':
+            await authMiddleware(req, res)
+            prisma = new PrismaClient()
+            await prisma.post_cate.delete({ where: { id: req.body.id } })
+            res.status(200).json({
                 success: true,
             })
             await prisma.$disconnect()

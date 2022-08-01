@@ -1,30 +1,30 @@
 import React, { useState } from 'react'
-import { delCate, getCateAll } from '@/api'
+import { delCate, getArticleAll } from '@/api'
 import CustomForm from '@/components/manager/customForm'
 import ManagerLayout from '@/components/manager/layout'
 import TableMoreAction from '@/components/manager/tableMoreAction'
 import { useRequest } from 'ahooks'
 import { Button, message, Space, Table } from 'antd'
 import { ColumnsType } from 'antd/lib/table'
-import CateDrawer from '@/components/manager/cate/drawer'
+import ArticleDrawer from '@/components/manager/article/drawer'
 import useRecord from '@/hook/useRecord'
 
-const Cate = () => {
+const Article = () => {
     const [searchParam, setSearchParams] = useState({ name: '' })
-    const { data, refresh, loading } = useRequest(() => getCateAll(searchParam).then((res) => res?.data), {
+    const { data, refresh, loading } = useRequest(() => getArticleAll(searchParam).then((res) => res?.data), {
         refreshDeps: [searchParam],
     })
-    const cateDrawer = useRecord<API.Cate>()
+    const articleDrawer = useRecord<API.Article>()
 
-    const columns: ColumnsType<API.Cate> = [
+    const columns: ColumnsType<API.Article> = [
         { title: '编号', dataIndex: 'id' },
-        { title: '分类名称', dataIndex: 'name' },
+        { title: '文章标题', dataIndex: 'title' },
         {
             title: '操作',
             render: (_, record) => {
                 return (
                     <Space>
-                        <a onClick={() => cateDrawer.show(record)}>编辑</a>
+                        <a onClick={() => articleDrawer.show(record)}>编辑</a>
                         <TableMoreAction
                             record={record}
                             menuList={[
@@ -49,11 +49,11 @@ const Cate = () => {
 
     return (
         <div className='card'>
-            <CateDrawer visible={cateDrawer.visible} record={cateDrawer.record} onClose={cateDrawer.hide} callback={refresh} />
-            <CustomForm items={[{ name: 'name', label: '分类名称' }]} formSearch={setSearchParams}></CustomForm>
+            <ArticleDrawer width={1200} visible={articleDrawer.visible} record={articleDrawer.record} onClose={articleDrawer.hide} callback={refresh} />
+            <CustomForm items={[{ name: 'title', label: '文章标题' }]} formSearch={setSearchParams}></CustomForm>
 
             <div className='mb-4'>
-                <Button type='primary' onClick={() => cateDrawer.show()}>
+                <Button type='primary' onClick={() => articleDrawer.show()}>
                     新增
                 </Button>
             </div>
@@ -63,8 +63,8 @@ const Cate = () => {
     )
 }
 
-Cate.getLayout = (page: any) => {
+Article.getLayout = (page: any) => {
     return <ManagerLayout>{page}</ManagerLayout>
 }
 
-export default Cate
+export default Article

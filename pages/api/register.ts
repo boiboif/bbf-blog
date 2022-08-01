@@ -35,7 +35,7 @@ export default async function regiter(req: NextApiRequest, res: NextApiResponse)
                     },
                 })
 
-                const token = await signToken(user.id)
+                const token = await signToken({ id: user.id, username: user.username })
 
                 // 把建立成功的用户数据（不包含密码）和 JWT 回传给前端
                 res.status(201).json({

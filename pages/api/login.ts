@@ -17,7 +17,7 @@ export default async function login(req: NextApiRequest, res: NextApiResponse) {
                     })
                 }
 
-                const token = await signToken(user.id)
+                const token = await signToken({ id: user.id, username: user.username })
 
                 res.status(200).json({ ...user, passwordHash: undefined, token })
                 await prisma.$disconnect()
