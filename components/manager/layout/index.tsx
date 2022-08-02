@@ -5,6 +5,7 @@ import { findParents } from 'bbf-tree-utils'
 import { useRequest } from 'ahooks'
 import { getUserInfoById } from '@/service'
 import { useStore } from '@/store'
+import { isBrowser } from '@/utils/isBrowser'
 
 const { Content, Sider, Header } = Layout
 
@@ -15,6 +16,7 @@ const routes = [
 ]
 
 const ManagerLayout = (props: PropsWithChildren) => {
+    const userId = isBrowser() ? localStorage.getItem('userId') : ''
     const router = useRouter()
     const userInfoStore = useStore('userInfoStore')
     const [selectedKeys, setSelectedKeys] = useState<string[]>([])
@@ -26,14 +28,14 @@ const ManagerLayout = (props: PropsWithChildren) => {
     }, [router.pathname])
 
     useEffect(() => {
-        const userId = localStorage.getItem('userId')
         if (!userId) {
             router.replace('/')
             userInfoStore.setUserInfo(undefined)
         }
-    }, [router, userInfoStore])
+    }, [router, userInfoStore, userId])
 
-    const { loading } = useRequest(() => getUserInfoById(localStorage.getItem('userId')!)().then((res) => res?.data), {
+    const { loading } = useRequest(() => getUserInfoById(userId!)().then((res) => res?.data), {
+        ready: !!userId,
         onSuccess: (data) => {
             userInfoStore.setUserInfo(data)
             if (!data?.roles.includes('admin')) {
@@ -69,7 +71,7 @@ const ManagerLayout = (props: PropsWithChildren) => {
                             <span className='cursor-pointer'>{userInfoStore.userInfo?.nickName ?? userInfoStore.userInfo?.username}</span>
                         </Popconfirm>
                     </div>
-                    <div className='text-md cursor-pointer' onClick={() => router.push('/')}>
+                    <div className='text-md cursor-pointer' onClick={() => router.replace('/')}>
                         <span>返回门户</span>
                     </div>
                 </div>

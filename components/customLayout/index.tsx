@@ -1,4 +1,4 @@
-import { useDebounceFn } from 'ahooks'
+import { useDebounceFn, useRequest } from 'ahooks'
 import React, { PropsWithChildren, useEffect, useState } from 'react'
 import style from './index.module.scss'
 import cn from 'classnames'
@@ -8,12 +8,23 @@ import { useSpring, animated } from 'react-spring'
 import MenuButton from '../menuButton'
 import LoginModal from '../login/loginModal'
 import useRecord from '@/hook/useRecord'
+import { getUserInfoById } from '@/service'
+import { useStore } from '@/store'
+import { isBrowser } from '@/utils/isBrowser'
+import { useScrollRestoration } from '@/hook/useScrollRestoration'
+import { useRouter } from 'next/router'
 
 const CustomLayout = (props: PropsWithChildren) => {
+    const userId = isBrowser() ? localStorage.getItem('userId') : ''
+    const userInfoStore = useStore('userInfoStore')
     const [menuVis, setMenuVis] = useState(false)
     const [status, setStatus] = useState<'close' | 'open'>('close')
     const [isHidden, setIsHidden] = useState(false)
     const loginModal = useRecord()
+    const router = useRouter()
+
+    useScrollRestoration(router, 'custom-layout')
+
     const springProps = useSpring({
         from: {
             opacity: 0,
@@ -44,6 +55,13 @@ const CustomLayout = (props: PropsWithChildren) => {
             document.removeEventListener('wheel', scollFn)
         }
     }, [setHidden])
+
+    useRequest(() => getUserInfoById(userId!)(null, { skipHttpErrorMessage: true }).then((res) => res?.data), {
+        ready: !!userId,
+        onSuccess: (data) => {
+            userInfoStore.setUserInfo(data)
+        },
+    })
 
     return (
         <div

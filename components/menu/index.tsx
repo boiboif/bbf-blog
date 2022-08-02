@@ -41,11 +41,9 @@ const Menu = (props: MenuProps) => {
     const userInfoStore = useStore('userInfoStore')
     const response = useResponsive()
 
-    const initBackgroundPosition = response?.md ? '288px 709px' : '144px 350px'
-
     const [springProps, api] = useSpring(() => ({
         opacity: 0,
-        backgroundPosition: initBackgroundPosition,
+        backgroundPosition: '288px 709px',
         display: 'none',
     }))
 
@@ -61,6 +59,7 @@ const Menu = (props: MenuProps) => {
     const delayMap = getDelayMap(menuList.length)
 
     useEffect(() => {
+        const initBackgroundPosition = response.md ? '288px 709px' : '144px 350px'
         if (visible) {
             api.set({
                 backgroundPosition: initBackgroundPosition,
@@ -97,7 +96,7 @@ const Menu = (props: MenuProps) => {
                 },
             })
         }
-    }, [visible, api, initBackgroundPosition])
+    }, [visible, api, response])
 
     const handleClick = (menu: { name: string; path: string }) => {
         if (menu.path) {

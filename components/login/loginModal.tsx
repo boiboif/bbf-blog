@@ -1,6 +1,7 @@
 import { login } from '@/service'
 import { useStore } from '@/store'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
+import { useRequest } from 'ahooks'
 import { Modal, Form, Input, Button, message } from 'antd'
 import { observer } from 'mobx-react-lite'
 
@@ -15,21 +16,24 @@ const LoginModal = (props: ModalProps) => {
     const [form] = Form.useForm()
     const userInfoStore = useStore('userInfoStore')
 
+    const { loading, run } = useRequest((val) => login(val).then((res) => res?.data), {
+        manual: true,
+        onSuccess: (data) => {
+            userInfoStore.setUserInfo(data)
+            localStorage.setItem('token', data?.token!)
+            localStorage.setItem('userId', data?.id.toString()!)
+            message.success('登录成功！')
+            handleCancel()
+        },
+    })
+
     const handleCancel = () => {
         onCancel()
         form.resetFields()
     }
 
-    const onFinish = async () => {
-        const vals = await form.validateFields()
-        const res = await login(vals)
-        if (res?.data) {
-            userInfoStore.setUserInfo(res.data)
-            localStorage.setItem('token', res.data.token)
-            localStorage.setItem('userId', res.data.id.toString())
-            message.success('登录成功！')
-            handleCancel()
-        }
+    const onFinish = async (val: any) => {
+        run(val)
     }
 
     return (
@@ -43,7 +47,7 @@ const LoginModal = (props: ModalProps) => {
                 </Form.Item>
 
                 <Form.Item>
-                    <Button type='primary' htmlType='submit' className='login-form-button'>
+                    <Button loading={loading} type='primary' htmlType='submit' className='login-form-button'>
                         登录
                     </Button>
                     Or <a href=''>register now!</a>

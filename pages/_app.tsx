@@ -9,7 +9,6 @@ import 'moment/locale/zh-cn'
 import 'antd/dist/antd.min.css'
 import '@/components/menuButton/index.scss'
 import CustomLayout from '@/components/customLayout'
-import { useScrollRestoration } from '@/hook/useScrollRestoration'
 import 'bytemd/dist/index.min.css'
 import NProgress from 'nprogress'
 import 'highlight.js/styles/vs.css'
@@ -38,8 +37,6 @@ function MyApp({ Component, pageProps, router }: AppPropsWithLayout) {
             NProgress.done()
         })
     }, [router.events])
-
-    useScrollRestoration(router, 'custom-layout')
 
     const getLayout = Component.getLayout ?? ((page) => <CustomLayout>{page}</CustomLayout>)
 

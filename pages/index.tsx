@@ -12,8 +12,11 @@ import img1 from '@/public/img/img_main-01.jpg'
 import img2 from '@/public/img/img_main-02.jpg'
 import { useRef, useState } from 'react'
 import ArticleListItem from '@/components/articleListItem'
+import { Button } from 'antd'
+import { useRouter } from 'next/router'
 
 const Home: NextPage = () => {
+    const router = useRouter()
     const [activeIndex, setActiveIndex] = useState(0)
     const readyChangeCover = useRef(true)
 
@@ -59,7 +62,7 @@ const Home: NextPage = () => {
                 <div>456</div>
             </div>
 
-            <div className='w-[91%] mx-auto max-w-[1500px]'>
+            <div className='w-[91%] mx-auto max-w-[1500px] mb-10'>
                 <div className='font-mono font-black tracking-wider mb-5 lg:mb-7'>
                     <span className='text-4xl lg:text-8xl text-teal-500 font-serif font-semibold'>N</span>
                     <span className='text-3xl lg:text-7xl font-sans'>ewly</span>
@@ -77,6 +80,10 @@ const Home: NextPage = () => {
                     <ArticleListItem></ArticleListItem>
                     <div className='h-[1px] bg-gray-300'></div>
                 </div>
+            </div>
+
+            <div className='w-[91%] mx-auto max-w-[1500px]'>
+                <Button onClick={() => router.push('/test')}>跳转测试</Button>
             </div>
         </div>
     )
