@@ -1,4 +1,4 @@
-import { getUserAll } from '@/api'
+import { getUserAll } from '@/service'
 import ManagerLayout from '@/components/manager/layout'
 import { useRequest } from 'ahooks'
 import React from 'react'

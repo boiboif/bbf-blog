@@ -56,6 +56,7 @@ const Banner = (props: BannerProps) => {
                                 className={classNames([styles['scale']])}
                                 src={img}
                                 alt=''
+                                priority
                             />
                         </div>
                     )

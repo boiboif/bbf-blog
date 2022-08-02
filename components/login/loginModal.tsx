@@ -1,4 +1,4 @@
-import { login } from '@/api/index'
+import { login } from '@/service'
 import { useStore } from '@/store'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import { Modal, Form, Input, Button, message } from 'antd'

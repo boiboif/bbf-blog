@@ -3,7 +3,7 @@ import React, { PropsWithChildren, useEffect, useState } from 'react'
 import { Layout, Menu, Popconfirm } from 'antd'
 import { findParents } from 'bbf-tree-utils'
 import { useRequest } from 'ahooks'
-import { getUserInfoById } from '@/api'
+import { getUserInfoById } from '@/service'
 import { useStore } from '@/store'
 
 const { Content, Sider, Header } = Layout

@@ -10,8 +10,8 @@ export default async function index(req: NextApiRequest, res: NextApiResponse) {
             await authMiddleware(req, res)
 
             prisma = new PrismaClient()
-            const { userId } = req.query
-            const userInfo = await prisma.user.findUnique({ where: { id: Number(userId) } })
+            const { id } = req.query
+            const userInfo = await prisma.user.findUnique({ where: { id: Number(id) } })
             res.status(200).json({
                 data: { ...userInfo, passwordHash: undefined },
                 success: true,
