@@ -1,21 +1,19 @@
 /* eslint-disable no-case-declarations */
+import { authMiddleware } from '@/utils/jwt'
 import { PrismaClient } from '@prisma/client'
 import { NextApiRequest, NextApiResponse } from 'next'
 
-/**
- *
- * @param req
- * @param res
- */
 export default async function index(req: NextApiRequest, res: NextApiResponse) {
     let prisma: PrismaClient
     switch (req.method) {
         case 'GET':
+            await authMiddleware(req, res)
+
             prisma = new PrismaClient()
             const { userId } = req.query
             const userInfo = await prisma.user.findUnique({ where: { id: Number(userId) } })
             res.status(200).json({
-                data: userInfo,
+                data: { ...userInfo, passwordHash: undefined },
                 success: true,
             })
             await prisma.$disconnect()

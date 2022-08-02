@@ -6,9 +6,13 @@ import style from './index.module.scss'
 import logo from '@/public/img/logo.png'
 import AnimateInViewport from '../animateInViewport'
 import { useRouter } from 'next/router'
+import { observer } from 'mobx-react-lite'
+import { useStore } from '@/store'
+import { useResponsive } from 'ahooks'
 
 interface MenuProps {
     visible?: boolean
+    onLogin?: () => void
 }
 
 const getDelayMap = (length: number) => {
@@ -32,12 +36,16 @@ const getDelayMap = (length: number) => {
 }
 
 const Menu = (props: MenuProps) => {
-    const { visible } = props
+    const { visible, onLogin } = props
     const router = useRouter()
+    const userInfoStore = useStore('userInfoStore')
+    const response = useResponsive()
+
+    const initBackgroundPosition = response?.md ? '288px 709px' : '144px 350px'
 
     const [springProps, api] = useSpring(() => ({
         opacity: 0,
-        backgroundPosition: '288px 709px',
+        backgroundPosition: initBackgroundPosition,
         display: 'none',
     }))
 
@@ -47,6 +55,7 @@ const Menu = (props: MenuProps) => {
         { name: '文章', path: '' },
         { name: '留言', path: '' },
         { name: '关于我', path: '' },
+        { name: '登录', path: '' },
         { name: '后台', path: '/manager' },
     ]
     const delayMap = getDelayMap(menuList.length)
@@ -54,7 +63,7 @@ const Menu = (props: MenuProps) => {
     useEffect(() => {
         if (visible) {
             api.set({
-                backgroundPosition: '288px 709px',
+                backgroundPosition: initBackgroundPosition,
             })
 
             api.start({
@@ -80,7 +89,7 @@ const Menu = (props: MenuProps) => {
             api.start({
                 opacity: 0,
                 display: 'none',
-                backgroundPosition: '288px 709px',
+                backgroundPosition: initBackgroundPosition,
                 delay: (key) => (key !== 'opacity' ? 400 : 0),
                 immediate: (key) => key === 'backgroundPosition',
                 config: {
@@ -88,11 +97,25 @@ const Menu = (props: MenuProps) => {
                 },
             })
         }
-    }, [visible, api])
+    }, [visible, api, initBackgroundPosition])
 
     const handleClick = (menu: { name: string; path: string }) => {
         if (menu.path) {
             router.push(menu.path)
+        }
+        if (menu.name === '登录') {
+            onLogin?.()
+        }
+    }
+
+    const switchLoginDisplay = (menuName: string) => {
+        switch (menuName) {
+            case '登录':
+                return userInfoStore.userInfo ? 'none' : 'block'
+            case '后台':
+                return userInfoStore.userInfo ? 'block' : 'none'
+            default:
+                return 'block'
         }
     }
 
@@ -110,6 +133,7 @@ const Menu = (props: MenuProps) => {
                                 <li
                                     className='font-sans font-bold text-center lg:text-left text-4xl sm:text-6xl w-1/2 lg:w-1/3 mr-0 lg:mr-16 xl:mr-16 mb-16 cursor-pointer'
                                     key={menu.name + menu.path}
+                                    style={{ display: switchLoginDisplay(menu.name) }}
                                 >
                                     <AnimateInViewport delay={delayMap[index]} animateCssClass='animate__fadeInBottomRight'>
                                         <span onClick={() => handleClick(menu)}>
@@ -127,4 +151,4 @@ const Menu = (props: MenuProps) => {
     )
 }
 
-export default Menu
+export default observer(Menu)

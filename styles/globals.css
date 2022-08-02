@@ -45,3 +45,16 @@ a {
         height: 500px !important;
     }
 }
+
+.ant-form.login-form {
+    width: 100%;
+}
+.login-form-forgot {
+    float: right;
+}
+.ant-col-rtl .login-form-forgot {
+    float: left;
+}
+.login-form-button {
+    width: 100%;
+}

@@ -50,7 +50,7 @@ const createHandler = (createHandlerParams: CreateHandlerParams) => {
 
                 if (!success) {
                     if (!isSkipErrorMessage) {
-                        message.error(errCode + '：' + errorMessage)
+                        message.error(errorMessage)
                     }
 
                     errorHandler?.({ error: { errCode, errorMessage }, requestOption })
@@ -63,9 +63,12 @@ const createHandler = (createHandlerParams: CreateHandlerParams) => {
                     const isSkipHttpErrorMssage =
                         createHandlerParams.skipHttpErrorMessage || config?.skipHttpErrorMessage || innerConfig?.skipHttpErrorMessage
                     if (isSkipHttpErrorMssage) return
-                    const errCode = error?.response?.status
+                    const errCode = error?.response?.status.toString()
                     const errorMessage = codeMessage[errCode]
                     message.error(`${errCode}: ${errorMessage}`)
+
+                    errorHandler?.({ error: { errCode, errorMessage }, requestOption })
+                    config?.errorHandler?.({ error: { errCode, errorMessage }, requestOption })
                 }
                 throw error
             }

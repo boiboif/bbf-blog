@@ -1,7 +1,10 @@
 import { useRouter } from 'next/router'
 import React, { PropsWithChildren, useEffect, useState } from 'react'
-import { Layout, Menu } from 'antd'
+import { Layout, Menu, Popconfirm } from 'antd'
 import { findParents } from 'bbf-tree-utils'
+import { useRequest } from 'ahooks'
+import { getUserInfoById } from '@/api'
+import { useStore } from '@/store'
 
 const { Content, Sider, Header } = Layout
 
@@ -13,7 +16,7 @@ const routes = [
 
 const ManagerLayout = (props: PropsWithChildren) => {
     const router = useRouter()
-
+    const userInfoStore = useStore('userInfoStore')
     const [selectedKeys, setSelectedKeys] = useState<string[]>([])
     const [openKeys, setOpenKeys] = useState<string[]>([])
 
@@ -22,12 +25,53 @@ const ManagerLayout = (props: PropsWithChildren) => {
         setOpenKeys(findParents(routes, router.pathname, 'key').map((item) => item.key))
     }, [router.pathname])
 
+    useEffect(() => {
+        const userId = localStorage.getItem('userId')
+        if (!userId) {
+            router.replace('/')
+            userInfoStore.setUserInfo(undefined)
+        }
+    }, [router, userInfoStore])
+
+    const { loading } = useRequest(() => getUserInfoById(localStorage.getItem('userId')!)().then((res) => res?.data), {
+        onSuccess: (data) => {
+            userInfoStore.setUserInfo(data)
+            if (!data?.roles.includes('admin')) {
+                router.replace('/noPermission')
+            }
+        },
+        onError: () => {
+            localStorage.removeItem('userId')
+            localStorage.removeItem('token')
+            userInfoStore.setUserInfo(undefined)
+            router.replace('/')
+        },
+    })
+
+    if (loading) {
+        return <div>获取用户信息中。。。</div>
+    }
+
+    const logout = () => {
+        localStorage.removeItem('userId')
+        localStorage.removeItem('token')
+        userInfoStore.setUserInfo(undefined)
+        router.replace('/')
+    }
+
     return (
         <div className='h-screen overflow-hidden flex-col'>
             <Header className='!px-4 flex items-center justify-between !text-white'>
                 <div className='text-2xl font-semibold'>后台管理</div>
-                <div className='cursor-pointer' onClick={() => router.push('/')}>
-                    返回门户
+                <div className='flex gap-4'>
+                    <div className='text-md flex-grow-0'>
+                        <Popconfirm title='退出登录' onConfirm={logout} okText='确定' cancelText='取消'>
+                            <span className='cursor-pointer'>{userInfoStore.userInfo?.nickName ?? userInfoStore.userInfo?.username}</span>
+                        </Popconfirm>
+                    </div>
+                    <div className='text-md cursor-pointer' onClick={() => router.push('/')}>
+                        <span>返回门户</span>
+                    </div>
                 </div>
             </Header>
             <div className='flex' style={{ background: '#f0f2f5' }}>

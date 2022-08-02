@@ -1,7 +1,6 @@
 import Banner from '@/components/banner'
 import Controller from '@/components/banner/controller'
 import type { NextPage } from 'next'
-import { useRouter } from 'next/router'
 import img0_on from '@/public/img/tab-00_on.jpg'
 import img1_on from '@/public/img/tab-01_on.jpg'
 import img2_on from '@/public/img/tab-02_on.jpg'
@@ -15,7 +14,6 @@ import { useRef, useState } from 'react'
 import ArticleListItem from '@/components/articleListItem'
 
 const Home: NextPage = () => {
-    const router = useRouter()
     const [activeIndex, setActiveIndex] = useState(0)
     const readyChangeCover = useRef(true)
 

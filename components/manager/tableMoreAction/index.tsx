@@ -23,47 +23,47 @@ const TableMoreAction = <T extends Record<string, any>>(props: Props<T>) => {
     const moreBtnDisabled = menuList.every((menu) => menu.disabled && menu.disabled(record))
 
     const menu = (record: T) => (
-        <Menu>
-            {menuList.map((item) => {
-                const { className = 'text-sky-500 cursor-pointer', confirmProps } = item
-                const disabled = item.disabled ? item.disabled(record) : false
-                const dealName = typeof item.name === 'function' ? item.name(record) : item.name
-                return (
-                    <Menu.Item key={dealName}>
-                        <div
-                            className={disabled ? 'text-gray-300' : className}
-                            onClick={(e) => {
-                                e.stopPropagation()
-                                if (disabled) return
-                                if (confirmProps) {
-                                    const defaultConfirmProps: ModalFuncProps = {
-                                        icon: <ExclamationCircleOutlined />,
-                                        content: '确 定 删 除 吗  ？',
-                                        cancelText: '取消',
-                                        okText: '确定',
-                                        okButtonProps: {
-                                            danger: true,
-                                            type: 'primary',
-                                        },
-                                        onOk() {
-                                            item.fn?.(record)
-                                        },
-                                    }
-                                    const mergeConfirmProps = {
-                                        ...defaultConfirmProps,
-                                        ...confirmProps,
-                                    }
-                                    return confirm(mergeConfirmProps)
+        <Menu
+            items={menuList.map((item, index) => ({
+                label: (
+                    <div
+                        className={
+                            (item.disabled ? item.disabled(record) : false)
+                                ? 'text-gray-300'
+                                : item.className ?? 'text-sky-500 cursor-pointer'
+                        }
+                        onClick={(e) => {
+                            e.stopPropagation()
+                            if (item.disabled ? item.disabled(record) : false) return
+                            if (item.confirmProps) {
+                                const defaultConfirmProps: ModalFuncProps = {
+                                    icon: <ExclamationCircleOutlined />,
+                                    content: '确 定 删 除 吗  ？',
+                                    cancelText: '取消',
+                                    okText: '确定',
+                                    okButtonProps: {
+                                        danger: true,
+                                        type: 'primary',
+                                    },
+                                    onOk() {
+                                        item.fn?.(record)
+                                    },
                                 }
-                                item.fn?.(record)
-                            }}
-                        >
-                            {dealName}
-                        </div>
-                    </Menu.Item>
-                )
-            })}
-        </Menu>
+                                const mergeConfirmProps = {
+                                    ...defaultConfirmProps,
+                                    ...item.confirmProps,
+                                }
+                                return confirm(mergeConfirmProps)
+                            }
+                            item.fn?.(record)
+                        }}
+                    >
+                        {typeof item.name === 'function' ? item.name(record) : item.name}
+                    </div>
+                ),
+                key: index,
+            }))}
+        ></Menu>
     )
 
     return (

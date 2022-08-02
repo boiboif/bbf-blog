@@ -11,6 +11,8 @@ export default function Document() {
                     rel='stylesheet'
                 />
                 <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/yakuhanjp@3.4.1/dist/css/yakuhanmp-noto.min.css'></link>
+                <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css' />
+                <link rel='stylesheet' href='https://unpkg.com/nprogress@0.2.0/nprogress.css' />
             </Head>
             <body>
                 <Main />

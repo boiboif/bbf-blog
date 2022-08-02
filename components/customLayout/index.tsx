@@ -6,11 +6,14 @@ import variables from '@/styles/variables.module.scss'
 import Menu from '../menu'
 import { useSpring, animated } from 'react-spring'
 import MenuButton from '../menuButton'
+import LoginModal from '../login/loginModal'
+import useRecord from '@/hook/useRecord'
 
 const CustomLayout = (props: PropsWithChildren) => {
     const [menuVis, setMenuVis] = useState(false)
     const [status, setStatus] = useState<'close' | 'open'>('close')
     const [isHidden, setIsHidden] = useState(false)
+    const loginModal = useRecord()
     const springProps = useSpring({
         from: {
             opacity: 0,
@@ -48,7 +51,13 @@ const CustomLayout = (props: PropsWithChildren) => {
             className={cn([style['layout-container'], 'lg:h-screen lg:overflow-auto lg:mr-20 mr-0'])}
             style={{ '--bg': isHidden ? variables.primaryColor : '#fff' } as React.CSSProperties}
         >
-            <Menu visible={menuVis} />
+            <LoginModal visible={loginModal.visible} onCancel={loginModal.hide}></LoginModal>
+            <Menu
+                visible={menuVis}
+                onLogin={() => {
+                    loginModal.show()
+                }}
+            />
             <animated.div
                 className='menubar fixed right-0 top-0 lg:h-full lg:w-20 h-10 w-12 z-20 cursor-pointer flex justify-center items-center'
                 style={{ background: variables.primaryColor, ...springProps }}

@@ -50,6 +50,16 @@ export default async function index(req: NextApiRequest, res: NextApiResponse) {
         case 'DELETE':
             await authMiddleware(req, res)
             prisma = new PrismaClient()
+
+            const hasPost = await prisma.post.findFirst({ where: { cateId: req.body.id } })
+
+            if (hasPost) {
+                return res.status(200).json({
+                    success: false,
+                    message: '该分类下存在文章，请先删除文章后进行删除！',
+                })
+            }
+
             await prisma.post_cate.delete({ where: { id: req.body.id } })
             res.status(200).json({
                 success: true,

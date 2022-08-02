@@ -6,15 +6,15 @@ import { ConfigProvider } from 'antd'
 import zhCN from 'antd/lib/locale/zh_CN'
 import moment from 'moment'
 import 'moment/locale/zh-cn'
-import 'antd/dist/antd.css'
+import 'antd/dist/antd.min.css'
 import '@/components/menuButton/index.scss'
-import 'animate.css'
 import CustomLayout from '@/components/customLayout'
 import { useScrollRestoration } from '@/hook/useScrollRestoration'
-import 'bytemd/dist/index.css'
-import 'github-markdown-css' // placed after highlight styles to override `code` padding
-import 'nprogress/nprogress.css'
+import 'bytemd/dist/index.min.css'
 import NProgress from 'nprogress'
+import 'highlight.js/styles/vs.css'
+import 'github-markdown-css' // placed after highlight styles to override `code` padding
+import { createStore, RootContext } from '@/store'
 
 moment.locale('zh-cn')
 
@@ -45,7 +45,9 @@ function MyApp({ Component, pageProps, router }: AppPropsWithLayout) {
 
     return getLayout(
         <ConfigProvider locale={zhCN}>
-            <Component {...pageProps} />
+            <RootContext.Provider value={createStore()}>
+                <Component {...pageProps} />
+            </RootContext.Provider>
         </ConfigProvider>
     )
 }
