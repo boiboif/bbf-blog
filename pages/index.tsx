@@ -1,5 +1,4 @@
-import Banner from '@/components/banner'
-import Controller from '@/components/banner/controller'
+import dynamic from 'next/dynamic'
 import type { NextPage } from 'next'
 import img0_on from '@/public/img/tab-00_on.jpg'
 import img1_on from '@/public/img/tab-01_on.jpg'
@@ -14,6 +13,13 @@ import { useRef, useState } from 'react'
 import ArticleListItem from '@/components/articleListItem'
 import { Button } from 'antd'
 import { useRouter } from 'next/router'
+
+const DynamicBanner = dynamic(() => import('@/components/banner'), {
+    suspense: true,
+})
+const DynamicController = dynamic(() => import('@/components/banner/controller'), {
+    suspense: true,
+})
 
 const Home: NextPage = () => {
     const router = useRouter()
@@ -31,7 +37,7 @@ const Home: NextPage = () => {
             <div className='lg:flex mx-auto max-w-[1600px]'>
                 <div className='w-full lg:w-[62%] lg:flex lg:flex-row-reverse lg:mb-12'>
                     <div className='flex-1'>
-                        <Banner
+                        <DynamicBanner
                             activeIndex={activeIndex}
                             imgList={imgList.map((v) => v.cover)}
                             onChange={(index) => {
@@ -44,7 +50,7 @@ const Home: NextPage = () => {
                     <div className='relative w-full lg:w-[11.409%] lg:max-w-[85px]'>
                         <div>123</div>
                         <div className='z-[5] relative flex w-full lg:block lg:absolute lg:top-0 lg:left-4 lg:w-[132%]'>
-                            <Controller
+                            <DynamicController
                                 imgList={imgList}
                                 activeIndex={activeIndex}
                                 onChange={(index) => {

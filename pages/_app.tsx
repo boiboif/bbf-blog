@@ -1,8 +1,8 @@
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
 import { NextPage } from 'next'
-import { ReactElement, ReactNode, useEffect } from 'react'
-import { ConfigProvider } from 'antd'
+import { ReactElement, ReactNode, Suspense, useEffect } from 'react'
+import { ConfigProvider, Spin } from 'antd'
 import zhCN from 'antd/lib/locale/zh_CN'
 import moment from 'moment'
 import 'moment/locale/zh-cn'
@@ -43,7 +43,15 @@ function MyApp({ Component, pageProps, router }: AppPropsWithLayout) {
     return getLayout(
         <ConfigProvider locale={zhCN}>
             <RootContext.Provider value={createStore()}>
-                <Component {...pageProps} />
+                <Suspense
+                    fallback={
+                        <Spin spinning={true}>
+                            <div className='h-screen'></div>
+                        </Spin>
+                    }
+                >
+                    <Component {...pageProps} />
+                </Suspense>
             </RootContext.Provider>
         </ConfigProvider>
     )
