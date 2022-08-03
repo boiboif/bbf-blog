@@ -36,12 +36,14 @@ const Banner = (props: BannerProps) => {
 
     return (
         <>
-            <div className={styles['banner-wrap']}>
+            <div className={classNames([styles['banner-wrap']])}>
                 {imgList?.map((img, index) => {
                     return (
                         <div
                             key={index}
-                            className={classNames(styles['img-wrap'], { [styles.active]: activeIndex === index })}
+                            className={classNames(styles['img-wrap'], 'min-h-[500px] lg:min-h-[712px]', {
+                                [styles.active]: activeIndex === index,
+                            })}
                             onTransitionEnd={() => {
                                 if (index === activeIndex) {
                                     allowTransition.current = true

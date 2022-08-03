@@ -8,12 +8,17 @@ import moment from 'moment'
 import 'moment/locale/zh-cn'
 import 'antd/dist/antd.min.css'
 import '@/components/menuButton/index.scss'
-import CustomLayout from '@/components/customLayout'
 import 'bytemd/dist/index.min.css'
 import NProgress from 'nprogress'
 import 'highlight.js/styles/vs.css'
 import 'github-markdown-css' // placed after highlight styles to override `code` padding
 import { createStore, RootContext } from '@/store'
+// import CustomLayout from '@/components/customLayout'
+import dynamic from 'next/dynamic'
+
+const CustomLayout = dynamic(() => import('@/components/customLayout'), {
+    suspense: true,
+})
 
 moment.locale('zh-cn')
 
@@ -38,20 +43,24 @@ function MyApp({ Component, pageProps, router }: AppPropsWithLayout) {
         })
     }, [router.events])
 
-    const getLayout = Component.getLayout ?? ((page) => <CustomLayout>{page}</CustomLayout>)
+    const getLayout =
+        Component.getLayout ??
+        ((page) => (
+            <Suspense
+                fallback={
+                    <Spin spinning={true}>
+                        <div className='h-screen'></div>
+                    </Spin>
+                }
+            >
+                <CustomLayout>{page}</CustomLayout>
+            </Suspense>
+        ))
 
     return getLayout(
         <ConfigProvider locale={zhCN}>
             <RootContext.Provider value={createStore()}>
-                <Suspense
-                    fallback={
-                        <Spin spinning={true}>
-                            <div className='h-screen'></div>
-                        </Spin>
-                    }
-                >
-                    <Component {...pageProps} />
-                </Suspense>
+                <Component {...pageProps} />
             </RootContext.Provider>
         </ConfigProvider>
     )
