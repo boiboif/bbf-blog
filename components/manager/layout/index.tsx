@@ -16,6 +16,8 @@ const routes = [
 ]
 
 const ManagerLayout = (props: PropsWithChildren) => {
+    const [loading, setLoading] = useState(true)
+    const [readyRequest, setReadyRequest] = useState(false)
     const userId = isBrowser() ? localStorage.getItem('userId') : ''
     const router = useRouter()
     const userInfoStore = useStore('userInfoStore')
@@ -28,14 +30,16 @@ const ManagerLayout = (props: PropsWithChildren) => {
     }, [router.pathname])
 
     useEffect(() => {
+        setReadyRequest(!!userId)
+
         if (!userId) {
             router.replace('/')
             userInfoStore.setUserInfo(undefined)
         }
     }, [router, userInfoStore, userId])
 
-    const { loading } = useRequest(() => getUserInfoById(userId!)().then((res) => res?.data), {
-        ready: !!userId,
+    useRequest(() => getUserInfoById(userId!)().then((res) => res?.data), {
+        ready: readyRequest,
         onSuccess: (data) => {
             userInfoStore.setUserInfo(data)
             if (!data?.roles.includes('admin')) {
@@ -47,6 +51,9 @@ const ManagerLayout = (props: PropsWithChildren) => {
             localStorage.removeItem('token')
             userInfoStore.setUserInfo(undefined)
             router.replace('/')
+        },
+        onFinally: () => {
+            setLoading(false)
         },
     })
 

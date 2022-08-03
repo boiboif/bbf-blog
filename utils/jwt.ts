@@ -33,7 +33,6 @@ export const authMiddleware = (req: NextApiRequest, res: NextApiResponse, auth?:
     return new Promise<TokenUserInfo>(async (resolve) => {
         try {
             const data = await verifyToken(req.headers.authorization!)
-            console.log(data)
             if (auth) {
                 if (data.roles.some((r) => auth?.includes(r))) {
                     resolve(data)
