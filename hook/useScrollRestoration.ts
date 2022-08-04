@@ -3,7 +3,7 @@
  * - see https://github.com/vercel/next.js/issues/3303#issuecomment-628400930
  * - see https://github.com/vercel/next.js/issues/12530#issuecomment-628864374
  */
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import Router, { NextRouter } from 'next/router'
 
 function saveScrollPos(asPath: string, scrollDom: HTMLElement | null) {
@@ -19,14 +19,20 @@ function restoreScrollPos(asPath: string, scrollDom: HTMLElement | null) {
 }
 
 export function useScrollRestoration(router: NextRouter, scrollDomId: string) {
+    const shouldScrollRestore = useRef(false)
+
+    useEffect(() => {
+        const scrollDom = document.getElementById(scrollDomId)
+        restoreScrollPos(router.asPath, scrollDom)
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [scrollDomId])
+
     useEffect(() => {
         if (!('scrollRestoration' in window.history)) return
 
         const scrollDom = document.getElementById(scrollDomId)
 
-        let shouldScrollRestore = false
         window.history.scrollRestoration = 'manual'
-        restoreScrollPos(router.asPath, scrollDom)
 
         const onBeforeUnload = (event: BeforeUnloadEvent) => {
             saveScrollPos(router.asPath, scrollDom)
@@ -38,8 +44,8 @@ export function useScrollRestoration(router: NextRouter, scrollDomId: string) {
         }
 
         const onRouteChangeComplete = (url: string) => {
-            if (shouldScrollRestore) {
-                shouldScrollRestore = false
+            if (shouldScrollRestore.current) {
+                shouldScrollRestore.current = false
                 /**
                  * Calling with relative url, not expected asPath, so this
                  * will break if there is a basePath or locale path prefix.
@@ -51,8 +57,9 @@ export function useScrollRestoration(router: NextRouter, scrollDomId: string) {
         window.addEventListener('beforeunload', onBeforeUnload)
         Router.events.on('routeChangeStart', onRouteChangeStart)
         Router.events.on('routeChangeComplete', onRouteChangeComplete)
+
         Router.beforePopState(() => {
-            shouldScrollRestore = true
+            shouldScrollRestore.current = true
             return true
         })
 

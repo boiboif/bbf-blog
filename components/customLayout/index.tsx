@@ -12,11 +12,15 @@ import { isBrowser } from '@/utils/isBrowser'
 import { useScrollRestoration } from '@/hook/useScrollRestoration'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
+import Loader from '../loader'
+import classNames from 'classnames'
+import { observer } from 'mobx-react-lite'
 
 const LoginModal = dynamic(() => import('../login/loginModal'))
 const Menu = dynamic(() => import('../menu'))
 
 const CustomLayout = (props: PropsWithChildren) => {
+    const { loading } = useStore('globalStore')
     const userId = isBrowser() ? localStorage.getItem('userId') : ''
     const userInfoStore = useStore('userInfoStore')
     const [menuVis, setMenuVis] = useState(false)
@@ -76,31 +80,44 @@ const CustomLayout = (props: PropsWithChildren) => {
     })
 
     return (
-        <div
-            id='custom-layout'
-            className={cn([style['layout-container'], 'lg:h-screen lg:overflow-auto lg:mr-20 mr-0'])}
-            style={{ '--bg': isHidden ? variables.primaryColor : '#fff' } as React.CSSProperties}
-        >
-            <LoginModal visible={loginModal.visible} onCancel={loginModal.hide}></LoginModal>
-            <Menu
-                visible={menuVis}
-                onLogin={() => {
-                    loginModal.show()
-                }}
-            />
-            <animated.div
-                className='menubar fixed right-0 top-0 lg:h-full lg:w-20 h-10 w-12 z-20 cursor-pointer flex justify-center items-center'
-                style={{ background: variables.primaryColor, ...springProps }}
-                onClick={() => {
-                    setMenuVis(!menuVis)
-                    setStatus(status === 'open' ? 'close' : 'open')
-                }}
+        <>
+            <div
+                className={classNames([
+                    'transition-opacity duration-[1200ms] fixed left-0 top-0 w-screen h-screen bg-white flex justify-center items-center',
+                    { 'opacity-0': !loading },
+                    { 'opacity-100': loading },
+                ])}
             >
-                <MenuButton status={status}></MenuButton>
-            </animated.div>
-            {props.children}
-        </div>
+                <Loader></Loader>
+            </div>
+            <div className={classNames(['transition-opacity duration-[1200ms]', { 'opacity-0': loading }, { 'opacity-100': !loading }])}>
+                <div
+                    id='custom-layout'
+                    className={cn([style['layout-container'], 'relative lg:h-screen lg:overflow-auto lg:mr-20 mr-0'])}
+                    style={{ '--bg': isHidden ? variables.primaryColor : '#fff' } as React.CSSProperties}
+                >
+                    <LoginModal visible={loginModal.visible} onCancel={loginModal.hide}></LoginModal>
+                    <Menu
+                        visible={menuVis}
+                        onLogin={() => {
+                            loginModal.show()
+                        }}
+                    />
+                    <animated.div
+                        className='menubar fixed right-0 top-0 lg:h-full lg:w-20 h-10 w-12 z-20 cursor-pointer flex justify-center items-center'
+                        style={{ background: variables.primaryColor, ...springProps }}
+                        onClick={() => {
+                            setMenuVis(!menuVis)
+                            setStatus(status === 'open' ? 'close' : 'open')
+                        }}
+                    >
+                        <MenuButton status={status}></MenuButton>
+                    </animated.div>
+                    {props.children}
+                </div>
+            </div>
+        </>
     )
 }
 
-export default CustomLayout
+export default observer(CustomLayout)
