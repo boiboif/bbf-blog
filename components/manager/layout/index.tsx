@@ -3,7 +3,7 @@ import React, { PropsWithChildren, useEffect, useState } from 'react'
 import { Layout, Menu, Popconfirm } from 'antd'
 import { findParents } from 'bbf-tree-utils'
 import { useRequest } from 'ahooks'
-import { getUserInfoById } from '@/service'
+import { getUserInfoById } from '@/clientApi'
 import { useStore } from '@/store'
 import { isBrowser } from '@/utils/isBrowser'
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { delArticle, getArticleAll, getCateAll } from '@/service'
+import { delArticle, getArticleAll, getCateAll } from '@/clientApi'
 import CustomForm from '@/components/manager/customForm'
 import ManagerLayout from '@/components/manager/layout'
 import TableMoreAction from '@/components/manager/tableMoreAction'

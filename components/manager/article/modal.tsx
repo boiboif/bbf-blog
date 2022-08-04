@@ -1,6 +1,6 @@
 import { Button, Modal, Form, Input, message, Select, Space } from 'antd'
 import { useEffect, useState } from 'react'
-import { addArticle, putArticle } from '@/service'
+import { addArticle, putArticle } from '@/clientApi'
 import { Editor } from '@bytemd/react'
 import zh from 'bytemd/locales/zh_Hans.json'
 import highlight from '@bytemd/plugin-highlight-ssr'

@@ -1,4 +1,4 @@
-import { login } from '@/service'
+import { login } from '@/clientApi'
 import { useStore } from '@/store'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import { useRequest } from 'ahooks'

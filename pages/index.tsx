@@ -1,4 +1,4 @@
-import type { NextPage } from 'next'
+import type { GetServerSideProps, NextPage } from 'next'
 import img0_on from '@/public/img/tab-00_on.jpg'
 import img1_on from '@/public/img/tab-01_on.jpg'
 import img2_on from '@/public/img/tab-02_on.jpg'
@@ -14,8 +14,11 @@ import { Button } from 'antd'
 import { useRouter } from 'next/router'
 import Banner from '@/components/banner'
 import Controller from '@/components/banner/controller'
+import { getArticleMany } from '@/service'
+import moment from 'moment'
 
-const Home: NextPage = () => {
+const Home: NextPage<{ articleList: API.Article[] }> = (props) => {
+    const { articleList } = props
     const router = useRouter()
     const [activeIndex, setActiveIndex] = useState(0)
     const readyChangeCover = useRef(true)
@@ -67,19 +70,19 @@ const Home: NextPage = () => {
                     <span className='text-4xl lg:text-8xl text-teal-500 font-serif font-semibold'>N</span>
                     <span className='text-3xl lg:text-7xl font-sans'>ewly</span>
                 </div>
-                <div>
-                    <div className='h-[1px] bg-gray-300'></div>
-                    <ArticleListItem></ArticleListItem>
-                    <div className='h-[1px] bg-gray-300'></div>
-                </div>
-                <div>
-                    <ArticleListItem></ArticleListItem>
-                    <div className='h-[1px] bg-gray-300'></div>
-                </div>
-                <div>
-                    <ArticleListItem></ArticleListItem>
-                    <div className='h-[1px] bg-gray-300'></div>
-                </div>
+                <div className='h-[1px] bg-gray-300'></div>
+                {articleList.map((article) => {
+                    return (
+                        <div key={article.id}>
+                            <ArticleListItem
+                                cate={article.cate.name}
+                                publishDate={moment(article.createdAt).format('YYYY-MM-DD')}
+                                title={article.title}
+                            ></ArticleListItem>
+                            <div className='h-[1px] bg-gray-300'></div>
+                        </div>
+                    )
+                })}
             </div>
 
             <div className='w-[91%] mx-auto max-w-[1500px]'>
@@ -90,3 +93,13 @@ const Home: NextPage = () => {
 }
 
 export default Home
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+    const allPost = await getArticleMany({ take: 3 })
+
+    return {
+        props: {
+            articleList: allPost ?? [],
+        },
+    }
+}

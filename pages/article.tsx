@@ -6,10 +6,11 @@ import logo from '@/public/img/logo.png'
 import Image from 'next/image'
 import CateList from '@/components/cateList'
 import { useRequest } from 'ahooks'
-import { getCateAll } from '@/service'
+import { getCateAll } from '@/clientApi'
 import { PrismaClient } from '@prisma/client'
 import ArticleListItem from '@/components/articleListItem'
 import moment from 'moment'
+import { getArticleMany } from '@/service'
 
 const Article: NextPage<{ articleList: API.Article[] }> = (props) => {
     const { articleList } = props
@@ -44,7 +45,7 @@ const Article: NextPage<{ articleList: API.Article[] }> = (props) => {
                 </div>
 
                 <div className='mb-10'>
-                    <CateList activeKey={router.query.cateId as string || ''} list={cateList} onChange={cateChange}></CateList>
+                    <CateList activeKey={(router.query.cateId as string) || ''} list={cateList} onChange={cateChange}></CateList>
                 </div>
 
                 <div className='h-[1px] bg-gray-300'></div>
@@ -68,17 +69,12 @@ const Article: NextPage<{ articleList: API.Article[] }> = (props) => {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const { cateId } = context.query
-    console.log(Number(cateId))
-    const prisma = new PrismaClient()
-    const allPost = await prisma.post.findMany({
-        include: { author: { select: { username: true } }, cate: true },
-        where: { cateId: Number(cateId) || undefined },
-    })
-    prisma.$disconnect()
+
+    const allPost = await getArticleMany({ cateId: cateId as string })
 
     return {
         props: {
-            articleList: JSON.parse(JSON.stringify(allPost)) ?? [],
+            articleList: allPost ?? [],
         },
     }
 }

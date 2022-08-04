@@ -1,6 +1,6 @@
 import { Button, Modal, Form, Input, message, Space } from 'antd'
 import { useEffect } from 'react'
-import { addCate, putCate } from '@/service'
+import { addCate, putCate } from '@/clientApi'
 
 interface ModalProps {
     title?: string

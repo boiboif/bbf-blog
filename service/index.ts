@@ -1,19 +1,24 @@
-import customApiHandler from './customApiHandler'
+import { PrismaClient } from '@prisma/client'
 
-export const getUserAll = customApiHandler('/api/user', 'GET')
+interface GetArticleManyParam {
+    cateId?: string
+    skip?: number
+    take?: number
+    title?: string
+}
 
-export const getCateAll = customApiHandler<CustomResponse<API.Cate[]>>('/api/cate', 'GET')
-export const addCate = customApiHandler('/api/cate', 'POST')
-export const putCate = customApiHandler('/api/cate', 'PUT')
-export const delCate = customApiHandler('/api/cate', 'DELETE')
+export const getArticleMany = async (param?: GetArticleManyParam) => {
+    const { cateId, skip, take, title } = param ?? {}
+    const prisma = new PrismaClient()
 
-export const getArticleAll = customApiHandler<CustomResponse<API.Article[]>>('/api/post', 'GET')
-export const addArticle = customApiHandler('/api/post', 'POST')
-export const putArticle = customApiHandler('/api/post', 'PUT')
-export const delArticle = customApiHandler('/api/post', 'DELETE')
+    const allPost = await prisma.post.findMany({
+        include: { author: { select: { username: true } }, cate: true },
+        where: { cateId: Number(cateId) || undefined, title },
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take,
+    })
+    prisma.$disconnect()
 
-export const login = customApiHandler<CustomResponse<API.User & { token: string }>, { username: string; password: string }>(
-    '/api/login',
-    'POST'
-)
-export const getUserInfoById =  (id: string) => customApiHandler<CustomResponse<API.User & { token: string }>>(`/api/user/${id}`, 'GET')
+    return JSON.parse(JSON.stringify(allPost))
+}
