@@ -44,7 +44,7 @@ const Article: NextPage<{ articleList: API.Article[] }> = (props) => {
                 </div>
 
                 <div className='mb-10'>
-                    <CateList activeKey={router.query.cateId as string} list={cateList} onChange={cateChange}></CateList>
+                    <CateList activeKey={router.query.cateId as string || ''} list={cateList} onChange={cateChange}></CateList>
                 </div>
 
                 <div className='h-[1px] bg-gray-300'></div>
