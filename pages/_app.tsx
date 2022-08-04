@@ -1,8 +1,8 @@
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
 import { NextPage } from 'next'
-import { ReactElement, ReactNode, Suspense, useEffect } from 'react'
-import { ConfigProvider, Spin } from 'antd'
+import { ReactElement, ReactNode, useEffect } from 'react'
+import { ConfigProvider } from 'antd'
 import zhCN from 'antd/lib/locale/zh_CN'
 import moment from 'moment'
 import 'moment/locale/zh-cn'
@@ -13,12 +13,7 @@ import NProgress from 'nprogress'
 import 'highlight.js/styles/vs.css'
 import 'github-markdown-css' // placed after highlight styles to override `code` padding
 import { createStore, RootContext } from '@/store'
-// import CustomLayout from '@/components/customLayout'
-import dynamic from 'next/dynamic'
-
-const CustomLayout = dynamic(() => import('@/components/customLayout'), {
-    suspense: true,
-})
+import CustomLayout from '@/components/customLayout'
 
 moment.locale('zh-cn')
 
@@ -43,19 +38,7 @@ function MyApp({ Component, pageProps, router }: AppPropsWithLayout) {
         })
     }, [router.events])
 
-    const getLayout =
-        Component.getLayout ??
-        ((page) => (
-            <Suspense
-                fallback={
-                    <Spin spinning={true}>
-                        <div className='h-screen'></div>
-                    </Spin>
-                }
-            >
-                <CustomLayout>{page}</CustomLayout>
-            </Suspense>
-        ))
+    const getLayout = Component.getLayout ?? ((page) => <CustomLayout>{page}</CustomLayout>)
 
     return getLayout(
         <ConfigProvider locale={zhCN}>

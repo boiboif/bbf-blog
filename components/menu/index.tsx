@@ -13,6 +13,7 @@ import { useResponsive } from 'ahooks'
 interface MenuProps {
     visible?: boolean
     onLogin?: () => void
+    onPush?: () => void
 }
 
 const getDelayMap = (length: number) => {
@@ -36,7 +37,7 @@ const getDelayMap = (length: number) => {
 }
 
 const Menu = (props: MenuProps) => {
-    const { visible, onLogin } = props
+    const { visible, onLogin, onPush } = props
     const router = useRouter()
     const userInfoStore = useStore('userInfoStore')
     const response = useResponsive()
@@ -50,7 +51,7 @@ const Menu = (props: MenuProps) => {
     const menuList = [
         { name: '首页', path: '/' },
         { name: '分类', path: '' },
-        { name: '文章', path: '' },
+        { name: '文章', path: '/article' },
         { name: '留言', path: '' },
         { name: '关于我', path: '' },
         { name: '登录', path: '' },
@@ -101,6 +102,7 @@ const Menu = (props: MenuProps) => {
     const handleClick = (menu: { name: string; path: string }) => {
         if (menu.path) {
             router.push(menu.path)
+            onPush?.()
         }
         if (menu.name === '登录') {
             onLogin?.()

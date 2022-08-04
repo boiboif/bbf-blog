@@ -8,9 +8,21 @@ declare namespace API {
 
     type Article = {
         id: number
-        content: string
         createdAt: string
         updatedAt: string
+        title: string
+        content: string
+        authorId: number
+        tags?: string[]
+        desc?: string
+        cover?: string
+        viewCount?: string
+        enabled: boolean
+        cateId: number
+        author: {
+            username: string
+        }
+        cate: Cate
     }
 
     type User = {

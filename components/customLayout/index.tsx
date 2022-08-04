@@ -5,14 +5,16 @@ import cn from 'classnames'
 import variables from '@/styles/variables.module.scss'
 import { useSpring, animated } from 'react-spring'
 import MenuButton from '../menuButton'
-import LoginModal from '../login/loginModal'
 import useRecord from '@/hook/useRecord'
 import { getUserInfoById } from '@/service'
 import { useStore } from '@/store'
 import { isBrowser } from '@/utils/isBrowser'
 import { useScrollRestoration } from '@/hook/useScrollRestoration'
 import { useRouter } from 'next/router'
-import Menu from '../menu'
+import dynamic from 'next/dynamic'
+
+const LoginModal = dynamic(() => import('../login/loginModal'))
+const Menu = dynamic(() => import('../menu'))
 
 const CustomLayout = (props: PropsWithChildren) => {
     const userId = isBrowser() ? localStorage.getItem('userId') : ''
@@ -44,6 +46,15 @@ const CustomLayout = (props: PropsWithChildren) => {
         }
     )
     useEffect(() => {
+        const routerCompleteFn = () => {
+            if (menuVis) {
+                setMenuVis(false)
+                setStatus((pre) => (pre === 'open' ? 'close' : 'open'))
+            }
+        }
+
+        router.events.on('routeChangeComplete', routerCompleteFn)
+
         const scollFn = () => {
             setIsHidden(true)
             setHidden.run()
@@ -53,8 +64,9 @@ const CustomLayout = (props: PropsWithChildren) => {
 
         return () => {
             document.removeEventListener('wheel', scollFn)
+            router.events.off('routeChangeComplete', routerCompleteFn)
         }
-    }, [setHidden])
+    }, [setHidden, router, menuVis])
 
     useRequest(() => getUserInfoById(userId!)(null, { skipHttpErrorMessage: true }).then((res) => res?.data), {
         ready: !!userId,

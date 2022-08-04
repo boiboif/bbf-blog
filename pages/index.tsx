@@ -83,7 +83,7 @@ const Home: NextPage = () => {
             </div>
 
             <div className='w-[91%] mx-auto max-w-[1500px]'>
-                <Button onClick={() => router.push('/test')}>跳转测试</Button>
+                <Button onClick={() => router.push('/article')}>跳转测试</Button>
             </div>
         </div>
     )

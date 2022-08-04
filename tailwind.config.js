@@ -11,7 +11,11 @@ module.exports = {
             lycoReco:
                 "YakuHanMP_Noto, 'Noto Serif JP', '游明朝', 'YuMincho', 'ヒラギノ明朝 ProN W3', 'Hiragino Mincho ProN', 'HG明朝E', 'ＭＳ 明朝', 'ＭＳ Ｐ明朝', 'Noto Serif JP', serif",
         },
-        extend: {},
+        extend: {
+            colors: {
+                primary: '#f0555a',
+            },
+        },
     },
     plugins: [],
 }
