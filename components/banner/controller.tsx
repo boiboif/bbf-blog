@@ -35,10 +35,17 @@ const Controller = (props: ControllerProps) => {
                                 { [styles.active]: activeIndex === index },
                             ])}
                         >
-                            <Image src={img.on} alt='' layout='responsive' onDragStart={(e) => e.preventDefault()}></Image>
+                            <Image
+                                quality={50}
+                                priority
+                                src={img.on}
+                                alt=''
+                                layout='responsive'
+                                onDragStart={(e) => e.preventDefault()}
+                            ></Image>
                         </div>
                         <div>
-                            <Image src={img.off} alt='' layout='responsive'></Image>
+                            <Image quality={50} priority src={img.off} alt='' layout='responsive'></Image>
                         </div>
                     </div>
                 )

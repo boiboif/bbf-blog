@@ -34,7 +34,8 @@ a {
     min-width: 200px;
     max-width: 980px;
     margin: 0 auto;
-    padding: 45px;
+    padding: 45px 0;
+    background-color: transparent !important;
 }
 
 @media (max-width: 767px) {
@@ -44,6 +45,10 @@ a {
     .bytemd {
         height: 500px !important;
     }
+}
+
+.ant-back-top-content {
+    background: #f0555a !important;
 }
 
 .ant-form.login-form {

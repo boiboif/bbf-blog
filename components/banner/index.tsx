@@ -68,6 +68,7 @@ const Banner = (props: BannerProps) => {
                                 }
                             }}
                             priority
+                            quality={50}
                         />
                     </div>
                 )

@@ -13,6 +13,7 @@ import dynamic from 'next/dynamic'
 import Loader from '../loader'
 import classNames from 'classnames'
 import { observer } from 'mobx-react-lite'
+import { BackTop } from 'antd'
 
 const LoginModal = dynamic(() => import('../login/loginModal'))
 const Menu = dynamic(() => import('../menu'))
@@ -49,6 +50,7 @@ const CustomLayout = (props: PropsWithChildren) => {
 
         const scollFn = () => {
             setIsHidden(true)
+            // 两秒后隐藏滚动条
             setHidden.run()
         }
 
@@ -69,19 +71,17 @@ const CustomLayout = (props: PropsWithChildren) => {
 
     return (
         <>
-            {router.pathname === '/' && (
-                <div className={classNames(['fixed left-0 top-0 w-screen h-screen flex justify-center items-center'])}>
-                    <div
-                        className={classNames([
-                            'transition-opacity duration-[1200ms]',
-                            { 'opacity-0': !loading },
-                            { 'opacity-100': loading },
-                        ])}
-                    >
-                        <Loader></Loader>
-                    </div>
+            <div className={classNames(['fixed left-0 top-0 w-screen h-screen flex justify-center items-center'])}>
+                <div
+                    className={classNames([
+                        'transition-opacity duration-[1200ms]',
+                        { 'opacity-0': !loading && router.pathname === '/' },
+                        { 'opacity-100': loading && router.pathname === '/' },
+                    ])}
+                >
+                    <Loader></Loader>
                 </div>
-            )}
+            </div>
 
             <div
                 id='custom-layout'
@@ -93,6 +93,7 @@ const CustomLayout = (props: PropsWithChildren) => {
                 ])}
                 style={{ '--bg': isHidden ? variables.primaryColor : '#fff' } as React.CSSProperties}
             >
+                <BackTop target={() => document.getElementById('custom-layout')!}></BackTop>
                 <LoginModal visible={loginModal.visible} onCancel={loginModal.hide}></LoginModal>
                 <Menu
                     visible={menuVis}

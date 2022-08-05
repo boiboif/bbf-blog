@@ -4,6 +4,7 @@ export default function Document() {
     return (
         <Html>
             <Head>
+                <title>bbf的个人博客</title>
                 <link rel='preconnect' href='https://fonts.googleapis.com' />
                 <link rel='preconnect' href='https://fonts.gstatic.com' crossOrigin='true' />
                 <link
@@ -11,8 +12,8 @@ export default function Document() {
                     rel='stylesheet'
                 />
                 <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/yakuhanjp@3.4.1/dist/css/yakuhanmp-noto.min.css'></link>
-                {/* <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css' />
-                <link rel='stylesheet' href='https://unpkg.com/nprogress@0.2.0/nprogress.css' /> */}
+                <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css' />
+                <link rel='stylesheet' href='https://unpkg.com/nprogress@0.2.0/nprogress.css' />
             </Head>
             <body>
                 <Main />

@@ -13,8 +13,6 @@ import 'bytemd/dist/index.min.css'
 import NProgress from 'nprogress'
 import { createStore, RootContext } from '@/store'
 import dynamic from 'next/dynamic'
-import 'nprogress/nprogress.css'
-import 'animate.css/animate.min.css'
 
 const CustomLayout = dynamic(() => import('@/components/customLayout'))
 

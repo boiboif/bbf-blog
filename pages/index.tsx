@@ -9,7 +9,6 @@ import img0 from '@/public/img/img_main-00.jpg'
 import img1 from '@/public/img/img_main-01.jpg'
 import img2 from '@/public/img/img_main-02.jpg'
 import { useRef, useState } from 'react'
-import { Button } from 'antd'
 import { useRouter } from 'next/router'
 import { getArticleMany } from '@/service'
 import moment from 'moment'
@@ -32,7 +31,7 @@ const Home: NextPage<{ articleList: API.Article[] }> = (props) => {
     ]
 
     return (
-        <div style={{ height: '300vh' }}>
+        <div style={{ height: '200vh' }}>
             <div className='lg:flex mx-auto max-w-[1600px]'>
                 <div className='w-full lg:w-[62%] lg:flex lg:flex-row-reverse lg:mb-12'>
                     <div className='flex-1'>
@@ -75,7 +74,7 @@ const Home: NextPage<{ articleList: API.Article[] }> = (props) => {
                 <div className='h-[1px] bg-gray-300'></div>
                 {articleList.map((article) => {
                     return (
-                        <div key={article.id}>
+                        <div key={article.id} onClick={() => router.push(`/article/${article.id}`)}>
                             <ArticleListItem
                                 cate={article.cate.name}
                                 publishDate={moment(article.createdAt).format('YYYY-MM-DD')}
@@ -87,16 +86,14 @@ const Home: NextPage<{ articleList: API.Article[] }> = (props) => {
                 })}
             </div>
 
-            <div className='w-[91%] mx-auto max-w-[1500px]'>
-                <Button onClick={() => router.push('/article')}>跳转测试</Button>
-            </div>
+            <div className='w-[91%] mx-auto max-w-[1500px]'></div>
         </div>
     )
 }
 
 export default Home
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async () => {
     const allPost = await getArticleMany({ take: 3 })
 
     return {
