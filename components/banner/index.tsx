@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef } from 'react'
 import Image, { StaticImageData } from 'next/image'
 import styles from './index.module.scss'
 import classNames from 'classnames'
@@ -17,8 +17,8 @@ interface BannerProps {
 const Banner = (props: BannerProps) => {
     const globalStore = useStore('globalStore')
     const { autoPlay = true, imgList, onTransitionEnd } = props
-    const loadedIndex = useRef(0)
     const allowTransition = useRef(true)
+    const loadedIndex = useRef(0)
 
     const [activeIndex, setActiveIndex] = useControllableValue<number>(props, {
         valuePropName: 'activeIndex',
@@ -67,6 +67,7 @@ const Banner = (props: BannerProps) => {
                                     globalStore.setLoading(false)
                                 }
                             }}
+                            priority
                         />
                     </div>
                 )

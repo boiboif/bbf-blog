@@ -1,9 +1,7 @@
 import { useDebounceFn, useRequest } from 'ahooks'
 import React, { PropsWithChildren, useEffect, useState } from 'react'
 import style from './index.module.scss'
-import cn from 'classnames'
 import variables from '@/styles/variables.module.scss'
-import { useSpring, animated } from 'react-spring'
 import MenuButton from '../menuButton'
 import useRecord from '@/hook/useRecord'
 import { getUserInfoById } from '@/clientApi'
@@ -30,16 +28,6 @@ const CustomLayout = (props: PropsWithChildren) => {
     const router = useRouter()
 
     useScrollRestoration(router, 'custom-layout')
-
-    const springProps = useSpring({
-        from: {
-            opacity: 0,
-        },
-        to: {
-            opacity: 1,
-        },
-        config: { duration: 500 },
-    })
 
     const setHidden = useDebounceFn(
         () => {
@@ -81,40 +69,48 @@ const CustomLayout = (props: PropsWithChildren) => {
 
     return (
         <>
-            <div
-                className={classNames([
-                    'transition-opacity duration-[1200ms] fixed left-0 top-0 w-screen h-screen bg-white flex justify-center items-center',
-                    { 'opacity-0': !loading },
-                    { 'opacity-100': loading },
-                ])}
-            >
-                <Loader></Loader>
-            </div>
-            <div className={classNames(['transition-opacity duration-[1200ms]', { 'opacity-0': loading }, { 'opacity-100': !loading }])}>
-                <div
-                    id='custom-layout'
-                    className={cn([style['layout-container'], 'relative lg:h-screen lg:overflow-auto lg:mr-20 mr-0'])}
-                    style={{ '--bg': isHidden ? variables.primaryColor : '#fff' } as React.CSSProperties}
-                >
-                    <LoginModal visible={loginModal.visible} onCancel={loginModal.hide}></LoginModal>
-                    <Menu
-                        visible={menuVis}
-                        onLogin={() => {
-                            loginModal.show()
-                        }}
-                    />
-                    <animated.div
-                        className='menubar fixed right-0 top-0 lg:h-full lg:w-20 h-10 w-12 z-20 cursor-pointer flex justify-center items-center'
-                        style={{ background: variables.primaryColor, ...springProps }}
-                        onClick={() => {
-                            setMenuVis(!menuVis)
-                            setStatus(status === 'open' ? 'close' : 'open')
-                        }}
+            {router.pathname === '/' && (
+                <div className={classNames(['fixed left-0 top-0 w-screen h-screen flex justify-center items-center'])}>
+                    <div
+                        className={classNames([
+                            'transition-opacity duration-[1200ms]',
+                            { 'opacity-0': !loading },
+                            { 'opacity-100': loading },
+                        ])}
                     >
-                        <MenuButton status={status}></MenuButton>
-                    </animated.div>
-                    {props.children}
+                        <Loader></Loader>
+                    </div>
                 </div>
+            )}
+
+            <div
+                id='custom-layout'
+                className={classNames([
+                    style['layout-container'],
+                    'transition-opacity duration-[1200ms] relative lg:h-screen lg:overflow-auto lg:mr-20 mr-0',
+                    { 'opacity-0': loading && router.pathname === '/' },
+                    { 'opacity-100': !loading && router.pathname === '/' },
+                ])}
+                style={{ '--bg': isHidden ? variables.primaryColor : '#fff' } as React.CSSProperties}
+            >
+                <LoginModal visible={loginModal.visible} onCancel={loginModal.hide}></LoginModal>
+                <Menu
+                    visible={menuVis}
+                    onLogin={() => {
+                        loginModal.show()
+                    }}
+                />
+                <div
+                    className='menubar fixed right-0 top-0 lg:h-full lg:w-20 h-10 w-12 z-20 cursor-pointer flex justify-center items-center'
+                    style={{ background: variables.primaryColor }}
+                    onClick={() => {
+                        setMenuVis(!menuVis)
+                        setStatus(status === 'open' ? 'close' : 'open')
+                    }}
+                >
+                    <MenuButton status={status}></MenuButton>
+                </div>
+                {props.children}
             </div>
         </>
     )

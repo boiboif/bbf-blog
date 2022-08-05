@@ -9,13 +9,15 @@ import img0 from '@/public/img/img_main-00.jpg'
 import img1 from '@/public/img/img_main-01.jpg'
 import img2 from '@/public/img/img_main-02.jpg'
 import { useRef, useState } from 'react'
-import ArticleListItem from '@/components/articleListItem'
 import { Button } from 'antd'
 import { useRouter } from 'next/router'
-import Banner from '@/components/banner'
-import Controller from '@/components/banner/controller'
 import { getArticleMany } from '@/service'
 import moment from 'moment'
+import dynamic from 'next/dynamic'
+
+const Banner = dynamic(() => import('@/components/banner'))
+const Controller = dynamic(() => import('@/components/banner/controller'))
+const ArticleListItem = dynamic(() => import('@/components/articleListItem'))
 
 const Home: NextPage<{ articleList: API.Article[] }> = (props) => {
     const { articleList } = props

@@ -12,6 +12,8 @@ import gemoji from '@bytemd/plugin-gemoji'
 import breaks from '@bytemd/plugin-breaks'
 import gfmLocales from '@bytemd/plugin-gfm/locales/zh_Hans.json'
 import mermaidLocales from '@bytemd/plugin-mermaid/locales/zh_Hans.json'
+import 'highlight.js/styles/vs.css'
+import 'github-markdown-css' // placed after highlight styles to override `code` padding
 
 const { Option } = Select
 

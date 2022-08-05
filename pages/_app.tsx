@@ -11,10 +11,12 @@ import '@/components/menuButton/index.scss'
 import '@/components/loader/index.scss'
 import 'bytemd/dist/index.min.css'
 import NProgress from 'nprogress'
-import 'highlight.js/styles/vs.css'
-import 'github-markdown-css' // placed after highlight styles to override `code` padding
 import { createStore, RootContext } from '@/store'
-import CustomLayout from '@/components/customLayout'
+import dynamic from 'next/dynamic'
+import 'nprogress/nprogress.css'
+import 'animate.css/animate.min.css'
+
+const CustomLayout = dynamic(() => import('@/components/customLayout'))
 
 moment.locale('zh-cn')
 

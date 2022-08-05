@@ -17,7 +17,7 @@ const ArticleListItem = (props: ArticleListItemProps) => {
             <div className='bg-teal-500 py-[2px] lg:py-[3px] text-white px-3 lg:mr-10 group-hover:bg-rose-500 transition-colors duration-300 text-xs !leading-none lg:text-base tracking-wider font-medium'>
                 {cate}
             </div>
-            <div className='w-full mt-3 lg:mt-0 font-lycoReco leading-6 lg:text-base lg:w-auto'>{title}</div>
+            <div className='w-full mt-3 font-sans lg:mt-0 leading-6 lg:text-base lg:w-auto'>{title}</div>
         </div>
     )
 }
