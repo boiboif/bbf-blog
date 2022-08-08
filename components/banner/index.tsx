@@ -31,7 +31,7 @@ const Banner = (props: BannerProps) => {
             if (!allowTransition.current || !autoPlay) return
             allowTransition.current = false
             setActiveIndex((activeIndex + 1) % 3)
-        }, 3000)
+        }, 5000)
 
         return () => {
             clearInterval(timer)
@@ -40,11 +40,15 @@ const Banner = (props: BannerProps) => {
 
     return (
         <div className={classNames([styles['banner-wrap']])}>
+            <div className='w-full absolute top-1/4 left-1/2 -translate-x-1/2 z-[5] text-center text-white '>
+                <div className="text-5xl lg:text-7xl font-bold">BBF&apos;s Blog</div>
+                <div className="text-2xl">想做的事最优先</div>
+            </div>
             {imgList?.map((img, index) => {
                 return (
                     <div
                         key={index}
-                        className={classNames(styles['img-wrap'], 'min-h-[500px] lg:min-h-[712px]', {
+                        className={classNames(styles['img-wrap'], 'min-h-[500px] lg:min-h-[712px] brightness-[0.85]', {
                             [styles.active]: activeIndex === index,
                         })}
                         onTransitionEnd={() => {
