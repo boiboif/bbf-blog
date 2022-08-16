@@ -18,6 +18,7 @@ import { getArticleMany } from '@/service'
 import moment from 'moment'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
+import styles from '@/styles/index.module.scss'
 
 const Banner = dynamic(() => import('@/components/banner'))
 const Controller = dynamic(() => import('@/components/banner/controller'))
@@ -124,7 +125,7 @@ const Home: NextPage<{ articleList: API.Article[] }> = (props) => {
                             className='cursor-pointer hidden lg:block mb-8 w-[80%] mx-auto'
                             onClick={() => window.open('https://lycoris-recoil.com/cafe_lyco_reco/')}
                         >
-                            <Image layout="responsive" src={bnr_cafe} alt=''></Image>
+                            <Image layout='responsive' src={bnr_cafe} alt=''></Image>
                         </div>
 
                         <div className='hidden lg:flex justify-center'>
@@ -144,7 +145,7 @@ const Home: NextPage<{ articleList: API.Article[] }> = (props) => {
                 </div>
             </div>
 
-            <div className='w-[91%] mx-auto max-w-[1500px] mb-10'>
+            <div className='w-[91%] mx-auto max-w-[1500px]'>
                 <div className='font-mono font-black tracking-wider mb-5 lg:mb-7'>
                     <span className='text-4xl lg:text-7xl text-teal-500 font-serif font-semibold'>N</span>
                     <span className='text-3xl lg:text-6xl font-sans'>ewly</span>
@@ -164,7 +165,14 @@ const Home: NextPage<{ articleList: API.Article[] }> = (props) => {
                 })}
             </div>
 
-            <div className='w-[91%] mx-auto max-w-[1500px]'></div>
+            <div className={styles.bg}>
+                <div className='w-[91%] mx-auto max-w-[1500px] pt-5 lg:pt-10'>
+                    <div className='font-mono font-black tracking-wider mb-5 lg:mb-7 text-right'>
+                        <span className='text-4xl lg:text-7xl text-teal-500 font-serif font-semibold'>F</span>
+                        <span className='text-3xl lg:text-6xl font-sans'>ollow</span>
+                    </div>
+                </div>
+            </div>
         </div>
     )
 }

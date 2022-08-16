@@ -48,15 +48,13 @@ const Menu = (props: MenuProps) => {
         display: 'none',
     }))
 
-    const menuList = [
+    let menuList = [
         { name: '首页', path: '/' },
-        { name: '分类', path: '' },
-        { name: '文章', path: '/article' },
-        { name: '留言', path: '' },
-        { name: '关于我', path: '' },
-        { name: '登录', path: '' },
-        { name: '后台', path: '/manager' },
+        { name: '分类', path: '/category' },
     ]
+
+    menuList = [...menuList, userInfoStore.userInfo ? { name: '后台', path: '/manager' } : { name: '登录', path: '' }]
+
     const delayMap = getDelayMap(menuList.length)
 
     useEffect(() => {
@@ -109,17 +107,6 @@ const Menu = (props: MenuProps) => {
         }
     }
 
-    const switchLoginDisplay = (menuName: string) => {
-        switch (menuName) {
-            case '登录':
-                return userInfoStore.userInfo ? 'none' : 'block'
-            case '后台':
-                return userInfoStore.userInfo ? 'block' : 'none'
-            default:
-                return 'block'
-        }
-    }
-
     return (
         <animated.div className={classNames([style['menu-wrap']])} style={{ display: springProps.display, opacity: springProps.opacity }}>
             <animated.div className={classNames([style.bg])} style={{ backgroundPosition: springProps.backgroundPosition }}></animated.div>
@@ -134,7 +121,6 @@ const Menu = (props: MenuProps) => {
                                 <li
                                     className='font-sans font-bold text-center lg:text-left text-4xl sm:text-6xl w-1/2 lg:w-1/3 mr-0 lg:mr-16 xl:mr-16 mb-16 cursor-pointer'
                                     key={menu.name + menu.path}
-                                    style={{ display: switchLoginDisplay(menu.name) }}
                                 >
                                     <AnimateInViewport delay={delayMap[index]} animateCssClass='animate__fadeInBottomRight'>
                                         <span onClick={() => handleClick(menu)}>

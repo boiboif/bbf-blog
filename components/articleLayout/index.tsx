@@ -7,10 +7,11 @@ import CateList from '@/components/cateList'
 
 interface Props {
     cateList: API.Cate[]
+    title?: string
 }
 
 const ArticleLayout = (props: PropsWithChildren<Props>) => {
-    const { children, cateList } = props
+    const { children, cateList, title = '文章' } = props
     const ref = useRef<HTMLDivElement>(null)
 
     const router = useRouter()
@@ -21,7 +22,7 @@ const ArticleLayout = (props: PropsWithChildren<Props>) => {
 
     const cateChange = (cateId: string) => {
         router.push({
-            pathname: '/article',
+            pathname: '/category',
             query: {
                 cateId,
             },
@@ -39,7 +40,8 @@ const ArticleLayout = (props: PropsWithChildren<Props>) => {
                     </div>
 
                     <div className='text-4xl lg:text-5xl font-bold tracking-widest'>
-                        <span className='text-teal-500 text-5xl lg:text-6xl'>文</span>章
+                        <span className='text-teal-500 text-5xl lg:text-6xl'>{title.slice(0, 1)}</span>
+                        {title.slice(1)}
                     </div>
                 </div>
 

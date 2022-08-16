@@ -18,7 +18,7 @@ const Article: NextPage<{ articleList: API.Article[]; cateList: API.Cate[] }> = 
     }
 
     return (
-        <ArticleLayout cateList={cateList}>
+        <ArticleLayout cateList={cateList} title="分类">
             {articleList.map((article) => {
                 return (
                     <div key={article.id} onClick={() => toDetail(article.id)}>
