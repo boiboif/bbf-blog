@@ -114,7 +114,7 @@ const Menu = (props: MenuProps) => {
                 <div className='mr-0 lg:mr-14 xl:mr-40 mb-10 lg:mb-0'>
                     <Image src={logo} alt=''></Image>
                 </div>
-                <div className='lg:flex-1'>
+                <div className='w-full'>
                     <ul className='flex flex-wrap'>
                         {menuList.map((menu, index) => {
                             return (

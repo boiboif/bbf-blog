@@ -75,7 +75,7 @@ const Home: NextPage<{ articleList: API.Article[] }> = (props) => {
                     <div className='w-20 h-20 lg:w-40 lg:h-40 relative rounded-[50%] overflow-hidden mb-4'>
                         <Image layout='fill' src={avatar} alt='' />
                     </div>
-                    <div className='w-[50%] lg:w-full text-3xl lg:text-4xl font-bold lg:pb-4 mb-2 lg:mb-4 lg:border-b lg:border-slate-200 flex lg:justify-center items-center ml-5'>
+                    <div className='w-[50%] md:w-[20%] lg:w-full text-3xl lg:text-4xl font-bold lg:pb-4 mb-2 lg:mb-4 lg:border-b lg:border-slate-200 flex lg:justify-center items-center ml-5'>
                         <span className='hidden lg:block'>👋</span>BBF<span className='block lg:hidden'>👋</span>
                     </div>
                     <div className='lg:text-center'>
