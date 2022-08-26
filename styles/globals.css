@@ -45,7 +45,6 @@ a {
     list-style: circle;
 }
 
-
 @media (max-width: 767px) {
     .markdown-body {
         padding: 15px 0;
@@ -70,4 +69,8 @@ a {
 }
 .login-form-button {
     width: 100%;
+}
+
+.text-shadow {
+    text-shadow: -1px 1px 0 #000, 1px 1px 0 #000, 1px -1px 0 #000, -1px -1px 0 #000;
 }
