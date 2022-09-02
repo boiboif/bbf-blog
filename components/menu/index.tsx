@@ -16,7 +16,7 @@ interface MenuProps {
     onPush?: () => void
 }
 
-const getDelayMap = (length: number) => {
+const getDelayMap = (length: number, baseDelay: number = 200) => {
     let current = 0
     let obj: Record<number, number> = {}
 
@@ -26,7 +26,7 @@ const getDelayMap = (length: number) => {
             if (index % 2 === 0 && index !== 0) {
                 current += 2
             }
-            const delay = current * 100 + 200
+            const delay = current * 100 + baseDelay
             return {
                 ...acc,
                 [index]: delay,
