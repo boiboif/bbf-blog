@@ -14,6 +14,7 @@ import Loader from '../loader'
 import classNames from 'classnames'
 import { observer } from 'mobx-react-lite'
 import { BackTop } from 'antd'
+import SakanaReact from 'sakana-react'
 
 const LoginModal = dynamic(() => import('../login/loginModal'))
 const Menu = dynamic(() => import('../menu'))
@@ -81,6 +82,10 @@ const CustomLayout = (props: PropsWithChildren) => {
                 >
                     <Loader></Loader>
                 </div>
+            </div>
+
+            <div className='fixed right-20 bottom-24 z-50'>
+                <SakanaReact></SakanaReact>
             </div>
 
             <div

@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 8010",
-    "build": "node init.js prisma generate && next build",
+    "build": "node init.js && npx prisma generate && next build",
     "start": "next start",
     "lint": "next lint"
   },
@@ -44,7 +44,8 @@
     "prisma": "^4.2.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-spring": "^9.5.2"
+    "react-spring": "^9.5.2",
+    "sakana-react": "^0.0.2"
   },
   "devDependencies": {
     "@types/cookie": "^0.5.1",
