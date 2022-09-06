@@ -45,7 +45,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-spring": "^9.5.2",
-    "sakana-react": "^0.0.2"
+    "sakana-react": "^1.0.0"
   },
   "devDependencies": {
     "@types/cookie": "^0.5.1",
