@@ -4,6 +4,7 @@ import type RootStore from './rootStore'
 class UserInfoStore {
     rootStore: RootStore
     loading: boolean = true
+    allowBannerAutoPlay: boolean = false
 
     constructor(rootStore: RootStore) {
         makeAutoObservable(this)
@@ -12,6 +13,10 @@ class UserInfoStore {
 
     async setLoading(loading: boolean) {
         this.loading = loading
+    }
+
+    async setAllowBannerAutoPlay(allow: boolean) {
+        this.allowBannerAutoPlay = allow
     }
 }
 

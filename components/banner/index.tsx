@@ -1,10 +1,12 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Image, { StaticImageData } from 'next/image'
 import styles from './index.module.scss'
 import classNames from 'classnames'
 import { useControllableValue } from 'ahooks'
 import { useStore } from '@/store'
 import { observer } from 'mobx-react-lite'
+import { isBrowser } from '@/utils/isBrowser'
+import { canCSSPropertiesUsed } from '@/utils/canCSSPropertiesUsed'
 
 interface BannerProps {
     autoPlay?: boolean
@@ -19,6 +21,7 @@ const Banner = (props: BannerProps) => {
     const { autoPlay = true, imgList, onTransitionEnd } = props
     const allowTransition = useRef(true)
     const loadedIndex = useRef(0)
+    const [imageLayout, setImageLayout] = useState<'fixed' | 'responsive' | 'fill' | 'intrinsic' | undefined>()
 
     const [activeIndex, setActiveIndex] = useControllableValue<number>(props, {
         valuePropName: 'activeIndex',
@@ -26,7 +29,7 @@ const Banner = (props: BannerProps) => {
     })
 
     useEffect(() => {
-        if (globalStore.loading) return
+        if (globalStore.allowBannerAutoPlay) return
         const timer = setInterval(() => {
             if (!allowTransition.current || !autoPlay) return
             allowTransition.current = false
@@ -36,47 +39,56 @@ const Banner = (props: BannerProps) => {
         return () => {
             clearInterval(timer)
         }
-    }, [activeIndex, autoPlay, setActiveIndex, globalStore.loading])
+    }, [activeIndex, autoPlay, setActiveIndex, globalStore.allowBannerAutoPlay])
+
+    useEffect(() => {
+        setImageLayout(canCSSPropertiesUsed('aspectRatio') ? 'fill' : 'responsive')
+    }, [])
 
     return (
         <div className={classNames([styles['banner-wrap']])}>
             <div className='w-full absolute top-1/4 left-1/2 -translate-x-1/2 z-[5] text-center text-white text-shadow opacity-80'>
-                <div className="text-5xl lg:text-7xl font-bold">BBF&apos;s Blog</div>
-                <div className="text-2xl">想做的事最优先~</div>
+                <div className='text-5xl lg:text-7xl font-bold'>BBF&apos;s Blog</div>
+                <div className='text-2xl'>想做的事最优先~</div>
             </div>
-            {imgList?.map((img, index) => {
-                return (
-                    <div
-                        key={index}
-                        className={classNames(styles['img-wrap'], 'min-h-[500px] lg:min-h-[712px]', {
-                            [styles.active]: activeIndex === index,
-                        })}
-                        onTransitionEnd={() => {
-                            if (index === activeIndex) {
-                                allowTransition.current = true
-                                onTransitionEnd?.()
-                            }
-                        }}
-                    >
-                        <Image
-                            objectPosition='left top'
-                            objectFit='cover'
-                            layout='fill'
-                            className={classNames([styles['scale']])}
-                            src={img}
-                            alt=''
-                            onLoadingComplete={() => {
-                                loadedIndex.current += 1
-                                if (loadedIndex.current === imgList.length) {
-                                    globalStore.setLoading(false)
+            {imageLayout &&
+                imgList?.map((img, index) => {
+                    return (
+                        <div
+                            key={index}
+                            className={classNames(styles['img-wrap'], 'min-h-[500px] lg:min-h-[712px]', {
+                                [styles.active]: activeIndex === index,
+                            })}
+                            onTransitionEnd={() => {
+                                if (index === activeIndex) {
+                                    allowTransition.current = true
+                                    onTransitionEnd?.()
                                 }
                             }}
-                            priority
-                            quality={50}
-                        />
-                    </div>
-                )
-            })}
+                        >
+                            <Image
+                                objectPosition='left top'
+                                objectFit='cover'
+                                layout={imageLayout}
+                                className={classNames([styles['scale']])}
+                                src={img}
+                                alt=''
+                                onLoadingComplete={() => {
+                                    loadedIndex.current += 1
+                                    if (loadedIndex.current === 1 && index === 0) {
+                                        globalStore.setLoading(false)
+                                    }
+                                    /** 所有图片加载完成后才可以进行轮播 */
+                                    if (loadedIndex.current === imgList.length) {
+                                        globalStore.setAllowBannerAutoPlay(true)
+                                    }
+                                }}
+                                priority={index === 0}
+                                quality={50}
+                            />
+                        </div>
+                    )
+                })}
         </div>
     )
 }
