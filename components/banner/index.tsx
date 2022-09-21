@@ -5,7 +5,6 @@ import classNames from 'classnames'
 import { useControllableValue } from 'ahooks'
 import { useStore } from '@/store'
 import { observer } from 'mobx-react-lite'
-import { isBrowser } from '@/utils/isBrowser'
 import { canCSSPropertiesUsed } from '@/utils/canCSSPropertiesUsed'
 
 interface BannerProps {
@@ -29,7 +28,7 @@ const Banner = (props: BannerProps) => {
     })
 
     useEffect(() => {
-        if (globalStore.allowBannerAutoPlay) return
+        if (!globalStore.allowBannerAutoPlay) return
         const timer = setInterval(() => {
             if (!allowTransition.current || !autoPlay) return
             allowTransition.current = false
@@ -56,7 +55,7 @@ const Banner = (props: BannerProps) => {
                     return (
                         <div
                             key={index}
-                            className={classNames(styles['img-wrap'], 'min-h-[500px] lg:min-h-[712px]', {
+                            className={classNames(styles['img-wrap'], {
                                 [styles.active]: activeIndex === index,
                             })}
                             onTransitionEnd={() => {
@@ -83,7 +82,7 @@ const Banner = (props: BannerProps) => {
                                         globalStore.setAllowBannerAutoPlay(true)
                                     }
                                 }}
-                                priority={index === 0}
+                                priority
                                 quality={50}
                             />
                         </div>
