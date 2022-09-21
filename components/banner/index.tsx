@@ -74,7 +74,7 @@ const Banner = (props: BannerProps) => {
                                 alt=''
                                 onLoadingComplete={() => {
                                     loadedIndex.current += 1
-                                    if (loadedIndex.current === 1 && index === 0) {
+                                    if (index === 0) {
                                         globalStore.setLoading(false)
                                     }
                                     /** 所有图片加载完成后才可以进行轮播 */

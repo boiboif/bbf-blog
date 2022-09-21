@@ -1,3 +1,4 @@
+import { formatObjArrTime } from '@/utils/time'
 import { PrismaClient } from '@prisma/client'
 
 interface GetArticleManyParam {
@@ -12,7 +13,7 @@ export const getArticleMany = async (param?: GetArticleManyParam) => {
     const prisma = new PrismaClient()
 
     const allPost = await prisma.post.findMany({
-        include: { author: { select: { username: true } }, cate: true },
+        include: { author: { select: { username: true } }, cate: { select: { name: true } } },
         where: { cateId: Number(cateId) || undefined, title },
         orderBy: { createdAt: 'desc' },
         skip,
@@ -20,7 +21,7 @@ export const getArticleMany = async (param?: GetArticleManyParam) => {
     })
     prisma.$disconnect()
 
-    return JSON.parse(JSON.stringify(allPost))
+    return formatObjArrTime(JSON.parse(JSON.stringify(allPost)))
 }
 
 export const getArticleById = async (id: string) => {

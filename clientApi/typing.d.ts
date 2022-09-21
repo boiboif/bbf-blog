@@ -23,6 +23,8 @@ declare namespace API {
             username: string
         }
         cate: Cate
+        createdAt: string
+        updatedAt: string
     }
 
     type User = {

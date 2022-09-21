@@ -15,7 +15,6 @@ import bnr_cafe from '@/public/img/bnr_cafe.jpg'
 import { useRef, useState } from 'react'
 import { useRouter } from 'next/router'
 import { getArticleMany } from '@/service'
-import moment from 'moment'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import styles from '@/styles/index.module.scss'
@@ -160,7 +159,7 @@ const Home: NextPage<{ articleList: API.Article[] }> = (props) => {
                         <div key={article.id} onClick={() => router.push(`/article/${article.id}`)}>
                             <ArticleListItem
                                 cate={article.cate.name}
-                                publishDate={moment(article.createdAt).format('YYYY-MM-DD')}
+                                publishDate={article.createdAt}
                                 title={article.title}
                             ></ArticleListItem>
                             <div className='h-[1px] bg-gray-300'></div>
@@ -184,7 +183,7 @@ const Home: NextPage<{ articleList: API.Article[] }> = (props) => {
 export default Home
 
 export const getServerSideProps: GetServerSideProps = async () => {
-    const allPost = await getArticleMany({ take: 3 })
+    const allPost = await getArticleMany({ take: 6 })
 
     return {
         props: {
