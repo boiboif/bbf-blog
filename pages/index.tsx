@@ -1,4 +1,4 @@
-import type { GetServerSideProps, NextPage } from 'next'
+import type { NextPage } from 'next'
 import img0_on from '@/public/img/tab-00_on.jpg'
 import img1_on from '@/public/img/tab-01_on.jpg'
 import img2_on from '@/public/img/tab-02_on.jpg'
@@ -14,17 +14,17 @@ import catch02_pc from '@/public/img/catch-02_pc.png'
 import bnr_cafe from '@/public/img/bnr_cafe.jpg'
 import { useRef, useState } from 'react'
 import { useRouter } from 'next/router'
-import { getArticleMany } from '@/service'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import styles from '@/styles/index.module.scss'
+import { useRequest } from 'ahooks'
+import { getArticleAll } from '@/clientApi'
 
 const Banner = dynamic(() => import('@/components/banner'))
 const Controller = dynamic(() => import('@/components/banner/controller'))
 const ArticleListItem = dynamic(() => import('@/components/articleListItem'))
 
-const Home: NextPage<{ articleList: API.Article[] }> = (props) => {
-    const { articleList } = props
+const Home: NextPage = () => {
     const router = useRouter()
     const [activeIndex, setActiveIndex] = useState(0)
     const readyChangeCover = useRef(true)
@@ -34,6 +34,8 @@ const Home: NextPage<{ articleList: API.Article[] }> = (props) => {
         { on: img1_on, off: img1_off, cover: img1 },
         { on: img2_on, off: img2_off, cover: img2 },
     ]
+
+    const { data: articleList } = useRequest(() => getArticleAll({ size: 6 }).then((res) => res?.data))
 
     return (
         <div>
@@ -154,7 +156,7 @@ const Home: NextPage<{ articleList: API.Article[] }> = (props) => {
                     <span className='text-3xl lg:text-6xl font-sans'>ewly</span>
                 </div>
                 <div className='h-[1px] bg-gray-300'></div>
-                {articleList.map((article) => {
+                {articleList?.map((article) => {
                     return (
                         <div key={article.id} onClick={() => router.push(`/article/${article.id}`)}>
                             <ArticleListItem
@@ -181,13 +183,3 @@ const Home: NextPage<{ articleList: API.Article[] }> = (props) => {
 }
 
 export default Home
-
-export const getServerSideProps: GetServerSideProps = async () => {
-    const allPost = await getArticleMany({ take: 6 })
-
-    return {
-        props: {
-            articleList: allPost ?? [],
-        },
-    }
-}
