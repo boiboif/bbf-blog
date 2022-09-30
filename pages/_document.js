@@ -3,7 +3,7 @@ import { Html, Head, Main, NextScript } from 'next/document'
 export default function Document() {
     return (
         <Html>
-            <title>bbf的个人博客</title>
+            <title>BBF的个人博客</title>
             <Head>
                 <link rel='preconnect' href='https://fonts.googleapis.com' />
                 <link rel='preconnect' href='https://fonts.gstatic.com' crossOrigin='true' />

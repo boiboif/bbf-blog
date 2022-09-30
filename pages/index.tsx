@@ -1,4 +1,4 @@
-import type { NextPage } from 'next'
+import type { GetStaticProps, NextPage } from 'next'
 import img0_on from '@/public/img/tab-00_on.jpg'
 import img1_on from '@/public/img/tab-01_on.jpg'
 import img2_on from '@/public/img/tab-02_on.jpg'
@@ -17,14 +17,15 @@ import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import styles from '@/styles/index.module.scss'
-import { useRequest } from 'ahooks'
-import { getArticleAll } from '@/clientApi'
+import { getArticleMany } from '@/service'
+import Head from 'next/head'
 
 const Banner = dynamic(() => import('@/components/banner'))
 const Controller = dynamic(() => import('@/components/banner/controller'))
 const ArticleListItem = dynamic(() => import('@/components/articleListItem'))
 
-const Home: NextPage = () => {
+const Home: NextPage<{ posts: API.Article[] }> = (props) => {
+    const { posts } = props
     const router = useRouter()
     const [activeIndex, setActiveIndex] = useState(0)
     const readyChangeCover = useRef(true)
@@ -35,10 +36,11 @@ const Home: NextPage = () => {
         { on: img2_on, off: img2_off, cover: img2 },
     ]
 
-    const { data: articleList } = useRequest(() => getArticleAll({ size: 6 }).then((res) => res?.data))
-
     return (
         <div>
+            <Head>
+                <title>BBF的个人博客</title>
+            </Head>
             <div className='lg:flex mx-auto max-w-[1600px]'>
                 <div className='w-full lg:w-[64%] lg:flex lg:flex-row-reverse lg:mb-12'>
                     <div className='flex-1'>
@@ -156,7 +158,7 @@ const Home: NextPage = () => {
                     <span className='text-3xl lg:text-6xl font-sans'>ewly</span>
                 </div>
                 <div className='h-[1px] bg-gray-300'></div>
-                {articleList?.map((article) => {
+                {posts?.map((article) => {
                     return (
                         <div key={article.id} onClick={() => router.push(`/article/${article.id}`)}>
                             <ArticleListItem
@@ -183,3 +185,14 @@ const Home: NextPage = () => {
 }
 
 export default Home
+
+export const getStaticProps: GetStaticProps = async (context) => {
+    const posts = await getArticleMany({ take: 6 })
+
+    return {
+        props: {
+            posts,
+        },
+        revalidate: 60,
+    }
+}

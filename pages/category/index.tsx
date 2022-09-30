@@ -5,6 +5,7 @@ import ArticleListItem from '@/components/articleListItem'
 import moment from 'moment'
 import { getArticleMany, getCateMany } from '@/service'
 import dynamic from 'next/dynamic'
+import Head from 'next/head'
 
 const ArticleLayout = dynamic(() => import('@/components/articleLayout'))
 
@@ -19,6 +20,9 @@ const Article: NextPage<{ articleList: API.Article[]; cateList: API.Cate[] }> = 
 
     return (
         <ArticleLayout cateList={cateList} title="分类">
+            <Head>
+                <title>BBF的个人博客 - 分类</title>
+            </Head>
             {articleList.map((article) => {
                 return (
                     <div key={article.id} onClick={() => toDetail(article.id)}>

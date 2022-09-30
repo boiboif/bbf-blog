@@ -18,6 +18,7 @@ import 'github-markdown-css' // placed after highlight styles to override `code`
 import moment from 'moment'
 import BackButton from '@/components/backButton'
 import { useRouter } from 'next/router'
+import Head from 'next/head'
 
 const ArticleLayout = dynamic(() => import('@/components/articleLayout'))
 
@@ -41,6 +42,9 @@ const ArticleDetail: NextPage<{ article: API.Article | null; cateList: API.Cate[
 
     return (
         <ArticleLayout cateList={cateList}>
+            <Head>
+                <title>BBF的个人博客 - {article?.title}</title>
+            </Head>
             <ArticleListItem
                 size='large'
                 title={article?.title}
