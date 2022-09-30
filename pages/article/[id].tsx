@@ -78,7 +78,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
             article,
             cateList: allCate ?? [],
         },
-        revalidate: 60,
+        // revalidate: 60,
     }
 }
 
