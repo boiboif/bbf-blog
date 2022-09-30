@@ -13,12 +13,12 @@ import avatar from '@/public/img/avatar.jpg'
 import catch02_pc from '@/public/img/catch-02_pc.png'
 import bnr_cafe from '@/public/img/bnr_cafe.jpg'
 import { useRef, useState } from 'react'
-import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import styles from '@/styles/index.module.scss'
 import { getArticleMany } from '@/service'
 import Head from 'next/head'
+import Link from 'next/link'
 
 const Banner = dynamic(() => import('@/components/banner'))
 const Controller = dynamic(() => import('@/components/banner/controller'))
@@ -26,7 +26,6 @@ const ArticleListItem = dynamic(() => import('@/components/articleListItem'))
 
 const Home: NextPage<{ posts: API.Article[] }> = (props) => {
     const { posts } = props
-    const router = useRouter()
     const [activeIndex, setActiveIndex] = useState(0)
     const readyChangeCover = useRef(true)
 
@@ -160,14 +159,16 @@ const Home: NextPage<{ posts: API.Article[] }> = (props) => {
                 <div className='h-[1px] bg-gray-300'></div>
                 {posts?.map((article) => {
                     return (
-                        <div key={article.id} onClick={() => router.push(`/article/${article.id}`)}>
-                            <ArticleListItem
-                                cate={article.cate.name}
-                                publishDate={article.createdAt}
-                                title={article.title}
-                            ></ArticleListItem>
-                            <div className='h-[1px] bg-gray-300'></div>
-                        </div>
+                        <Link key={article.id} href={{ pathname: `/article/${article.id}`, query: { cateId: article.cateId } }}>
+                            <a className='link'>
+                                <ArticleListItem
+                                    cate={article.cate.name}
+                                    publishDate={article.createdAt}
+                                    title={article.title}
+                                ></ArticleListItem>
+                                <div className='h-[1px] bg-gray-300'></div>
+                            </a>
+                        </Link>
                     )
                 })}
             </div>
