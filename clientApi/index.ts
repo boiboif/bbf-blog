@@ -16,4 +16,6 @@ export const login = customApiHandler<CustomResponse<API.User & { token: string 
     '/api/login',
     'POST'
 )
-export const getUserInfoById =  (id: string) => customApiHandler<CustomResponse<API.User & { token: string }>>(`/api/user/${id}`, 'GET')
+export const getUserInfoById = (id: string) => customApiHandler<CustomResponse<API.User & { token: string }>>(`/api/user/${id}`, 'GET')
+
+export const revalidated = customApiHandler('/api/revalidate', 'GET')

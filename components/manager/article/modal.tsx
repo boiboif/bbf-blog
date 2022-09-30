@@ -1,6 +1,6 @@
 import { Button, Modal, Form, Input, message, Select, Space } from 'antd'
 import { useEffect, useState } from 'react'
-import { addArticle, putArticle } from '@/clientApi'
+import { addArticle, putArticle, revalidated } from '@/clientApi'
 import { Editor } from '@bytemd/react'
 import zh from 'bytemd/locales/zh_Hans.json'
 import highlight from '@bytemd/plugin-highlight-ssr'
@@ -70,11 +70,15 @@ const ArticleModal = (props: ModalProps) => {
 
         const submitApi = record ? putArticle : addArticle
 
-        await submitApi({
+        const res = await submitApi({
             id: record?.id,
             ...vals,
             content: value,
         })
+
+        // revalidated({ path: '/' })
+        // revalidated({ path: '/category' })
+        // revalidated({ path: `/article/${res.data.id}` })
 
         message.success('提交成功！')
         setValue('')

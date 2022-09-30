@@ -1,6 +1,6 @@
 import { Button, Modal, Form, Input, message, Space } from 'antd'
 import { useEffect } from 'react'
-import { addCate, putCate } from '@/clientApi'
+import { addCate, putCate, revalidated } from '@/clientApi'
 
 interface ModalProps {
     title?: string
@@ -36,6 +36,8 @@ const CateModal = (props: ModalProps) => {
             id: record?.id,
             ...vals,
         })
+
+        // revalidated({ path: '/category' })
 
         message.success('提交成功！')
         handleCancel()

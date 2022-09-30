@@ -8,10 +8,11 @@ import CateList from '@/components/cateList'
 interface Props {
     cateList: API.Cate[]
     title?: string
+    activeKey?: string
 }
 
 const ArticleLayout = (props: PropsWithChildren<Props>) => {
-    const { children, cateList, title = '文章' } = props
+    const { children, cateList, title = '文章', activeKey } = props
     const ref = useRef<HTMLDivElement>(null)
 
     const router = useRouter()
@@ -47,7 +48,7 @@ const ArticleLayout = (props: PropsWithChildren<Props>) => {
 
                 <div className='mb-10'>
                     <CateList
-                        activeKey={(router.query.cateId as string) || ''}
+                        activeKey={(router.query.cateId as string) || activeKey || ''}
                         list={cateList.map((item) => ({ key: item.id.toString(), name: item.name }))}
                         onChange={cateChange}
                     ></CateList>

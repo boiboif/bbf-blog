@@ -41,7 +41,7 @@ const ArticleDetail: NextPage<{ article: API.Article | null; cateList: API.Cate[
     const router = useRouter()
 
     return (
-        <ArticleLayout cateList={cateList}>
+        <ArticleLayout cateList={cateList} activeKey={article?.cateId.toString()}>
             <Head>
                 <title>BBF的个人博客 - {article?.title}</title>
             </Head>
@@ -73,12 +73,18 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
     const article = await getArticleById(params!.id as string)
     const allCate = await getCateMany()
 
+    if (!article) {
+        return {
+            notFound: true,
+        }
+    }
+
     return {
         props: {
             article,
             cateList: allCate ?? [],
         },
-        // revalidate: 60,
+        revalidate: 60
     }
 }
 

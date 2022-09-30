@@ -159,7 +159,7 @@ const Home: NextPage<{ posts: API.Article[] }> = (props) => {
                 <div className='h-[1px] bg-gray-300'></div>
                 {posts?.map((article) => {
                     return (
-                        <Link key={article.id} href={{ pathname: `/article/${article.id}`, query: { cateId: article.cateId } }}>
+                        <Link key={article.id} href={{ pathname: `/article/${article.id}` }}>
                             <a className='link'>
                                 <ArticleListItem
                                     cate={article.cate.name}
@@ -194,6 +194,6 @@ export const getStaticProps: GetStaticProps = async (context) => {
         props: {
             posts,
         },
-        revalidate: 60,
+        revalidate: 60
     }
 }
