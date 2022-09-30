@@ -1,5 +1,5 @@
-import { getArticleById, getCateMany } from '@/service'
-import { GetServerSideProps, NextPage } from 'next'
+import { getArticleById, getArticleMany, getCateMany } from '@/service'
+import { GetStaticPaths, GetStaticProps, NextPage } from 'next'
 import React from 'react'
 import dynamic from 'next/dynamic'
 import { Viewer } from '@bytemd/react'
@@ -60,10 +60,17 @@ const ArticleDetail: NextPage<{ article: API.Article | null; cateList: API.Cate[
     )
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-    const { id } = context.query
+export const getStaticPaths: GetStaticPaths = async (params) => {
+    const posts = await getArticleMany()
 
-    const article = await getArticleById(id as string)
+    return {
+        paths: posts.map((item) => ({ params: { id: item.id.toString() } })),
+        fallback: false,
+    }
+}
+
+export const getStaticProps: GetStaticProps = async ({ params }) => {
+    const article = await getArticleById(params!.id as string)
     const allCate = await getCateMany()
 
     return {
@@ -71,7 +78,22 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
             article,
             cateList: allCate ?? [],
         },
+        revalidate: 60,
     }
 }
+
+// export const getServerSideProps: GetServerSideProps = async (context) => {
+//     const { id } = context.query
+
+// const article = await getArticleById(id as string)
+// const allCate = await getCateMany()
+
+// return {
+//     props: {
+//         article,
+//         cateList: allCate ?? [],
+//     },
+// }
+// }
 
 export default ArticleDetail
