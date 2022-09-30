@@ -14,8 +14,13 @@ const Category: NextPage<{ articleList: API.Article[]; cateList: API.Cate[] }> =
     const router = useRouter()
     const cateId = router.query.cateId as string
 
-    const toDetail = (id: number) => {
-        router.push(`/article/${id}`)
+    const toDetail = (article: API.Article) => {
+        router.push({
+            pathname: `/article/${article.id}`,
+            query: {
+                cateId: article.cateId,
+            },
+        })
     }
 
     const filterArticleList = useMemo(() => {
@@ -29,7 +34,7 @@ const Category: NextPage<{ articleList: API.Article[]; cateList: API.Cate[] }> =
             </Head>
             {filterArticleList.map((article) => {
                 return (
-                    <div key={article.id} onClick={() => toDetail(article.id)}>
+                    <div key={article.id} onClick={() => toDetail(article)}>
                         <ArticleListItem
                             cate={article.cate.name}
                             publishDate={moment(article.createdAt).format('YYYY-MM-DD')}
