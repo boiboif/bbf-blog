@@ -5,6 +5,7 @@ export default function Document() {
         <Html>
             <title>BBF的个人博客</title>
             <Head>
+                <meta name="baidu-site-verification" content="code-yO5ND6S9Mc" />
                 <link rel='preconnect' href='https://fonts.googleapis.com' />
                 <link rel='preconnect' href='https://fonts.gstatic.com' crossOrigin='true' />
                 <link
