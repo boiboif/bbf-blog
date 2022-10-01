@@ -1,7 +1,6 @@
 import { GetStaticProps, NextPage } from 'next'
 import { useRouter } from 'next/router'
 import React, { useMemo } from 'react'
-import ArticleListItem from '@/components/articleListItem'
 import moment from 'moment'
 import { getArticleMany, getCateMany } from '@/service'
 import dynamic from 'next/dynamic'
@@ -9,6 +8,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 
 const ArticleLayout = dynamic(() => import('@/components/articleLayout'))
+const ArticleListItem = dynamic(() => import('@/components/articleListItem'))
 
 const Category: NextPage<{ articleList: API.Article[]; cateList: API.Cate[] }> = (props) => {
     const { articleList, cateList } = props
@@ -56,7 +56,7 @@ export const getStaticProps: GetStaticProps = async () => {
             articleList: allPost ?? [],
             cateList: allCate ?? [],
         },
-        revalidate: 60
+        revalidate: 60,
     }
 }
 

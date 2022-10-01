@@ -2,7 +2,6 @@ import { useDebounceFn, useRequest } from 'ahooks'
 import React, { PropsWithChildren, useEffect, useState } from 'react'
 import style from './index.module.scss'
 import variables from '@/styles/variables.module.scss'
-import MenuButton from '../menuButton'
 import useRecord from '@/hook/useRecord'
 import { getUserInfoById } from '@/clientApi'
 import { useStore } from '@/store'
@@ -18,6 +17,7 @@ import SakanaReact from 'sakana-react'
 
 const LoginModal = dynamic(() => import('../login/loginModal'))
 const Menu = dynamic(() => import('../menu'))
+const MenuButton = dynamic(() => import('../menuButton'))
 
 const CustomLayout = (props: PropsWithChildren) => {
     const { loading } = useStore('globalStore')

@@ -16,11 +16,11 @@ import highlight from '@bytemd/plugin-highlight-ssr'
 import 'highlight.js/styles/vs.css'
 import 'github-markdown-css' // placed after highlight styles to override `code` padding
 import moment from 'moment'
-import BackButton from '@/components/backButton'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 
 const ArticleLayout = dynamic(() => import('@/components/articleLayout'))
+const BackButton = dynamic(() => import('@/components/backButton'))
 
 const plugins = [
     gfm({
@@ -43,7 +43,8 @@ const ArticleDetail: NextPage<{ article: API.Article | null; cateList: API.Cate[
     return (
         <ArticleLayout cateList={cateList} activeKey={article?.cateId.toString()}>
             <Head>
-                <title>BBF的个人博客 - {article?.title}</title>
+                <title></title>
+                <title>{'BBF的个人博客 - ' + article?.title}</title>
             </Head>
             <ArticleListItem
                 size='large'
@@ -84,7 +85,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
             article,
             cateList: allCate ?? [],
         },
-        revalidate: 60
+        revalidate: 60,
     }
 }
 

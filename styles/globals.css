@@ -47,7 +47,7 @@ a.link:hover {
 }
 
 .markdown-body ol {
-    list-style: auto;
+    list-style: decimal;
 }
 .markdown-body ul {
     list-style: circle;
