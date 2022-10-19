@@ -19,6 +19,12 @@ declare namespace API {
         roles: string[]
         contactInfo?: contactInfo
     }
+
+    type PortalStatisticsCount = {
+        tagCount: number
+        cateCount: number
+        postCount: number
+    }
 }
 
 export as namespace API

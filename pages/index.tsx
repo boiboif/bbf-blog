@@ -20,13 +20,14 @@ import { getPostMany } from '@/service'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { getPortalStatisticsCount } from '@/service/statistics'
 
 const Banner = dynamic(() => import('@/components/banner'))
 const Controller = dynamic(() => import('@/components/banner/controller'))
 const ArticleListItem = dynamic(() => import('@/components/articleListItem'))
 
-const Home: NextPage<{ posts: API.Article[] }> = (props) => {
-    const { posts } = props
+const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsCount }> = (props) => {
+    const { posts, staticsCount } = props
     const [activeIndex, setActiveIndex] = useState(0)
     const readyChangeCover = useRef(true)
 
@@ -77,27 +78,56 @@ const Home: NextPage<{ posts: API.Article[] }> = (props) => {
                 </div>
 
                 <div className='w-[91%] lg:w-auto lg:flex-1 mx-auto pt-5 lg:pt-11 flex lg:items-center lg:flex-col flex-wrap overflow-hidden'>
-                    <div className='w-20 h-20 lg:w-32 lg:h-32 xl:w-40 xl:h-40 relative rounded-[50%] overflow-hidden mb-4 mr-4 lg:mr-0'>
-                        <Image layout='fill' src={avatar} alt='' />
-                    </div>
-                    <div className='w-[50%] sm:w-[20%] lg:w-[80%] text-3xl lg:text-4xl font-bold lg:pb-4 mb-2 lg:mb-4 lg:border-b lg:border-slate-200 flex lg:justify-center items-center'>
-                        <span className='hidden lg:block'>👋</span>BBF<span className='block lg:hidden'>👋</span>
-                    </div>
-                    <div className='lg:text-center lg:w-full'>
-                        <div className='text-md lg:text-lg xl:text-xl font-bold mb-2 lg:mb-0 text-teal-500 truncate'>
-                            🍒 A Front-end developer - 前端开发工程师
+                    <div className='w-full lg:text-center flex items-center flex-wrap sm:flex-nowrap lg:block'>
+                        <div className='w-20 h-20 lg:w-32 lg:h-32 xl:w-40 xl:h-40 relative rounded-[50%] overflow-hidden mb-4 mr-8 sm:mr-4 lg:mx-auto'>
+                            <Image layout='fill' src={avatar} alt='' />
                         </div>
-                        <div className='text-5xl text-rose-500 mb-2 hidden lg:block leading-4 xl:leading-5'>×</div>
-                        <div className='text-md lg:text-lg xl:text-xl font-bold mb-2 lg:mb-0 truncate'>
-                            🍋 Tech Stack: <span className='text-[#61dafb]'>React</span> <span className='text-[#42b983]'>Vue</span>{' '}
-                            <span className='text-[#3178c6]'>TypeScript</span> <span>etc.</span>
-                        </div>
-                        <div className='text-5xl text-rose-500 mb-2 hidden lg:block leading-4 xl:leading-5'>×</div>
-                        <div className='text-md lg:text-lg xl:text-xl font-bold mb-6 xl:mb-12 truncate'>
-                            📍 DongGuan - <span className='text-red-500'>China</span>
+                        <div className='text-[#333] mr-6 lg:mr-0 mb-2 lg:mb-4 flex lg:justify-center gap-5 lg:gap-10 items-center'>
+                            <div>
+                                <div className='lg:font-bold lg:text-xl'>文章</div>
+                                <div className='text-center text-gray-500 text-sm lg:text-xl'>{staticsCount.postCount}</div>
+                            </div>
+
+                            <div>
+                                <div className='lg:font-bold lg:text-xl'>分类</div>
+                                <div className='text-center text-gray-500 text-sm lg:text-xl'>{staticsCount.cateCount}</div>
+                            </div>
+
+                            <div>
+                                <div className='lg:font-bold lg:text-xl'>标签</div>
+                                <div className='text-center text-gray-500 text-sm lg:text-xl'>{staticsCount.tagCount}</div>
+                            </div>
                         </div>
 
-                        <div
+                        <div className='mx-auto w-1/2 hidden lg:block border-b border-slate-200 mb-6' />
+
+                        <div>
+                            <div className='text-md lg:text-lg xl:text-xl font-bold mb-2 lg:mb-0 text-teal-500 truncate'>
+                                🍒 A Front-end developer - 前端开发工程师
+                            </div>
+                            <div className='text-5xl text-rose-500 mb-2 hidden lg:block leading-4 xl:leading-7'>×</div>
+                            <div className='text-md lg:text-lg xl:text-xl font-bold mb-2 lg:mb-0 truncate'>
+                                🍋 Tech Stack: <span className='text-[#61dafb]'>React</span> <span className='text-[#42b983]'>Vue</span>{' '}
+                                <span className='text-[#3178c6]'>TypeScript</span> <span>etc.</span>
+                            </div>
+                            <div className='text-5xl text-rose-500 mb-2 hidden lg:block leading-4 xl:leading-7'>×</div>
+                            <div className='text-md lg:text-lg xl:text-xl font-bold mb-2 lg:mb-0 truncate'>
+                                📍 DongGuan - <span className='text-red-500'>China.</span>
+                            </div>
+                            <div className='text-5xl text-rose-500 mb-2 hidden lg:block leading-4 xl:leading-7'>×</div>
+                            <div className='text-md lg:text-lg xl:text-xl font-bold mb-6 truncate flex items-center lg:justify-center'>
+                                <div className="w-4 h-4 lg:w-[20px] lg:h-[20px] relative">
+                                    <Image layout="fill" src='https://www.dota2.com.cn/favicon.ico' alt=''></Image>
+                                </div>
+                                <div className='ml-1 lg:ml-2'>Let&apos;s play some dota!</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className='mx-auto w-1/2 hidden lg:block border-b border-slate-200 mb-6' />
+
+                    <div className='lg:text-center lg:w-full'>
+                        {/* <div
                             className='hidden lg:flex items-center justify-center cursor-pointer mb-4'
                             onClick={() => window.open('https://reactjs.org/')}
                         >
@@ -109,7 +139,7 @@ const Home: NextPage<{ posts: API.Article[] }> = (props) => {
                                 />
                             </div>
                             <span className='ml-4 text-3xl text-[#61dafb] font-bold'>React</span>
-                        </div>
+                        </div> */}
 
                         <div className='hidden lg:flex justify-center mb-6 xl:mb-8 w-[25%] mx-auto'>
                             <a href='https://nextjs.org/' target='_blank' rel='noreferrer'>
@@ -201,10 +231,12 @@ export default Home
 
 export const getStaticProps: GetStaticProps = async (context) => {
     const posts = await getPostMany({ take: 6 })
+    const staticsCount = await getPortalStatisticsCount()
 
     return {
         props: {
             posts,
+            staticsCount,
         },
         revalidate: 60,
     }

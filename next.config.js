@@ -4,6 +4,9 @@ const nextConfig = {
   swcMinify: true,
   experimental: {
     scrollRestoration: true
+  },
+  images: {
+    domains: ['www.dota2.com.cn']
   }
 }
 
