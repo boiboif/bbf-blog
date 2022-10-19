@@ -51,6 +51,7 @@ const Menu = (props: MenuProps) => {
     let menuList = [
         { name: '首页', path: '/' },
         { name: '分类', path: '/category' },
+        { name: '标签', path: '/tag' },
     ]
 
     menuList = [...menuList, userInfoStore.userInfo ? { name: '后台', path: '/manager' } : { name: '登录', path: '' }]

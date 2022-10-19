@@ -2,7 +2,7 @@ import { GetStaticProps, NextPage } from 'next'
 import { useRouter } from 'next/router'
 import React, { useMemo } from 'react'
 import moment from 'moment'
-import { getPostMany, getCateMany } from '@/service'
+import { getPostMany, getTagAll } from '@/service'
 import dynamic from 'next/dynamic'
 import Head from 'next/head'
 import Link from 'next/link'
@@ -10,10 +10,9 @@ import Link from 'next/link'
 const ArticleLayout = dynamic(() => import('@/components/articleLayout'))
 const ArticleListItem = dynamic(() => import('@/components/articleListItem'))
 
-const Category: NextPage<{ articleList: API.Article[]; cateList: API.Cate[] }> = (props) => {
-    const { articleList, cateList } = props
+const Tag: NextPage<{ articleList: API.Article[]; tagList: API.Tag[] }> = (props) => {
+    const { articleList, tagList } = props
     const router = useRouter()
-    const cateId = router.query.cateId as string
 
     const toTag = (tagId: string) => {
         router.push({
@@ -25,13 +24,14 @@ const Category: NextPage<{ articleList: API.Article[]; cateList: API.Cate[] }> =
     }
 
     const filterArticleList = useMemo(() => {
-        return cateId ? articleList.filter((v) => v.cateId.toString() === cateId) : articleList
-    }, [articleList, cateId])
+        const tags = router.query.tags ? (router.query.tags as string).split(',') : []
+        return tags.length > 0 ? articleList.filter((v) => v.tags?.some((t) => tags.includes(t.id.toString()))) : articleList
+    }, [articleList, router.query.tags])
 
     return (
-        <ArticleLayout cateList={cateList} title='分类'>
+        <ArticleLayout tagList={tagList} title='标签'>
             <Head>
-                <title>BBF的个人博客 - 分类</title>
+                <title>BBF的个人博客 - 标签</title>
             </Head>
             {filterArticleList.map((article) => {
                 return (
@@ -60,12 +60,12 @@ const Category: NextPage<{ articleList: API.Article[]; cateList: API.Cate[] }> =
 
 export const getStaticProps: GetStaticProps = async () => {
     const allPost = await getPostMany()
-    const allCate = await getCateMany()
+    const allTag = await getTagAll()
 
     return {
         props: {
             articleList: allPost ?? [],
-            cateList: allCate ?? [],
+            tagList: allTag ?? [],
         },
         revalidate: 60,
     }
@@ -84,4 +84,4 @@ export const getStaticProps: GetStaticProps = async () => {
 //     }
 // }
 
-export default Category
+export default Tag

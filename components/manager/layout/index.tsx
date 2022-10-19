@@ -11,6 +11,7 @@ const { Content, Sider, Header } = Layout
 
 const routes = [
     { label: '首页', key: '/manager' },
+    { label: '标签管理', key: '/manager/tag' },
     { label: '分类管理', key: '/manager/cate' },
     { label: '文章管理', key: '/manager/article' },
 ]

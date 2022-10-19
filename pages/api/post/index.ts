@@ -1,5 +1,5 @@
 /* eslint-disable no-case-declarations */
-import { getArticleMany } from '@/service'
+import { getPostMany } from '@/service'
 import { authMiddleware } from '@/utils/jwt'
 import { PrismaClient } from '@prisma/client'
 import { NextApiRequest, NextApiResponse } from 'next'
@@ -8,13 +8,11 @@ export default async function index(req: NextApiRequest, res: NextApiResponse) {
     let prisma: PrismaClient
     switch (req.method) {
         case 'GET':
-            prisma = new PrismaClient()
-            const allPost = await getArticleMany({ take: Number() || undefined, skip: Number(req.query.page) || undefined })
+            const allPost = await getPostMany({ take: Number() || undefined, skip: Number(req.query.page) || undefined })
             res.status(200).json({
                 data: allPost,
                 success: true,
             })
-            await prisma.$disconnect()
             break
 
         case 'POST':
@@ -24,8 +22,11 @@ export default async function index(req: NextApiRequest, res: NextApiResponse) {
 
             const post = await prisma.post.create({
                 data: {
-                    authorId,
                     ...req.body,
+                    authorId,
+                    tags: {
+                        connect: req.body.tags.map((t: number) => ({ id: t })) || [],
+                    },
                 },
             })
             res.status(200).json({
@@ -41,7 +42,13 @@ export default async function index(req: NextApiRequest, res: NextApiResponse) {
             await authMiddleware(req, res)
 
             const newPost = await prisma.post.update({
-                data: req.body,
+                data: {
+                    ...req.body,
+                    tags: {
+                        set: [],
+                        connect: req.body.tags.map((t: number) => ({ id: t })) || [],
+                    },
+                },
                 where: {
                     id: req.body.id,
                 },
@@ -57,6 +64,15 @@ export default async function index(req: NextApiRequest, res: NextApiResponse) {
             prisma = new PrismaClient()
 
             await authMiddleware(req, res)
+
+            await prisma.post.update({
+                where: { id: req.body.id },
+                data: {
+                    tags: {
+                        set: [],
+                    },
+                },
+            })
 
             await prisma.post.delete({ where: { id: req.body.id } })
             res.status(200).json({ success: true })

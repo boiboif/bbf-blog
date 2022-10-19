@@ -11,7 +11,7 @@ export default async function index(req: NextApiRequest, res: NextApiResponse) {
 
             prisma = new PrismaClient()
             const { id } = req.query
-            const userInfo = await prisma.user.findUnique({ where: { id: Number(id) } })
+            const userInfo = await prisma.user.findUnique({ where: { id: Number(id) }, include: { contactInfo: true } })
             res.status(200).json({
                 data: { ...userInfo, passwordHash: undefined },
                 success: true,

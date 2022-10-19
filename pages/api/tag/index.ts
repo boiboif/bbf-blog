@@ -1,14 +1,12 @@
 /* eslint-disable no-case-declarations */
-import { getCateMany } from '@/service'
+import { addTag, deleteTag, getTagPage, updateTag } from '@/service/tag'
 import { authMiddleware } from '@/utils/jwt'
-import { PrismaClient } from '@prisma/client'
 import { NextApiRequest, NextApiResponse } from 'next'
 
 export default async function index(req: NextApiRequest, res: NextApiResponse) {
-    let prisma: PrismaClient
     switch (req.method) {
         case 'GET':
-            const allCate = await getCateMany()
+            const allCate = await getTagPage({ skip: Number(req.query.page) || undefined, take: Number(req.query.size) || undefined })
             res.status(200).json({
                 data: allCate,
                 success: true,
@@ -17,44 +15,29 @@ export default async function index(req: NextApiRequest, res: NextApiResponse) {
 
         case 'POST':
             await authMiddleware(req, res)
-            prisma = new PrismaClient()
-            const cate = await prisma.post_cate.create({ data: { name: req.body.name } })
+            const cate = await addTag(req.body)
             res.status(200).json({
                 data: cate,
                 success: true,
             })
-            await prisma.$disconnect()
+
             break
 
         case 'PUT':
             await authMiddleware(req, res)
-            prisma = new PrismaClient()
-            const updateData = await prisma.post_cate.update({ data: req.body, where: { id: req.body.id } })
+            const updateData = await updateTag(req.body)
             res.status(200).json({
                 data: updateData,
                 success: true,
             })
-            await prisma.$disconnect()
             break
 
         case 'DELETE':
             await authMiddleware(req, res)
-            prisma = new PrismaClient()
-
-            const hasPost = await prisma.post.findFirst({ where: { cateId: req.body.id } })
-
-            if (hasPost) {
-                return res.status(200).json({
-                    success: false,
-                    message: '该分类下存在文章，请先删除文章后进行删除！',
-                })
-            }
-
-            await prisma.post_cate.delete({ where: { id: req.body.id } })
+            await deleteTag({ id: req.body.id })
             res.status(200).json({
                 success: true,
             })
-            await prisma.$disconnect()
             break
 
         default:

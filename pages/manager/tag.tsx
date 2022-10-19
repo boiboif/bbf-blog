@@ -1,32 +1,30 @@
 import React, { useState } from 'react'
-import { delArticle, getArticleAll, getCateAll, getTagAll } from '@/clientApi'
+import { delTag, getTagAll } from '@/clientApi'
 import CustomForm from '@/components/manager/customForm'
 import ManagerLayout from '@/components/manager/layout'
 import TableMoreAction from '@/components/manager/tableMoreAction'
 import { useRequest } from 'ahooks'
 import { Button, message, Space, Table } from 'antd'
 import { ColumnsType } from 'antd/lib/table'
-import ArticleModal from '@/components/manager/article/modal'
+import TagModal from '@/components/manager/tag/modal'
 import useRecord from '@/hook/useRecord'
 
-const Article = () => {
+const Tag = () => {
     const [searchParam, setSearchParams] = useState({ name: '' })
-    const { data, refresh, loading } = useRequest(() => getArticleAll(searchParam).then((res) => res?.data), {
+    const { data, refresh, loading } = useRequest(() => getTagAll(searchParam).then((res) => res?.data), {
         refreshDeps: [searchParam],
     })
-    const articleModal = useRecord<API.Article>()
-    const { data: cateList } = useRequest(() => getCateAll().then((res) => res?.data))
-    const { data: tagList } = useRequest(() => getTagAll().then((res) => res?.data))
+    const tagModal = useRecord<API.Tag>()
 
-    const columns: ColumnsType<API.Article> = [
+    const columns: ColumnsType<API.Tag> = [
         { title: '编号', dataIndex: 'id' },
-        { title: '文章标题', dataIndex: 'title' },
+        { title: '标签名称', dataIndex: 'name' },
         {
             title: '操作',
             render: (_, record) => {
                 return (
                     <Space>
-                        <a onClick={() => articleModal.show(record)}>编辑</a>
+                        <a onClick={() => tagModal.show(record)}>编辑</a>
                         <TableMoreAction
                             record={record}
                             menuList={[
@@ -35,7 +33,7 @@ const Article = () => {
                                     className: 'text-red-500',
                                     confirmProps: {
                                         onOk: async () => {
-                                            await delArticle({ id: record.id })
+                                            await delTag({ id: record.id })
                                             message.success('删除成功！')
                                             refresh()
                                         },
@@ -51,18 +49,11 @@ const Article = () => {
 
     return (
         <div className='card'>
-            <ArticleModal
-                cateList={cateList}
-                tagList={tagList}
-                visible={articleModal.visible}
-                record={articleModal.record}
-                onCancel={articleModal.hide}
-                callback={refresh}
-            />
-            <CustomForm items={[{ name: 'title', label: '文章标题' }]} formSearch={setSearchParams}></CustomForm>
+            <TagModal visible={tagModal.visible} record={tagModal.record} onCancel={tagModal.hide} callback={refresh} />
+            <CustomForm items={[{ name: 'name', label: '标签名称' }]} formSearch={setSearchParams}></CustomForm>
 
             <div className='mb-4'>
-                <Button type='primary' onClick={() => articleModal.show()}>
+                <Button type='primary' onClick={() => tagModal.show()}>
                     新增
                 </Button>
             </div>
@@ -72,8 +63,8 @@ const Article = () => {
     )
 }
 
-Article.getLayout = (page: any) => {
+Tag.getLayout = (page: any) => {
     return <ManagerLayout>{page}</ManagerLayout>
 }
 
-export default Article
+export default Tag

@@ -16,9 +16,10 @@ import { useRef, useState } from 'react'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import styles from '@/styles/index.module.scss'
-import { getArticleMany } from '@/service'
+import { getPostMany } from '@/service'
 import Head from 'next/head'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 const Banner = dynamic(() => import('@/components/banner'))
 const Controller = dynamic(() => import('@/components/banner/controller'))
@@ -28,6 +29,8 @@ const Home: NextPage<{ posts: API.Article[] }> = (props) => {
     const { posts } = props
     const [activeIndex, setActiveIndex] = useState(0)
     const readyChangeCover = useRef(true)
+
+    const router = useRouter()
 
     const imgList = [
         { on: img0_on, off: img0_off, cover: img0 },
@@ -74,7 +77,7 @@ const Home: NextPage<{ posts: API.Article[] }> = (props) => {
                 </div>
 
                 <div className='w-[91%] lg:w-auto lg:flex-1 mx-auto pt-5 lg:pt-11 flex lg:items-center lg:flex-col flex-wrap overflow-hidden'>
-                    <div className='w-20 h-20 lg:w-32 lg:h-32 xl:w-40 xl:h-40 relative rounded-[50%] overflow-hidden mb-4'>
+                    <div className='w-20 h-20 lg:w-32 lg:h-32 xl:w-40 xl:h-40 relative rounded-[50%] overflow-hidden mb-4 mr-4 lg:mr-0'>
                         <Image layout='fill' src={avatar} alt='' />
                     </div>
                     <div className='w-[50%] sm:w-[20%] lg:w-[80%] text-3xl lg:text-4xl font-bold lg:pb-4 mb-2 lg:mb-4 lg:border-b lg:border-slate-200 flex lg:justify-center items-center'>
@@ -165,6 +168,15 @@ const Home: NextPage<{ posts: API.Article[] }> = (props) => {
                                     cate={article.cate.name}
                                     publishDate={article.createdAt}
                                     title={article.title}
+                                    onTagClick={(tagId) =>
+                                        router.push({
+                                            pathname: `/tag`,
+                                            query: {
+                                                tags: tagId,
+                                            },
+                                        })
+                                    }
+                                    tags={article.tags}
                                 ></ArticleListItem>
                                 <div className='h-[1px] bg-gray-300'></div>
                             </a>
@@ -176,8 +188,8 @@ const Home: NextPage<{ posts: API.Article[] }> = (props) => {
             <div className={styles.bg}>
                 <div className='w-[91%] mx-auto max-w-[1500px] pt-5 lg:pt-10'>
                     <div className='font-mono font-black tracking-wider pb-5 lg:pb-7 text-right'>
-                        <span className='text-4xl lg:text-7xl text-teal-500 font-serif font-semibold'>F</span>
-                        <span className='text-3xl lg:text-6xl font-sans'>ollow</span>
+                        <span className='text-4xl lg:text-7xl text-teal-500 font-serif font-semibold'>T</span>
+                        <span className='text-3xl lg:text-6xl font-sans'>o Be Continue</span>
                     </div>
                 </div>
             </div>
@@ -188,12 +200,12 @@ const Home: NextPage<{ posts: API.Article[] }> = (props) => {
 export default Home
 
 export const getStaticProps: GetStaticProps = async (context) => {
-    const posts = await getArticleMany({ take: 6 })
+    const posts = await getPostMany({ take: 6 })
 
     return {
         props: {
             posts,
         },
-        revalidate: 60
+        revalidate: 60,
     }
 }

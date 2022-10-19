@@ -27,7 +27,7 @@ specifiers:
   axios: ^0.27.2
   bbf-tree-utils: ^0.1.0
   bcryptjs: ^2.4.3
-  bytemd: ^1.17.2
+  bytemd: ^1.17.4
   classnames: ^2.3.1
   cookie: ^0.5.0
   eslint: 8.20.0
@@ -54,13 +54,13 @@ specifiers:
 
 dependencies:
   '@ant-design/icons': 4.7.0_biqbaboplfbrettd7655fr4n2y
-  '@bytemd/plugin-breaks': 1.17.2_bytemd@1.17.2
-  '@bytemd/plugin-frontmatter': 1.17.2_bytemd@1.17.2
-  '@bytemd/plugin-gemoji': 1.17.2_bytemd@1.17.2
-  '@bytemd/plugin-gfm': 1.17.2_bytemd@1.17.2
-  '@bytemd/plugin-highlight-ssr': 1.17.2_bytemd@1.17.2
-  '@bytemd/plugin-medium-zoom': 1.17.2_bytemd@1.17.2
-  '@bytemd/plugin-mermaid': 1.17.2_bytemd@1.17.2
+  '@bytemd/plugin-breaks': 1.17.2_bytemd@1.17.4
+  '@bytemd/plugin-frontmatter': 1.17.2_bytemd@1.17.4
+  '@bytemd/plugin-gemoji': 1.17.2_bytemd@1.17.4
+  '@bytemd/plugin-gfm': 1.17.2_bytemd@1.17.4
+  '@bytemd/plugin-highlight-ssr': 1.17.2_bytemd@1.17.4
+  '@bytemd/plugin-medium-zoom': 1.17.2_bytemd@1.17.4
+  '@bytemd/plugin-mermaid': 1.17.2_bytemd@1.17.4
   '@bytemd/react': 1.17.2_react@18.2.0
   '@prisma/client': 4.3.1_prisma@4.3.1
   '@types/bcryptjs': 2.4.2
@@ -72,7 +72,7 @@ dependencies:
   axios: 0.27.2
   bbf-tree-utils: 0.1.0
   bcryptjs: 2.4.3
-  bytemd: 1.17.2
+  bytemd: 1.17.4
   classnames: 2.3.1
   cookie: 0.5.0
   github-markdown-css: 5.1.0
@@ -165,74 +165,74 @@ packages:
     resolution: {integrity: sha512-mgmE7XBYY/21erpzhexk4Cj1cyTQ9LzvnTxtzM17BJ7ERMNE6W72mQRo0I1Ud8eFJ+RVVIcBNhLFZ3GX4XFz5w==}
     dev: false
 
-  /@bytemd/plugin-breaks/1.17.2_bytemd@1.17.2:
+  /@bytemd/plugin-breaks/1.17.2_bytemd@1.17.4:
     resolution: {integrity: sha512-z3QqP+EwjC5U/mNtDtplvyj4uZW30LnYwRVGeeLTlFa3Gn0tPvtbVCs7gqt+c0HrSN+L3Kazly6yreeslePG+A==}
     peerDependencies:
       bytemd: ^1.5.0
     dependencies:
-      bytemd: 1.17.2
+      bytemd: 1.17.4
       remark-breaks: 3.0.2
     dev: false
 
-  /@bytemd/plugin-frontmatter/1.17.2_bytemd@1.17.2:
+  /@bytemd/plugin-frontmatter/1.17.2_bytemd@1.17.4:
     resolution: {integrity: sha512-mqXS8tkcuN1RikmughOn2TZCj9CH+rRlKprmawgUUhYyrhtYJBg2j7hjKAyNzFQgkGZc/CZSUb9Gwj1jv9j31g==}
     peerDependencies:
       bytemd: ^1.5.0
     dependencies:
       '@types/js-yaml': 4.0.5
-      bytemd: 1.17.2
+      bytemd: 1.17.4
       js-yaml: 4.1.0
       remark-frontmatter: 4.0.1
       vfile: 5.3.5
     dev: false
 
-  /@bytemd/plugin-gemoji/1.17.2_bytemd@1.17.2:
+  /@bytemd/plugin-gemoji/1.17.2_bytemd@1.17.4:
     resolution: {integrity: sha512-Czfx0+cbRlPm0/9I+fONimF6/5zyedGMNPTR3Ec2Li/cD3KJ/sCE7znx3A53C2phwjm8GiDtFfPgzPpLvTqacw==}
     peerDependencies:
       bytemd: ^1.5.0
     dependencies:
-      bytemd: 1.17.2
+      bytemd: 1.17.4
       remark-gemoji: 7.0.1
     dev: false
 
-  /@bytemd/plugin-gfm/1.17.2_bytemd@1.17.2:
+  /@bytemd/plugin-gfm/1.17.2_bytemd@1.17.4:
     resolution: {integrity: sha512-u3DBMdPTcRMIRvzc582ylZhvrFumnoGjWNnUO3aXQH0mJ98XyGXxdWYAh7jow+XevhApp966ks5bvDAbYjzRTQ==}
     peerDependencies:
       bytemd: ^1.5.0
     dependencies:
       '@icon-park/svg': 1.4.2
-      bytemd: 1.17.2
+      bytemd: 1.17.4
       remark-gfm: 3.0.1
     transitivePeerDependencies:
       - supports-color
     dev: false
 
-  /@bytemd/plugin-highlight-ssr/1.17.2_bytemd@1.17.2:
+  /@bytemd/plugin-highlight-ssr/1.17.2_bytemd@1.17.4:
     resolution: {integrity: sha512-nwhynUGbIBtGQb5UFgnkaWusPNGDdyvNJE+d4TeDBpCGi2FHcmaUyh6elbwVF4vRVdGWcZnn/pqd7Oij7ZIvEA==}
     peerDependencies:
       bytemd: ^1.5.0
     dependencies:
-      bytemd: 1.17.2
+      bytemd: 1.17.4
       rehype-highlight: 5.0.2
     dev: false
 
-  /@bytemd/plugin-medium-zoom/1.17.2_bytemd@1.17.2:
+  /@bytemd/plugin-medium-zoom/1.17.2_bytemd@1.17.4:
     resolution: {integrity: sha512-pbiku1dgaKh8JpFKxIH1aDGG6yI8gJMyLkOWGAz7PzOkK2Z5Gm/fUg4p4p6P+/Rcse0mSA82ZVCmHHQLdkVoaQ==}
     peerDependencies:
       bytemd: ^1.5.0
     dependencies:
-      bytemd: 1.17.2
+      bytemd: 1.17.4
       medium-zoom: 1.0.6
     dev: false
 
-  /@bytemd/plugin-mermaid/1.17.2_bytemd@1.17.2:
+  /@bytemd/plugin-mermaid/1.17.2_bytemd@1.17.4:
     resolution: {integrity: sha512-/s3jY49ugPep4rwzZzKm6+rKAsJ7W3uTu/ht6X/pWCh1Me35MQIqEbgGaAxz/WOp+LCB/fJRzyA8ADsfsAP66A==}
     peerDependencies:
       bytemd: ^1.5.0
     dependencies:
       '@icon-park/svg': 1.4.2
       '@types/mermaid': 8.2.9
-      bytemd: 1.17.2
+      bytemd: 1.17.4
       mermaid: 9.1.6
     dev: false
 
@@ -946,6 +946,33 @@ packages:
 
   /bytemd/1.17.2:
     resolution: {integrity: sha512-t8TljTgRU1+OPPbxBPjvnvh8Nti9FAirmKQhgSDYMQnXs9SGw6tTRJy3f8ZZoD+rnYt8hyf035ADDfU1/bTJhQ==}
+    dependencies:
+      '@icon-park/svg': 1.4.2
+      '@popperjs/core': 2.11.6
+      '@types/codemirror': 5.60.5
+      '@types/hast': 2.3.4
+      '@types/lodash-es': 4.17.6
+      '@types/mdast': 3.0.10
+      codemirror-ssr: 0.65.0_@types+codemirror@5.60.5
+      hast-util-sanitize: 4.0.0
+      lodash-es: 4.17.21
+      rehype-raw: 6.1.1
+      rehype-sanitize: 5.0.1
+      rehype-stringify: 9.0.3
+      remark-parse: 10.0.1
+      remark-rehype: 10.1.0
+      select-files: 1.0.1
+      tippy.js: 6.3.7
+      unified: 10.1.2
+      unist-util-visit: 4.1.1
+      vfile: 5.3.5
+      word-count: 0.2.2
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
+
+  /bytemd/1.17.4:
+    resolution: {integrity: sha512-TYLiA2rToR1Q4yUFt9WXXeQ2RPoC+nQPuXOwe0h9dVs0cDMOPcGm7aEsSIpvAjyYE+PrUY9h3asPCUd+6TGcRQ==}
     dependencies:
       '@icon-park/svg': 1.4.2
       '@popperjs/core': 2.11.6

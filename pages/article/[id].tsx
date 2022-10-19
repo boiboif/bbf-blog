@@ -1,9 +1,8 @@
-import { getArticleById, getArticleMany, getCateMany } from '@/service'
+import { getPostById, getPostMany, getCateMany } from '@/service'
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next'
 import React from 'react'
 import dynamic from 'next/dynamic'
 import { Viewer } from '@bytemd/react'
-import ArticleListItem from '@/components/articleListItem'
 import breaks from '@bytemd/plugin-breaks'
 import frontmatter from '@bytemd/plugin-frontmatter'
 import gemoji from '@bytemd/plugin-gemoji'
@@ -20,6 +19,7 @@ import { useRouter } from 'next/router'
 import Head from 'next/head'
 
 const ArticleLayout = dynamic(() => import('@/components/articleLayout'))
+const ArticleListItem = dynamic(() => import('@/components/articleListItem'))
 const BackButton = dynamic(() => import('@/components/backButton'))
 
 const plugins = [
@@ -40,10 +40,18 @@ const ArticleDetail: NextPage<{ article: API.Article | null; cateList: API.Cate[
 
     const router = useRouter()
 
+    const toTag = (tagId: string) => {
+        router.push({
+            pathname: `/tag`,
+            query: {
+                tags: tagId,
+            },
+        })
+    }
+
     return (
         <ArticleLayout cateList={cateList} activeKey={article?.cateId.toString()}>
             <Head>
-                <title></title>
                 <title>{'BBF的个人博客 - ' + article?.title}</title>
             </Head>
             <ArticleListItem
@@ -51,6 +59,8 @@ const ArticleDetail: NextPage<{ article: API.Article | null; cateList: API.Cate[
                 title={article?.title}
                 cate={article?.cate.name}
                 publishDate={moment(article?.createdAt).format('YYYY-MM-DD')}
+                tags={article?.tags}
+                onTagClick={toTag}
             ></ArticleListItem>
             <div className='h-[1px] bg-gray-300'></div>
             <Viewer plugins={plugins} value={article?.content || ''}></Viewer>
@@ -62,7 +72,7 @@ const ArticleDetail: NextPage<{ article: API.Article | null; cateList: API.Cate[
 }
 
 export const getStaticPaths: GetStaticPaths = async (params) => {
-    const posts = await getArticleMany()
+    const posts = await getPostMany()
 
     return {
         paths: posts.map((item) => ({ params: { id: item.id.toString() } })),
@@ -71,7 +81,7 @@ export const getStaticPaths: GetStaticPaths = async (params) => {
 }
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-    const article = await getArticleById(params!.id as string)
+    const article = await getPostById(params!.id as string)
     const allCate = await getCateMany()
 
     if (!article) {
@@ -92,7 +102,7 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 // export const getServerSideProps: GetServerSideProps = async (context) => {
 //     const { id } = context.query
 
-// const article = await getArticleById(id as string)
+// const article = await getPostById(id as string)
 // const allCate = await getCateMany()
 
 // return {

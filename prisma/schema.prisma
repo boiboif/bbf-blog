@@ -1,7 +1,7 @@
 generator client {
     provider        = "prisma-client-js"
     previewFeatures = ["referentialIntegrity"]
-    binaryTargets = ["native", "debian-openssl-1.1.x"]
+    binaryTargets   = ["native", "debian-openssl-1.1.x"]
 }
 
 datasource db {
@@ -9,6 +9,7 @@ datasource db {
     referentialIntegrity = "prisma"
     url                  = env("DATABASE_URL")
     // url                  = env("DEV_DATABASE_URL")
+    // url                  = env("LOCAL_DATABASE_URL")
     // shadowDatabaseUrl    = env("SHADOW_DATABASE_URL")
 }
 
@@ -20,7 +21,7 @@ model post {
     content   String    @db.Text
     author    user      @relation(fields: [authorId], references: [id])
     authorId  Int
-    tags      String?
+    tags      tag[]
     desc      String?
     cover     String?
     viewCount Int?
@@ -29,6 +30,14 @@ model post {
     cateId    Int
 
     @@index(authorId)
+}
+
+model tag {
+    id        Int      @id @default(autoincrement())
+    name      String   @db.VarChar(255)
+    posts     post[]
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
 
 model post_cate {
@@ -63,3 +72,14 @@ model contactInfo {
     tel    String?
     wechat String?
 }
+
+// model comment {
+//     id            Int       @id @default(autoincrement())
+//     content       String
+//     replyComentId Int?
+//     replayComment comment?  @relation("CommentReply", fields: [replyComentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+//     replays       comment[] @relation("CommentReply")
+//     avaliable     Boolean   @default(true)
+//     createdAt     DateTime  @default(now())
+//     updatedAt     DateTime  @updatedAt
+// }

@@ -1,6 +1,12 @@
+import { Prisma } from '@prisma/client'
 import customApiHandler from './customApiHandler'
 
 export const getUserAll = customApiHandler('/api/user', 'GET')
+
+export const getTagAll = customApiHandler<CustomResponse<API.Tag[]>>('/api/tag', 'GET')
+export const addTag = customApiHandler('/api/tag', 'POST')
+export const putTag = customApiHandler('/api/tag', 'PUT')
+export const delTag = customApiHandler('/api/tag', 'DELETE')
 
 export const getCateAll = customApiHandler<CustomResponse<API.Cate[]>>('/api/cate', 'GET')
 export const addCate = customApiHandler('/api/cate', 'POST')

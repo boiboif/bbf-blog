@@ -9,10 +9,10 @@ const formatObjArr =
             return keys.reduce((acc, cur) => {
                 return {
                     ...acc,
-                    [cur]: rules(item[cur]),
+                    [cur]: rules(item[cur]) as string,
                 }
             }, item)
         })
 
 export const formatDate = format('YYYY-MM-DD')
-export const formatObjArrTime = formatObjArr(['createdAt', 'updatedAt'], formatDate)
+export const formatObjArrDate = formatObjArr(['createdAt', 'updatedAt'], formatDate)

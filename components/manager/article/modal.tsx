@@ -37,10 +37,11 @@ interface ModalProps {
     record?: API.Article | null
     callback?: () => void
     cateList?: API.Cate[]
+    tagList?: API.Tag[]
 }
 
 const ArticleModal = (props: ModalProps) => {
-    const { visible, record, onCancel, title, callback, cateList } = props
+    const { visible, record, onCancel, title, callback, cateList, tagList } = props
     const [form] = Form.useForm()
     const [value, setValue] = useState('')
 
@@ -48,6 +49,7 @@ const ArticleModal = (props: ModalProps) => {
         if (record && visible) {
             form.setFieldsValue({
                 ...record,
+                tags: record.tags?.map((t) => t.id),
             })
             setValue(record.content)
         }
@@ -88,7 +90,7 @@ const ArticleModal = (props: ModalProps) => {
 
     return (
         <Modal
-            className='!w-full lg:!w-[1200px]'
+            className='!w-full lg:!w-[1500px]'
             title={title ? title : record ? '编辑' : '新增'}
             visible={visible}
             onCancel={handleCancel}
@@ -109,6 +111,17 @@ const ArticleModal = (props: ModalProps) => {
                 <Form.Item name='cateId' label='分类' rules={[{ required: true }]}>
                     <Select>
                         {cateList?.map((cate) => {
+                            return (
+                                <Option key={cate.id} value={cate.id}>
+                                    {cate.name}
+                                </Option>
+                            )
+                        })}
+                    </Select>
+                </Form.Item>
+                <Form.Item name='tags' label='标签'>
+                    <Select showSearch optionFilterProp='children' mode='multiple' allowClear>
+                        {tagList?.map((cate) => {
                             return (
                                 <Option key={cate.id} value={cate.id}>
                                     {cate.name}

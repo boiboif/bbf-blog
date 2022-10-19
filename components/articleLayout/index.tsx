@@ -3,19 +3,24 @@ import React, { PropsWithChildren, useEffect, useRef } from 'react'
 import style from './index.module.scss'
 import logo from '@/public/img/logo.png'
 import Image from 'next/image'
-import CateList from '@/components/cateList'
+import dynamic from 'next/dynamic'
+
+const CateList = dynamic(() => import('@/components/cateList'))
+const TagList = dynamic(() => import('@/components/tagList'))
 
 interface Props {
-    cateList: API.Cate[]
+    cateList?: API.Cate[]
+    tagList?: API.Tag[]
     title?: string
     activeKey?: string
 }
 
 const ArticleLayout = (props: PropsWithChildren<Props>) => {
-    const { children, cateList, title = '文章', activeKey } = props
+    const { children, cateList, tagList, title = '文章', activeKey } = props
     const ref = useRef<HTMLDivElement>(null)
 
     const router = useRouter()
+    const tags = router.query.tags ? (router.query.tags as string).split(',') : []
 
     useEffect(() => {
         ref.current?.scrollIntoView()
@@ -26,6 +31,15 @@ const ArticleLayout = (props: PropsWithChildren<Props>) => {
             pathname: '/category',
             query: {
                 cateId,
+            },
+        })
+    }
+
+    const tagChange = (keys: string[]) => {
+        router.push({
+            pathname: '/tag',
+            query: {
+                tags: keys.join(','),
             },
         })
     }
@@ -47,11 +61,19 @@ const ArticleLayout = (props: PropsWithChildren<Props>) => {
                 </div>
 
                 <div className='mb-10'>
-                    <CateList
-                        activeKey={(router.query.cateId as string) || activeKey || ''}
-                        list={cateList.map((item) => ({ key: item.id.toString(), name: item.name }))}
-                        onChange={cateChange}
-                    ></CateList>
+                    {cateList ? (
+                        <CateList
+                            activeKey={(router.query.cateId as string) || activeKey || ''}
+                            list={cateList.map((item) => ({ key: item.id.toString(), name: item.name }))}
+                            onChange={cateChange}
+                        ></CateList>
+                    ) : tagList ? (
+                        <TagList
+                            activeKeys={tags}
+                            list={tagList.map((item) => ({ key: item.id.toString(), name: item.name }))}
+                            onChange={tagChange}
+                        />
+                    ) : null}
                 </div>
 
                 <div className='h-[1px] bg-gray-300'></div>
