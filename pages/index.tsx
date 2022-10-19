@@ -21,6 +21,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { getPortalStatisticsCount } from '@/service/statistics'
+import { Space } from 'antd'
 
 const Banner = dynamic(() => import('@/components/banner'))
 const Controller = dynamic(() => import('@/components/banner/controller'))
@@ -116,8 +117,8 @@ const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsC
                             </div>
                             <div className='text-5xl text-rose-500 mb-2 hidden lg:block leading-4 xl:leading-7'>×</div>
                             <div className='text-md lg:text-lg xl:text-xl font-bold mb-6 truncate flex items-center lg:justify-center'>
-                                <div className="w-4 h-4 lg:w-[20px] lg:h-[20px] relative">
-                                    <Image layout="fill" src='https://www.dota2.com.cn/favicon.ico' alt=''></Image>
+                                <div className='w-4 h-4 lg:w-[20px] lg:h-[20px] relative'>
+                                    <Image layout='fill' src='https://www.dota2.com.cn/favicon.ico' alt=''></Image>
                                 </div>
                                 <div className='ml-1 lg:ml-2'>Let&apos;s play some dota!</div>
                             </div>
@@ -222,6 +223,23 @@ const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsC
                         <span className='text-3xl lg:text-6xl font-sans'>o Be Continue</span>
                     </div>
                 </div>
+
+                <div className='pt-10 pb-5 text-center'>
+                    <Space>
+                        © 2022 BBF Powered by
+                        <a href='https://nextjs.org/' target='_blank' rel='noreferrer'>
+                            Next.js
+                        </a>
+                        &
+                        <a href='https://www.prisma.io/' target='_blank' rel='noreferrer' className='text-teal-500'>
+                            Prisma
+                        </a>
+                        &
+                        <a href='https://tailwindcss.com/' target='_blank' rel='noreferrer' className='text-rose-500'>
+                            tailwindcss.css
+                        </a>
+                    </Space>
+                </div>
             </div>
         </div>
     )
@@ -230,7 +248,7 @@ const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsC
 export default Home
 
 export const getStaticProps: GetStaticProps = async (context) => {
-    const posts = await getPostMany({ take: 6 })
+    const posts = await getPostMany({ take: 8 })
     const staticsCount = await getPortalStatisticsCount()
 
     return {
