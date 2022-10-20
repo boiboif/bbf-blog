@@ -85,7 +85,7 @@ const CustomLayout = (props: PropsWithChildren) => {
             </div>
 
             <div className='fixed right-4 bottom-10 lg:right-28 lg:bottom-28 z-50 w-[100px] h-[100px] lg:w-[200px] lg:h-[200px]'>
-                <SakanaReact width="100%" lineWidth={3}></SakanaReact>
+                <SakanaReact width='100%' lineWidth={3}></SakanaReact>
             </div>
 
             <div

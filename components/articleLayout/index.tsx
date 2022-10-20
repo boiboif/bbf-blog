@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic'
 
 const CateList = dynamic(() => import('@/components/cateList'))
 const TagList = dynamic(() => import('@/components/tagList'))
+const Footer = dynamic(() => import('@/components/footer'))
 
 interface Props {
     cateList?: API.Cate[]
@@ -45,7 +46,7 @@ const ArticleLayout = (props: PropsWithChildren<Props>) => {
     }
 
     return (
-        <div className='relative pb-10' ref={ref}>
+        <div className='relative' ref={ref}>
             <div className={style.bg}></div>
 
             <div className='w-[89.3%] max-w-[620px] lg:max-w-[1500px] lg:w-[90%] pt-5 lg:pt-14 mx-auto relative'>
@@ -79,6 +80,8 @@ const ArticleLayout = (props: PropsWithChildren<Props>) => {
                 <div className='h-[1px] bg-gray-300'></div>
 
                 {children}
+
+                <Footer />
             </div>
         </div>
     )

@@ -21,11 +21,11 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { getPortalStatisticsCount } from '@/service/statistics'
-import { Space } from 'antd'
 
 const Banner = dynamic(() => import('@/components/banner'))
 const Controller = dynamic(() => import('@/components/banner/controller'))
 const ArticleListItem = dynamic(() => import('@/components/articleListItem'))
+const Footer = dynamic(() => import('@/components/footer'))
 
 const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsCount }> = (props) => {
     const { posts, staticsCount } = props
@@ -46,7 +46,7 @@ const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsC
                 <title>BBF的个人博客</title>
             </Head>
             <div className='lg:flex mx-auto max-w-[1600px]'>
-                <div className='w-full lg:w-[64%] lg:flex lg:flex-row-reverse lg:mb-12'>
+                <div className='w-full lg:w-[65%] lg:flex lg:flex-row-reverse lg:mb-12'>
                     <div className='flex-1'>
                         <Banner
                             activeIndex={activeIndex}
@@ -78,25 +78,25 @@ const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsC
                     </div>
                 </div>
 
-                <div className='w-[91%] lg:w-auto lg:flex-1 mx-auto pt-5 lg:pt-11 flex lg:items-center lg:flex-col flex-wrap overflow-hidden'>
+                <div className='w-[91%] lg:w-0 lg:flex-1 mx-auto pt-5 lg:pt-11 flex lg:items-center lg:flex-col flex-wrap'>
                     <div className='w-full lg:text-center flex items-center flex-wrap sm:flex-nowrap lg:block'>
-                        <div className='w-20 h-20 lg:w-32 lg:h-32 xl:w-40 xl:h-40 relative rounded-[50%] overflow-hidden mb-4 mr-8 sm:mr-4 lg:mx-auto'>
+                        <div className='w-20 h-20 lg:w-32 lg:h-32 xl:w-40 xl:h-40 relative rounded-[50%] overflow-hidden mb-4 mr-8 sm:mr-4 lg:mx-auto shadow-lg shadow-rose-300'>
                             <Image layout='fill' src={avatar} alt='' />
                         </div>
                         <div className='text-[#333] mr-6 lg:mr-0 mb-2 lg:mb-4 flex lg:justify-center gap-5 lg:gap-10 items-center'>
                             <div>
                                 <div className='lg:font-bold lg:text-xl'>文章</div>
-                                <div className='text-center text-gray-500 text-sm lg:text-xl'>{staticsCount.postCount}</div>
+                                <div className='text-center text-teal-500 text-sm lg:text-xl'>{staticsCount.postCount}</div>
                             </div>
 
                             <div>
                                 <div className='lg:font-bold lg:text-xl'>分类</div>
-                                <div className='text-center text-gray-500 text-sm lg:text-xl'>{staticsCount.cateCount}</div>
+                                <div className='text-center text-teal-500 text-sm lg:text-xl'>{staticsCount.cateCount}</div>
                             </div>
 
                             <div>
                                 <div className='lg:font-bold lg:text-xl'>标签</div>
-                                <div className='text-center text-gray-500 text-sm lg:text-xl'>{staticsCount.tagCount}</div>
+                                <div className='text-center text-teal-500 text-sm lg:text-xl'>{staticsCount.tagCount}</div>
                             </div>
                         </div>
 
@@ -155,10 +155,10 @@ const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsC
                         </div>
 
                         <div
-                            className='cursor-pointer hidden lg:block mb-6 xl:mb-8 w-[80%] mx-auto'
+                            className='cursor-pointer hidden lg:block mb-6 xl:mb-8 w-[70%] mx-auto'
                             onClick={() => window.open('https://lycoris-recoil.com')}
                         >
-                            <Image src={logo} alt='' />
+                            <Image layout="responsive" src={logo} alt='' />
                         </div>
 
                         <div
@@ -224,22 +224,7 @@ const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsC
                     </div>
                 </div>
 
-                <div className='pt-10 pb-5 text-center'>
-                    <Space>
-                        © 2022 BBF Powered by
-                        <a href='https://nextjs.org/' target='_blank' rel='noreferrer'>
-                            Next.js
-                        </a>
-                        &
-                        <a href='https://www.prisma.io/' target='_blank' rel='noreferrer' className='text-teal-500'>
-                            Prisma
-                        </a>
-                        &
-                        <a href='https://tailwindcss.com/' target='_blank' rel='noreferrer' className='text-rose-500'>
-                            tailwindcss.css
-                        </a>
-                    </Space>
-                </div>
+                <Footer />
             </div>
         </div>
     )

@@ -36,6 +36,7 @@ const ArticleListItem = (props: ArticleListItemProps) => {
                                 className='hover:text-rose-500 transition-colors'
                                 onClick={(e) => {
                                     e.stopPropagation()
+                                    e.preventDefault()
                                     onTagClick?.(t.id.toString())
                                 }}
                             >
@@ -70,6 +71,7 @@ const ArticleListItem = (props: ArticleListItemProps) => {
                                 className='hover:text-rose-500 transition-colors'
                                 onClick={(e) => {
                                     e.stopPropagation()
+                                    e.preventDefault()
                                     onTagClick?.(t.id.toString())
                                 }}
                             >
