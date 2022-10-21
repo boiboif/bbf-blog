@@ -9,15 +9,16 @@ import { isBrowser } from '@/utils/isBrowser'
 import { useScrollRestoration } from '@/hook/useScrollRestoration'
 import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
-import Loader from '../loader'
 import classNames from 'classnames'
 import { observer } from 'mobx-react-lite'
 import { BackTop } from 'antd'
 import SakanaReact from 'sakana-react'
 
-const LoginModal = dynamic(() => import('../login/loginModal'))
-const Menu = dynamic(() => import('../menu'))
-const MenuButton = dynamic(() => import('../menuButton'))
+const LoginModal = dynamic(() => import('@/components/login/loginModal'))
+const Menu = dynamic(() => import('@/components/menu'))
+const MenuButton = dynamic(() => import('@/components/menuButton'))
+const Dot = dynamic(() => import('@/components/dot'))
+const Loader = dynamic(() => import('@/components/loader'))
 
 const CustomLayout = (props: PropsWithChildren) => {
     const { loading } = useStore('globalStore')
@@ -98,6 +99,7 @@ const CustomLayout = (props: PropsWithChildren) => {
                 ])}
                 style={{ '--bg': isHidden ? variables.primaryColor : '#fff' } as React.CSSProperties}
             >
+                <Dot />
                 <BackTop target={() => document.getElementById('custom-layout')!}></BackTop>
                 <LoginModal visible={loginModal.visible} onCancel={loginModal.hide}></LoginModal>
                 <Menu

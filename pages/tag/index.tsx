@@ -6,6 +6,7 @@ import { getPostMany, getTagAll } from '@/service'
 import dynamic from 'next/dynamic'
 import Head from 'next/head'
 import Link from 'next/link'
+import { useDotShow } from '@/hook/useDotShow'
 
 const ArticleLayout = dynamic(() => import('@/components/articleLayout'))
 const ArticleListItem = dynamic(() => import('@/components/articleListItem'))
@@ -13,6 +14,7 @@ const ArticleListItem = dynamic(() => import('@/components/articleListItem'))
 const Tag: NextPage<{ articleList: API.Article[]; tagList: API.Tag[] }> = (props) => {
     const { articleList, tagList } = props
     const router = useRouter()
+    const dotShow = useDotShow()
 
     const toTag = (tagId: string) => {
         router.push({
@@ -33,27 +35,29 @@ const Tag: NextPage<{ articleList: API.Article[]; tagList: API.Tag[] }> = (props
             <Head>
                 <title>BBF的个人博客 - 标签</title>
             </Head>
-            {filterArticleList.map((article) => {
-                return (
-                    <Link
-                        key={article.id}
-                        href={{
-                            pathname: `/article/${article.id}`,
-                        }}
-                    >
-                        <a className='link'>
-                            <ArticleListItem
-                                cate={article.cate.name}
-                                publishDate={moment(article.createdAt).format('YYYY-MM-DD')}
-                                title={article.title}
-                                onTagClick={toTag}
-                                tags={article.tags}
-                            ></ArticleListItem>
-                            <div className='h-[1px] bg-gray-300'></div>
-                        </a>
-                    </Link>
-                )
-            })}
+            <div {...dotShow}>
+                {filterArticleList.map((article) => {
+                    return (
+                        <Link
+                            key={article.id}
+                            href={{
+                                pathname: `/article/${article.id}`,
+                            }}
+                        >
+                            <a className='link'>
+                                <ArticleListItem
+                                    cate={article.cate.name}
+                                    publishDate={moment(article.createdAt).format('YYYY-MM-DD')}
+                                    title={article.title}
+                                    onTagClick={toTag}
+                                    tags={article.tags}
+                                ></ArticleListItem>
+                                <div className='h-[1px] bg-gray-300'></div>
+                            </a>
+                        </Link>
+                    )
+                })}
+            </div>
         </ArticleLayout>
     )
 }

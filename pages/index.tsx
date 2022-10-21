@@ -21,6 +21,7 @@ import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { getPortalStatisticsCount } from '@/service/statistics'
+import { useDotShow } from '@/hook/useDotShow'
 
 const Banner = dynamic(() => import('@/components/banner'))
 const Controller = dynamic(() => import('@/components/banner/controller'))
@@ -31,7 +32,7 @@ const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsC
     const { posts, staticsCount } = props
     const [activeIndex, setActiveIndex] = useState(0)
     const readyChangeCover = useRef(true)
-
+    const dotShow = useDotShow()
     const router = useRouter()
 
     const imgList = [
@@ -158,7 +159,7 @@ const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsC
                             className='cursor-pointer hidden lg:block mb-6 xl:mb-8 w-[70%] mx-auto'
                             onClick={() => window.open('https://lycoris-recoil.com')}
                         >
-                            <Image layout="responsive" src={logo} alt='' />
+                            <Image layout='responsive' src={logo} alt='' />
                         </div>
 
                         <div
@@ -191,29 +192,31 @@ const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsC
                     <span className='text-3xl lg:text-6xl font-sans'>ewly</span>
                 </div>
                 <div className='h-[1px] bg-gray-300'></div>
-                {posts?.map((article) => {
-                    return (
-                        <Link key={article.id} href={{ pathname: `/article/${article.id}` }}>
-                            <a className='link'>
-                                <ArticleListItem
-                                    cate={article.cate.name}
-                                    publishDate={article.createdAt}
-                                    title={article.title}
-                                    onTagClick={(tagId) =>
-                                        router.push({
-                                            pathname: `/tag`,
-                                            query: {
-                                                tags: tagId,
-                                            },
-                                        })
-                                    }
-                                    tags={article.tags}
-                                ></ArticleListItem>
-                                <div className='h-[1px] bg-gray-300'></div>
-                            </a>
-                        </Link>
-                    )
-                })}
+                <div {...dotShow}>
+                    {posts?.map((article) => {
+                        return (
+                            <Link key={article.id} href={{ pathname: `/article/${article.id}` }}>
+                                <a className='link'>
+                                    <ArticleListItem
+                                        cate={article.cate.name}
+                                        publishDate={article.createdAt}
+                                        title={article.title}
+                                        onTagClick={(tagId) =>
+                                            router.push({
+                                                pathname: `/tag`,
+                                                query: {
+                                                    tags: tagId,
+                                                },
+                                            })
+                                        }
+                                        tags={article.tags}
+                                    />
+                                    <div className='h-[1px] bg-gray-300'></div>
+                                </a>
+                            </Link>
+                        )
+                    })}
+                </div>
             </div>
 
             <div className={styles.bg}>

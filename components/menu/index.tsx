@@ -4,11 +4,13 @@ import React, { useEffect } from 'react'
 import { useSpring, animated, easings } from 'react-spring'
 import style from './index.module.scss'
 import logo from '@/public/img/logo.png'
-import AnimateInViewport from '../animateInViewport'
 import { useRouter } from 'next/router'
 import { observer } from 'mobx-react-lite'
 import { useStore } from '@/store'
 import { useResponsive } from 'ahooks'
+import dynamic from 'next/dynamic'
+
+const AnimateInViewport = dynamic(() => import('@/components/animateInViewport'))
 
 interface MenuProps {
     visible?: boolean

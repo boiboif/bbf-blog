@@ -2,6 +2,7 @@ import React from 'react'
 import classnames from 'classnames'
 import { TagsOutlined } from '@ant-design/icons'
 import { Space } from 'antd'
+import { useDotColor } from '@/hook/useDotShow'
 interface ArticleListItemProps {
     publishDate?: string
     cate?: string
@@ -14,11 +15,13 @@ interface ArticleListItemProps {
 
 const ArticleListItem = (props: ArticleListItemProps) => {
     const { publishDate, cate, title, onClick, size, tags = [], onTagClick } = props
+    const dotColorProps = useDotColor()
 
     return (
         <div
             onClick={() => onClick?.()}
             className='group cursor-pointer py-4 lg:py-[30px] flex flex-wrap justify-start items-center lg:flex-nowrap'
+            {...dotColorProps}
         >
             <div className='text-teal-500 mr-5 font-lycoReco leading-none group-hover:text-rose-500 transition-colors duration-300 text-xs lg:text-[15px] tracking-wider font-semibold'>
                 {publishDate}

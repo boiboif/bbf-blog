@@ -17,6 +17,7 @@ import 'github-markdown-css' // placed after highlight styles to override `code`
 import moment from 'moment'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
+import { useDotShow } from '@/hook/useDotShow'
 
 const ArticleLayout = dynamic(() => import('@/components/articleLayout'))
 const ArticleListItem = dynamic(() => import('@/components/articleListItem'))
@@ -37,7 +38,7 @@ const plugins = [
 
 const ArticleDetail: NextPage<{ article: API.Article | null; cateList: API.Cate[] }> = (props) => {
     const { article, cateList } = props
-
+    const dotShow = useDotShow()
     const router = useRouter()
 
     const toTag = (tagId: string) => {
@@ -54,14 +55,16 @@ const ArticleDetail: NextPage<{ article: API.Article | null; cateList: API.Cate[
             <Head>
                 <title>{'BBF的个人博客 - ' + article?.title}</title>
             </Head>
-            <ArticleListItem
-                size='large'
-                title={article?.title}
-                cate={article?.cate.name}
-                publishDate={moment(article?.createdAt).format('YYYY-MM-DD')}
-                tags={article?.tags}
-                onTagClick={toTag}
-            ></ArticleListItem>
+            <div {...dotShow}>
+                <ArticleListItem
+                    size='large'
+                    title={article?.title}
+                    cate={article?.cate.name}
+                    publishDate={moment(article?.createdAt).format('YYYY-MM-DD')}
+                    tags={article?.tags}
+                    onTagClick={toTag}
+                ></ArticleListItem>
+            </div>
             <div className='h-[1px] bg-gray-300'></div>
             <Viewer plugins={plugins} value={article?.content || ''}></Viewer>
             <div className='text-center'>
