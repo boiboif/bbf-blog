@@ -3,8 +3,12 @@
     background-size: 288px auto 0 0;
 }
 
-@media (max-width: 1024px) {
-    .bg {
-        background-size: 144px auto;
-    }
+.cate_link {
+    background: url('/img/cate.jpg') no-repeat center;
+    background-size: cover;
+}
+
+.friend_link {
+    background: url('/img/link.jpg') no-repeat center;
+    background-size: cover;
 }

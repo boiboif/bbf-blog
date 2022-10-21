@@ -22,6 +22,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { getPortalStatisticsCount } from '@/service/statistics'
 import { useDotShow } from '@/hook/useDotShow'
+import classNames from 'classnames'
 
 const Banner = dynamic(() => import('@/components/banner'))
 const Controller = dynamic(() => import('@/components/banner/controller'))
@@ -222,8 +223,38 @@ const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsC
             <div className={styles.bg}>
                 <div className='w-[91%] mx-auto max-w-[1500px] pt-5 lg:pt-10'>
                     <div className='font-mono font-black tracking-wider pb-5 lg:pb-7 text-right'>
+                        <span className='text-4xl lg:text-7xl text-rose-500 font-serif font-semibold'>L</span>
+                        <span className='text-3xl lg:text-6xl font-sans'>inks</span>
+                    </div>
+
+                    <div className='lg:flex justify-between gap-10 mb-10 lg:mb-12'>
+                        <Link href='/category'>
+                            <div
+                                className={classNames([
+                                    'flex-1 flex justify-center items-center bg-rose-50 h-48 sm:h-60 md:h-80 xl:h-96 rounded-lg mb-4 lg:mb-0 cursor-pointer shadow-md shadow-rose-300 brightness-95',
+                                    styles.cate_link,
+                                ])}
+                            >
+                                <span className='text-shadow-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-teal-500 font-sans font-semibold tracking-widest opacity-80 translate-y-2'>
+                                    分类
+                                </span>
+                            </div>
+                        </Link>
+                        <div
+                            className={classNames([
+                                'flex-1 flex justify-center items-center bg-teal-50 h-48 sm:h-60 md:h-80 xl:h-96 rounded-lg cursor-pointer shadow-md shadow-rose-300 brightness-95',
+                                styles.friend_link,
+                            ])}
+                        >
+                            <span className='text-shadow-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-teal-500 font-sans font-semibold tracking-widest opacity-80 translate-y-2'>
+                                友链
+                            </span>
+                        </div>
+                    </div>
+
+                    <div className='font-mono font-black tracking-wider pb-5 lg:pb-7 text-left'>
                         <span className='text-4xl lg:text-7xl text-teal-500 font-serif font-semibold'>T</span>
-                        <span className='text-3xl lg:text-6xl font-sans'>o Be Continue</span>
+                        <span className='text-3xl lg:text-6xl font-sans'>o Be Continue....</span>
                     </div>
                 </div>
 
