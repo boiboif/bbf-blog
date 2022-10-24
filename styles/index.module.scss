@@ -3,12 +3,9 @@
     background-size: 288px auto 0 0;
 }
 
-.cate_link {
-    background: url('/img/cate.jpg') no-repeat center;
-    background-size: cover;
-}
-
-.friend_link {
-    background: url('/img/link.jpg') no-repeat center;
-    background-size: cover;
+.link_text {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
 }

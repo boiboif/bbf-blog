@@ -9,6 +9,8 @@ import img0 from '@/public/img/img_main-00.jpg'
 import img1 from '@/public/img/img_main-01.jpg'
 import img2 from '@/public/img/img_main-02.jpg'
 import logo from '@/public/img/logo.png'
+import cateImg from '@/public/img/cate.jpg'
+import linkImg from '@/public/img/link.jpg'
 import avatar from '@/public/img/avatar.jpg'
 import catch02_pc from '@/public/img/catch-02_pc.png'
 import bnr_cafe from '@/public/img/bnr_cafe.jpg'
@@ -229,24 +231,26 @@ const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsC
 
                     <div className='lg:flex justify-between gap-10 mb-10 lg:mb-12'>
                         <Link href='/category'>
-                            <div
-                                className={classNames([
-                                    'flex-1 flex justify-center items-center bg-rose-50 h-48 sm:h-60 md:h-80 xl:h-96 rounded-lg mb-4 lg:mb-0 cursor-pointer shadow-md shadow-rose-300 brightness-95',
-                                    styles.cate_link,
-                                ])}
-                            >
-                                <span className='text-shadow-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-teal-500 font-sans font-semibold tracking-widest opacity-80 translate-y-2'>
+                            <div className='flex-1 relative h-56 sm:h-72 md:h-80 xl:h-96 rounded-lg mb-4 lg:mb-0 cursor-pointer shadow-md shadow-rose-300 brightness-95'>
+                                <Image priority className='rounded-lg' objectFit='cover' layout='fill' src={cateImg} alt='' />
+                                <span
+                                    className={classNames([
+                                        styles.link_text,
+                                        'text-shadow-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-teal-500 font-sans font-semibold tracking-widest opacity-80 translate-y-2',
+                                    ])}
+                                >
                                     分类
                                 </span>
                             </div>
                         </Link>
-                        <div
-                            className={classNames([
-                                'flex-1 flex justify-center items-center bg-teal-50 h-48 sm:h-60 md:h-80 xl:h-96 rounded-lg cursor-pointer shadow-md shadow-rose-300 brightness-95',
-                                styles.friend_link,
-                            ])}
-                        >
-                            <span className='text-shadow-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-teal-500 font-sans font-semibold tracking-widest opacity-80 translate-y-2'>
+                        <div className='flex-1 relative h-56 sm:h-60 md:h-80 xl:h-96 rounded-lg mb-4 lg:mb-0 cursor-pointer shadow-md shadow-rose-300 brightness-95'>
+                            <Image priority className='rounded-lg' objectFit='cover' layout='fill' src={linkImg} alt='' />
+                            <span
+                                className={classNames([
+                                    styles.link_text,
+                                    'text-shadow-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-teal-500 font-sans font-semibold tracking-widest opacity-80 translate-y-2',
+                                ])}
+                            >
                                 友链
                             </span>
                         </div>
