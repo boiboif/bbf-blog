@@ -125,7 +125,7 @@ const Menu = (props: MenuProps) => {
                                     className='font-sans font-bold text-center lg:text-left text-4xl sm:text-6xl w-1/2 lg:w-1/3 mr-0 lg:mr-16 xl:mr-16 mb-16 cursor-pointer'
                                     key={menu.name + menu.path}
                                 >
-                                    <AnimateInViewport delay={delayMap[index]} animateCssClass='animate__fadeInBottomRight'>
+                                    <AnimateInViewport delay={delayMap[index]} animateCssClass='animate__fadeInBottomRight' className="inline-block">
                                         <span onClick={() => handleClick(menu)}>
                                             <span className='text-teal-500'>{menu.name[0]}</span>
                                             {menu.name.slice(1)}

@@ -6,7 +6,9 @@ import { useControllableValue } from 'ahooks'
 import { useStore } from '@/store'
 import { observer } from 'mobx-react-lite'
 import { canCSSPropertiesUsed } from '@/utils/canCSSPropertiesUsed'
+import dynamic from 'next/dynamic'
 
+const AnimateInViewport = dynamic(() => import('@/components/animateInViewport'))
 interface BannerProps {
     autoPlay?: boolean
     imgList?: (string | StaticImageData)[]
@@ -16,7 +18,7 @@ interface BannerProps {
 }
 
 const Banner = (props: BannerProps) => {
-    const globalStore = useStore('globalStore')
+    const { allowBannerAutoPlay, loading, setLoading, setAllowBannerAutoPlay } = useStore('globalStore')
     const { autoPlay = true, imgList, onTransitionEnd } = props
     const allowTransition = useRef(true)
     const loadedIndex = useRef(0)
@@ -28,7 +30,7 @@ const Banner = (props: BannerProps) => {
     })
 
     useEffect(() => {
-        if (!globalStore.allowBannerAutoPlay) return
+        if (!allowBannerAutoPlay) return
         const timer = setInterval(() => {
             if (!allowTransition.current || !autoPlay) return
             allowTransition.current = false
@@ -38,7 +40,7 @@ const Banner = (props: BannerProps) => {
         return () => {
             clearInterval(timer)
         }
-    }, [activeIndex, autoPlay, setActiveIndex, globalStore.allowBannerAutoPlay])
+    }, [activeIndex, autoPlay, setActiveIndex, allowBannerAutoPlay])
 
     useEffect(() => {
         setImageLayout(canCSSPropertiesUsed('aspectRatio') ? 'fill' : 'responsive')
@@ -46,10 +48,15 @@ const Banner = (props: BannerProps) => {
 
     return (
         <div className={classNames([styles['banner-wrap']])}>
-            <div className='w-full absolute top-1/4 left-1/2 -translate-x-1/2 z-[5] text-center text-white text-shadow opacity-80'>
+            <AnimateInViewport
+                ready={!loading}
+                animateOnce
+                animateCssClass='animate__backInDown'
+                className='w-full absolute top-1/4 z-[5] text-center text-white text-shadow'
+            >
                 <div className='text-5xl lg:text-7xl font-bold'>BBF&apos;s Blog</div>
                 <div className='text-2xl'>想做的事最优先~</div>
-            </div>
+            </AnimateInViewport>
             {imageLayout &&
                 imgList?.map((img, index) => {
                     return (
@@ -75,11 +82,11 @@ const Banner = (props: BannerProps) => {
                                 onLoadingComplete={() => {
                                     loadedIndex.current += 1
                                     if (index === 0) {
-                                        globalStore.setLoading(false)
+                                        setLoading(false)
                                     }
                                     /** 所有图片加载完成后才可以进行轮播 */
                                     if (loadedIndex.current === imgList.length) {
-                                        globalStore.setAllowBannerAutoPlay(true)
+                                        setAllowBannerAutoPlay(true)
                                     }
                                 }}
                                 priority

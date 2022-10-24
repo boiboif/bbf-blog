@@ -35,11 +35,11 @@ class UserInfoStore {
         this.rootStore = rootStore
     }
 
-    async setLoading(loading: boolean) {
+    setLoading = (loading: boolean) => {
         this.loading = loading
     }
 
-    async setAllowBannerAutoPlay(allow: boolean) {
+    setAllowBannerAutoPlay = (allow: boolean) => {
         this.allowBannerAutoPlay = allow
     }
 
