@@ -1,11 +1,19 @@
 import { useStore } from '@/store'
 import { useMouse } from 'ahooks'
+import { observer } from 'mobx-react-lite'
+import router from 'next/router'
 import React, { useEffect } from 'react'
 import { useSpring, animated } from 'react-spring'
 
 const Dot = () => {
-    const { dotShow, dotColor } = useStore('globalStore')
+    const { dotShow, dotColor, setDotShow } = useStore('globalStore')
     const mouse = useMouse()
+
+    useEffect(() => {
+        router.events.on('routeChangeComplete', () => {
+            setDotShow(false)
+        })
+    }, [setDotShow])
 
     const [dotSpring, dotSpringApi] = useSpring(() => ({
         x: 0,
@@ -34,4 +42,4 @@ const Dot = () => {
     )
 }
 
-export default Dot
+export default observer(Dot)
