@@ -282,6 +282,7 @@ const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsC
                                                 })
                                             }
                                             tags={article.tags}
+                                            viewCout={article.viewCount}
                                         />
                                         <div className='h-[1px] bg-gray-300'></div>
                                     </a>

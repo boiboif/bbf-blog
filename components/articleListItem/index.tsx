@@ -1,8 +1,9 @@
 import React from 'react'
 import classnames from 'classnames'
-import { TagsOutlined } from '@ant-design/icons'
+import { TagsOutlined, EyeOutlined } from '@ant-design/icons'
 import { Space } from 'antd'
 import { useDotColor } from '@/hook/useDotShow'
+import classNames from 'classnames'
 interface ArticleListItemProps {
     publishDate?: string
     cate?: string
@@ -11,10 +12,11 @@ interface ArticleListItemProps {
     onTagClick?: (tagId: string) => void
     size?: 'large' | 'middle'
     tags?: API.Tag[]
+    viewCout?: number
 }
 
 const ArticleListItem = (props: ArticleListItemProps) => {
-    const { publishDate, cate, title, onClick, size, tags = [], onTagClick } = props
+    const { publishDate, cate, title, onClick, size, tags = [], onTagClick, viewCout = 0 } = props
     const dotColorProps = useDotColor()
 
     return (
@@ -30,7 +32,7 @@ const ArticleListItem = (props: ArticleListItemProps) => {
                 {cate}
             </div>
             {tags.length > 0 && (
-                <div className='lg:hidden ml-4 flex items-center text-xs text-gray-500 transition-colors'>
+                <div className='lg:hidden ml-4 flex items-center text-xs text-gray-500'>
                     <TagsOutlined className='mr-1 !text-teal-500' />
                     <Space size='small'>
                         {tags.map((t) => (
@@ -49,10 +51,13 @@ const ArticleListItem = (props: ArticleListItemProps) => {
                     </Space>
                 </div>
             )}
-
+            <div className='lg:hidden flex items-center text-xs text-gray-500 ml-4'>
+                <EyeOutlined className='mr-1 !text-teal-500 hover:text-rose-500 transition-colors' />
+                <span>{viewCout}</span>
+            </div>
             <div
                 className={classnames([
-                    'w-full mt-3 font-sans lg:mt-0 leading-6 text-base lg:w-auto',
+                    'w-full mt-3 font-sans lg:mt-0 leading-6 text-base lg:w-auto mr-4',
                     {
                         'lg:!text-2xl': size === 'large',
                         '!text-xl': size === 'large',
@@ -65,7 +70,7 @@ const ArticleListItem = (props: ArticleListItemProps) => {
                 {title}
             </div>
             {tags.length > 0 && (
-                <div className='hidden lg:flex items-center ml-4 mt-1 text-gray-500'>
+                <div className='hidden lg:flex items-center mt-1 text-gray-500'>
                     <TagsOutlined className='mr-1 !text-teal-500 group-hover:!text-rose-500 transition-colors' />
                     <Space size='small'>
                         {tags.map((t) => (
@@ -84,6 +89,10 @@ const ArticleListItem = (props: ArticleListItemProps) => {
                     </Space>
                 </div>
             )}
+            <div className={classNames(['hidden lg:flex items-center mt-1 text-gray-500', { 'ml-4': tags.length > 0 }])}>
+                <EyeOutlined className='mr-1 !text-teal-500 group-hover:!text-rose-500 transition-colors' />
+                <span>{viewCout}</span>
+            </div>
         </div>
     )
 }

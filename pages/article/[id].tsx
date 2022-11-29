@@ -63,6 +63,7 @@ const ArticleDetail: NextPage<{ article: API.Article | null; cateList: API.Cate[
                     publishDate={moment(article?.createdAt).format('YYYY-MM-DD')}
                     tags={article?.tags}
                     onTagClick={toTag}
+                    viewCout={article?.viewCount}
                 ></ArticleListItem>
             </div>
             <div className='h-[1px] bg-gray-300'></div>

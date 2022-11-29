@@ -24,7 +24,7 @@ model post {
     tags      tag[]
     desc      String?
     cover     String?
-    viewCount Int?
+    viewCount Int       @default(0)
     enabled   Boolean   @default(true)
     cate      post_cate @relation(fields: [cateId], references: [id])
     cateId    Int

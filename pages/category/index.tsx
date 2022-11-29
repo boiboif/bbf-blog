@@ -51,6 +51,7 @@ const Category: NextPage<{ articleList: API.Article[]; cateList: API.Cate[] }> =
                                     title={article.title}
                                     onTagClick={toTag}
                                     tags={article.tags}
+                                    viewCout={article.viewCount}
                                 ></ArticleListItem>
                                 <div className='h-[1px] bg-gray-300'></div>
                             </a>

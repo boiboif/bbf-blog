@@ -51,6 +51,7 @@ const Tag: NextPage<{ articleList: API.Article[]; tagList: API.Tag[] }> = (props
                                     title={article.title}
                                     onTagClick={toTag}
                                     tags={article.tags}
+                                    viewCout={article.viewCount}
                                 ></ArticleListItem>
                                 <div className='h-[1px] bg-gray-300'></div>
                             </a>

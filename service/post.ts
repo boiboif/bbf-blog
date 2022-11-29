@@ -30,7 +30,16 @@ export const getPostMany = async (param?: GetPostManyParam) => {
 export const getPostById = async (id: string) => {
     const prisma = new PrismaClient()
 
-    const post = await prisma.post.findUnique({
+    await prisma.post.update({
+        data: {
+            viewCount: {
+                increment: 1,
+            },
+        },
+        where: { id: Number(id) },
+    })
+
+    let post = await prisma.post.findUnique({
         include: { author: { select: { username: true } }, cate: true, tags: true },
         where: { id: Number(id) || undefined },
     })
