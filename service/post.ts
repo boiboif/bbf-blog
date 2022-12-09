@@ -27,24 +27,30 @@ export const getPostMany = async (param?: GetPostManyParam) => {
 }
 
 /** 根据ID查询文章详情 */
-export const getPostById = async (id: string) => {
+export const getPostById = async (id: string, updateCount: boolean = false) => {
     const prisma = new PrismaClient()
 
-    await prisma.post.update({
-        data: {
-            viewCount: {
-                increment: 1,
-            },
-        },
-        where: { id: Number(id) },
-    })
+    try {
+        if (updateCount) {
+            await prisma.post.update({
+                data: {
+                    viewCount: {
+                        increment: 1,
+                    },
+                },
+                where: { id: Number(id) },
+            })
+        }
 
-    let post = await prisma.post.findUnique({
-        include: { author: { select: { username: true } }, cate: true, tags: true },
-        where: { id: Number(id) || undefined },
-    })
+        let post = await prisma.post.findUnique({
+            include: { author: { select: { username: true } }, cate: true, tags: true },
+            where: { id: Number(id) || undefined },
+        })
 
-    prisma.$disconnect()
+        prisma.$disconnect()
 
-    return JSON.parse(JSON.stringify(post)) as typeof post
+        return JSON.parse(JSON.stringify(post)) as typeof post
+    } catch (error) {
+        return null
+    }
 }

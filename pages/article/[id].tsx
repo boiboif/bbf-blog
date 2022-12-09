@@ -18,6 +18,8 @@ import moment from 'moment'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { useDotShow } from '@/hook/useDotShow'
+import { useRequest } from 'ahooks'
+import { getArticleById } from '@/clientApi'
 
 const ArticleLayout = dynamic(() => import('@/components/articleLayout'))
 const ArticleListItem = dynamic(() => import('@/components/articleListItem'))
@@ -41,6 +43,11 @@ const ArticleDetail: NextPage<{ article: API.Article | null; cateList: API.Cate[
     const dotShow = useDotShow()
     const router = useRouter()
 
+    const { data = article } = useRequest(() => getArticleById(article!.id.toString())().then((res) => res?.data), {
+        ready: !!article,
+        cacheKey: 'getArticleById',
+    })
+
     const toTag = (tagId: string) => {
         router.push({
             pathname: `/tag`,
@@ -51,23 +58,23 @@ const ArticleDetail: NextPage<{ article: API.Article | null; cateList: API.Cate[
     }
 
     return (
-        <ArticleLayout cateList={cateList} activeKey={article?.cateId.toString()}>
+        <ArticleLayout cateList={cateList} activeKey={data?.cateId.toString()}>
             <Head>
-                <title>{'BBF的个人博客 - ' + article?.title}</title>
+                <title>{'BBF的个人博客 - ' + data?.title}</title>
             </Head>
             <div {...dotShow}>
                 <ArticleListItem
                     size='large'
-                    title={article?.title}
-                    cate={article?.cate.name}
-                    publishDate={moment(article?.createdAt).format('YYYY-MM-DD')}
-                    tags={article?.tags}
+                    title={data?.title}
+                    cate={data?.cate.name}
+                    publishDate={moment(data?.createdAt).format('YYYY-MM-DD')}
+                    tags={data?.tags}
                     onTagClick={toTag}
-                    viewCout={article?.viewCount}
+                    viewCout={data?.viewCount}
                 ></ArticleListItem>
             </div>
             <div className='h-[1px] bg-gray-300'></div>
-            <Viewer plugins={plugins} value={article?.content || ''}></Viewer>
+            <Viewer plugins={plugins} value={data?.content || ''}></Viewer>
             <div className='text-center'>
                 <BackButton onClick={() => router.back()}></BackButton>
             </div>

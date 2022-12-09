@@ -27,6 +27,8 @@ import { useDotShow } from '@/hook/useDotShow'
 import classNames from 'classnames'
 import { useStore } from '@/store'
 import { observer } from 'mobx-react-lite'
+import { useRequest } from 'ahooks'
+import { getArticleAll } from '@/clientApi'
 
 const Banner = dynamic(() => import('@/components/banner'))
 const Controller = dynamic(() => import('@/components/banner/controller'))
@@ -41,6 +43,10 @@ const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsC
     const readyChangeCover = useRef(true)
     const dotShow = useDotShow()
     const router = useRouter()
+
+    const { data = posts } = useRequest(() => getArticleAll({ size: 8 }).then((res) => res?.data), {
+        cacheKey: 'getArticleAll',
+    })
 
     const imgList = [
         { on: img0_on, off: img0_off, cover: img0 },
@@ -264,7 +270,7 @@ const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsC
                 </AnimateInViewport>
                 <AnimateInViewport ready={!loading} animateOnce className='h-[1px] bg-gray-300'></AnimateInViewport>
                 <div {...dotShow}>
-                    {posts?.map((article, i) => {
+                    {data?.map((article, i) => {
                         return (
                             <AnimateInViewport ready={!loading} animateOnce key={article.id} delay={50 * (i + 1)}>
                                 <Link href={{ pathname: `/article/${article.id}` }}>

@@ -8,7 +8,7 @@ export default async function index(req: NextApiRequest, res: NextApiResponse) {
     let prisma: PrismaClient
     switch (req.method) {
         case 'GET':
-            const allPost = await getPostMany({ take: Number() || undefined, skip: Number(req.query.page) || undefined })
+            const allPost = await getPostMany({ take: Number(req.query.size) || undefined, skip: Number(req.query.page) || undefined })
             res.status(200).json({
                 data: allPost,
                 success: true,
@@ -25,7 +25,7 @@ export default async function index(req: NextApiRequest, res: NextApiResponse) {
                     ...req.body,
                     authorId,
                     tags: {
-                        connect: req.body.tags.map((t: number) => ({ id: t })) || [],
+                        connect: req.body.tags?.map((t: number) => ({ id: t })) || [],
                     },
                 },
             })
