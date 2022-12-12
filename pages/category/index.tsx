@@ -7,6 +7,8 @@ import dynamic from 'next/dynamic'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useDotShow } from '@/hook/useDotShow'
+import { useRequest } from 'ahooks'
+import { getArticleAll } from '@/clientApi'
 
 const ArticleLayout = dynamic(() => import('@/components/articleLayout'))
 const ArticleListItem = dynamic(() => import('@/components/articleListItem'))
@@ -16,6 +18,10 @@ const Category: NextPage<{ articleList: API.Article[]; cateList: API.Cate[] }> =
     const router = useRouter()
     const cateId = router.query.cateId as string
     const dotShow = useDotShow()
+
+    const { data = articleList } = useRequest(() => getArticleAll().then((res) => res?.data), {
+        cacheKey: 'getArticleAll'
+    })
 
     const toTag = (tagId: string) => {
         router.push({
@@ -27,8 +33,8 @@ const Category: NextPage<{ articleList: API.Article[]; cateList: API.Cate[] }> =
     }
 
     const filterArticleList = useMemo(() => {
-        return cateId ? articleList.filter((v) => v.cateId.toString() === cateId) : articleList
-    }, [articleList, cateId])
+        return cateId ? data.filter((v) => v.cateId.toString() === cateId) : data
+    }, [data, cateId])
 
     return (
         <ArticleLayout cateList={cateList} title='分类'>

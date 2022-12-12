@@ -36,6 +36,12 @@ const ArticleListItem = dynamic(() => import('@/components/articleListItem'))
 const Footer = dynamic(() => import('@/components/footer'))
 const AnimateInViewport = dynamic(() => import('@/components/animateInViewport'))
 
+const imgList = [
+    { on: img0_on, off: img0_off, cover: img0 },
+    { on: img1_on, off: img1_off, cover: img1 },
+    { on: img2_on, off: img2_off, cover: img2 },
+]
+
 const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsCount }> = (props) => {
     const { posts, staticsCount } = props
     const { loading } = useStore('globalStore')
@@ -45,14 +51,8 @@ const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsC
     const router = useRouter()
 
     const { data = posts } = useRequest(() => getArticleAll({ size: 8 }).then((res) => res?.data), {
-        cacheKey: 'getArticleAll',
+        cacheKey: 'getArticleAllIndex',
     })
-
-    const imgList = [
-        { on: img0_on, off: img0_off, cover: img0 },
-        { on: img1_on, off: img1_off, cover: img1 },
-        { on: img2_on, off: img2_off, cover: img2 },
-    ]
 
     return (
         <div>
