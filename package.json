@@ -4,9 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "npx prisma generate && next dev -p 8010",
-    "build": "node init.js && npx prisma generate && next build",
+    "build": "npx prisma generate && node init.js && next build",
     "start": "next start",
     "lint": "next lint"
+  },
+  "engines": {
+    "node": ">=18.x"
   },
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
