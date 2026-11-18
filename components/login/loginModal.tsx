@@ -37,7 +37,7 @@ const LoginModal = (props: ModalProps) => {
     }
 
     return (
-        <Modal className='!w-full lg:!w-[400px]' title={'登录'} visible={visible} onCancel={handleCancel} footer={false} destroyOnClose>
+        <Modal className='!w-full lg:!w-[400px]' title={'登录'} open={visible} onCancel={handleCancel} footer={false} destroyOnClose>
             <Form form={form} name='normal_login' className='login-form' onFinish={onFinish}>
                 <Form.Item name='username' rules={[{ required: true, message: '请输入用户名!' }]}>
                     <Input prefix={<UserOutlined className='site-form-item-icon' />} placeholder='用户名' />
@@ -50,7 +50,6 @@ const LoginModal = (props: ModalProps) => {
                     <Button loading={loading} type='primary' htmlType='submit' className='login-form-button'>
                         登录
                     </Button>
-                    Or <a href=''>register now!</a>
                 </Form.Item>
             </Form>
         </Modal>

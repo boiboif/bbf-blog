@@ -3,11 +3,10 @@ import React, { PropsWithChildren, useEffect, useRef } from 'react'
 import style from './index.module.scss'
 import logo from '@/public/img/logo.png'
 import Image from 'next/image'
-import dynamic from 'next/dynamic'
 
-const CateList = dynamic(() => import('@/components/cateList'))
-const TagList = dynamic(() => import('@/components/tagList'))
-const Footer = dynamic(() => import('@/components/footer'))
+import CateList from '@/components/cateList'
+import TagList from '@/components/tagList'
+import Footer from '@/components/footer'
 
 interface Props {
     cateList?: API.Cate[]
@@ -21,7 +20,7 @@ const ArticleLayout = (props: PropsWithChildren<Props>) => {
     const ref = useRef<HTMLDivElement>(null)
 
     const router = useRouter()
-    const tags = router.query.tags ? (router.query.tags as string).split(',') : []
+    const tags = router.query.tags?.toString().split(',').filter(Boolean) ?? []
 
     useEffect(() => {
         ref.current?.scrollIntoView()
@@ -52,7 +51,7 @@ const ArticleLayout = (props: PropsWithChildren<Props>) => {
             <div className='w-[89.3%] max-w-[620px] lg:max-w-[1500px] lg:w-[90%] pt-5 lg:pt-14 mx-auto relative'>
                 <div className='mb-10 lg:mb-24 lg:flex lg:items-center lg:flex-row-reverse lg:justify-between'>
                     <div className='w-[165px] mb-6 lg:mb-0 lg:w-[332px]'>
-                        <Image priority layout='responsive' src={logo} alt=''></Image>
+                        <Image loading='eager' className='w-full h-auto' sizes='(min-width: 1024px) 332px, 165px' src={logo} alt='' />
                     </div>
 
                     <div className='text-4xl lg:text-5xl font-bold tracking-widest'>

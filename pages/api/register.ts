@@ -1,66 +1,56 @@
-import { signToken } from "@/utils/jwt";
-import prisma from "@/utils/prismaClient";
-import bcrypt from "bcryptjs";
-import { NextApiRequest, NextApiResponse } from "next";
+import { sessionUserSelect, signToken } from '@/utils/jwt'
+import prisma from '@/utils/prismaClient'
+import { Prisma } from '@prisma/client'
+import bcrypt from 'bcryptjs'
+import type { NextApiRequest, NextApiResponse } from 'next'
 
-export default async function regiter(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  switch (req.method) {
-    // 如果对这个路径发起 POST 请求，代表他想要注册一个账号
-    case "POST":
-      try {
-        // 在数据库的 User 表中建立一个新的数据
-        const user = await prisma.user.create({
-          data: {
-            email: req.body.email,
-            // 密码是经过 bcrypt 加密的
-            passwordHash: bcrypt.hashSync(req.body.password, 8),
-            username: req.body.username,
-            nickName: req.body.nickName,
-            roles: req.body.roles,
-            gender: req.body.gender,
-            introduce: req.body.introduce,
-            birthDate: req.body.birthDate,
-            experience: req.body.experience,
-          },
-        });
+class ReservedUsernameError extends Error {}
 
-        await prisma.contactInfo.create({
-          data: {
-            userId: user.id,
-            tel: req.body.tel,
-            wechat: req.body.webchat,
-          },
-        });
-
-        const token = await signToken({
-          id: user.id,
-          username: user.username,
-          roles: user.roles as string[],
-        });
-
-        // 把建立成功的用户数据（不包含密码）和 JWT 回传给前端
-        res.status(201).json({
-          data: { ...user, passwordHash: undefined, token },
-          success: true,
-        });
-      } catch (e: any) {
-        console.log(e);
-        // 如果发生未预期的错误，将对应的错误说明的 Prisma 文档发给用户
-        res.status(500).json({
-          result: false,
-          message:
-            typeof e.code === "string"
-              ? "https://www.prisma.io/docs/reference/api-reference/error-reference#" +
-                e.code.toLowerCase()
-              : e,
-        });
-      }
-      break;
-    default:
-      // 如果不是 POST 请求，代表他正在用错误的方式访问这个 API
-      res.status(405).json({ error: "Method not allowed" });
-  }
+export default async function register(req: NextApiRequest, res: NextApiResponse) {
+    if (req.method !== 'POST') {
+        res.setHeader('Allow', 'POST')
+        return res.status(405).json({ success: false, message: 'Method not allowed' })
+    }
+    const body = req.body ?? {}
+    if (typeof body.username !== 'string' || !body.username.trim() ||
+        typeof body.password !== 'string' || !body.password || Buffer.byteLength(body.password) > 72) {
+        return res.status(400).json({ success: false, message: '用户名或密码格式无效' })
+    }
+    const passwordHash = await bcrypt.hash(body.password, 12)
+    try {
+        const account = await prisma.$transaction(async (tx) => {
+            const user = await tx.user.create({
+                data: {
+                    username: body.username,
+                    passwordHash,
+                    roles: [],
+                    email: body.email,
+                    nickName: body.nickName,
+                    gender: body.gender,
+                    introduce: body.introduce,
+                    birthDate: body.birthDate,
+                    experience: body.experience,
+                    contactInfo: { create: { tel: body.tel, wechat: body.wechat ?? body.webchat } },
+                },
+                select: sessionUserSelect,
+            })
+            // Use the username column's own collation, including case and accent rules.
+            const reserved = await tx.user.findFirst({
+                where: { id: user.id, username: process.env.ADMIN_USERNAME || 'admin' },
+                select: { id: true },
+            })
+            if (reserved) throw new ReservedUsernameError()
+            return { ...user, token: signToken(user.id) }
+        })
+        return res.status(201).json({ success: true, data: account })
+    } catch (error) {
+        if (error instanceof ReservedUsernameError || (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002')) {
+            return res.status(409).json({ success: false, message: '用户名不可用' })
+        }
+        if (error instanceof Prisma.PrismaClientValidationError || (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2000')) {
+            return res.status(400).json({ success: false, message: '注册资料格式无效' })
+        }
+        console.error('Failed to register account', error instanceof Prisma.PrismaClientKnownRequestError ? error.code : 'server error')
+        return res.status(500).json({ success: false, message: '注册失败，请稍后重试' })
+    }
 }

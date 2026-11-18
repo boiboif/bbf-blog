@@ -15,26 +15,21 @@ import avatar from '@/public/img/avatar.jpg'
 import catch02_pc from '@/public/img/catch-02_pc.png'
 import bnr_cafe from '@/public/img/bnr_cafe.jpg'
 import { useRef, useState } from 'react'
-import dynamic from 'next/dynamic'
 import Image from 'next/image'
 import styles from '@/styles/index.module.scss'
-import { getPostMany } from '@/service'
+import { getPostSummaries } from '@/service'
 import Head from 'next/head'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { getPortalStatisticsCount } from '@/service/statistics'
 import { useDotShow } from '@/hook/useDotShow'
 import classNames from 'classnames'
-import { useStore } from '@/store'
-import { observer } from 'mobx-react-lite'
-import { useRequest } from 'ahooks'
-import { getArticleAll } from '@/clientApi'
 
-const Banner = dynamic(() => import('@/components/banner'))
-const Controller = dynamic(() => import('@/components/banner/controller'))
-const ArticleListItem = dynamic(() => import('@/components/articleListItem'))
-const Footer = dynamic(() => import('@/components/footer'))
-const AnimateInViewport = dynamic(() => import('@/components/animateInViewport'))
+import Banner from '@/components/banner'
+import Controller from '@/components/banner/controller'
+import ArticleListItem from '@/components/articleListItem'
+import Footer from '@/components/footer'
+import AnimateInViewport from '@/components/animateInViewport'
 
 const imgList = [
     { on: img0_on, off: img0_off, cover: img0 },
@@ -42,17 +37,12 @@ const imgList = [
     { on: img2_on, off: img2_off, cover: img2 },
 ]
 
-const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsCount }> = (props) => {
+const Home: NextPage<{ posts: API.ArticleSummary[]; staticsCount: API.PortalStatisticsCount }> = (props) => {
     const { posts, staticsCount } = props
-    const { loading } = useStore('globalStore')
     const [activeIndex, setActiveIndex] = useState(0)
     const readyChangeCover = useRef(true)
     const dotShow = useDotShow()
     const router = useRouter()
-
-    const { data = posts } = useRequest(() => getArticleAll({ size: 8 }).then((res) => res?.data), {
-        cacheKey: 'getArticleAllIndex',
-    })
 
     return (
         <div>
@@ -73,8 +63,8 @@ const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsC
                         />
                     </div>
                     <div className='relative w-full lg:w-[11.409%] lg:max-w-[85px] lg:flex lg:flex-col-reverse lg:justify-end'>
-                        <div className='hidden lg:block w-[70%] mx-auto'>
-                            <Image src={catch02_pc} alt='' />
+                        <div className='hidden lg:block relative w-[70%] aspect-[60/454] mx-auto'>
+                            <Image src={catch02_pc} fill className='object-contain' sizes='60px' alt='' />
                         </div>
                         <div className='z-[5] relative flex w-full lg:block lg:w-[132%] lg:mb-6'>
                             <Controller
@@ -94,45 +84,43 @@ const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsC
 
                 <div className='w-[91%] lg:w-0 lg:flex-1 mx-auto pt-5 lg:pt-11 flex lg:items-center lg:flex-col flex-wrap'>
                     <div className='w-full lg:text-center flex items-center flex-wrap sm:flex-nowrap lg:block'>
-                        <AnimateInViewport ready={!loading} className='inline-block' animateCssClass='animate__swing'>
+                        <AnimateInViewport className='inline-block' animateCssClass='animate__swing'>
                             <div
                                 className={classNames([
-                                    styles.avatar,
+                                    'blog-avatar',
                                     'w-20 h-20 lg:w-32 lg:h-32 xl:w-40 xl:h-40 relative rounded-[50%] overflow-hidden mb-4 mr-8 sm:mr-4 lg:mx-auto shadow-lg shadow-rose-300',
                                 ])}
                             >
-                                <Image layout='fill' src={avatar} alt='' />
+                                <Image fill sizes='(min-width: 1280px) 160px, (min-width: 1024px) 128px, 80px' src={avatar} alt='' />
                             </div>
                         </AnimateInViewport>
                         <div className='text-[#333] mr-6 lg:mr-0 mb-2 lg:mb-4 flex lg:justify-center gap-5 lg:gap-10 items-center'>
-                            <AnimateInViewport ready={!loading} animateOnce>
+                            <AnimateInViewport animateOnce>
                                 <div className='lg:font-bold lg:text-xl'>文章</div>
                                 <div className='text-center text-teal-500 text-sm lg:text-xl'>{staticsCount.postCount}</div>
                             </AnimateInViewport>
 
-                            <AnimateInViewport ready={!loading} animateOnce>
+                            <AnimateInViewport animateOnce>
                                 <div className='lg:font-bold lg:text-xl'>分类</div>
                                 <div className='text-center text-teal-500 text-sm lg:text-xl'>{staticsCount.cateCount}</div>
                             </AnimateInViewport>
 
-                            <AnimateInViewport ready={!loading} animateOnce>
+                            <AnimateInViewport animateOnce>
                                 <div className='lg:font-bold lg:text-xl'>标签</div>
                                 <div className='text-center text-teal-500 text-sm lg:text-xl'>{staticsCount.tagCount}</div>
                             </AnimateInViewport>
                         </div>
 
-                        <AnimateInViewport ready={!loading} className='mx-auto w-1/2 hidden lg:block border-b border-slate-200 mb-6' />
+                        <AnimateInViewport className='mx-auto w-1/2 hidden lg:block border-b border-slate-200 mb-6' />
 
                         <div>
                             <AnimateInViewport
-                                ready={!loading}
                                 animateOnce
                                 className='text-md lg:text-lg xl:text-xl font-bold mb-2 lg:mb-0 text-teal-500 truncate'
                             >
                                 🍒 A Front-end developer - 前端开发工程师
                             </AnimateInViewport>
                             <AnimateInViewport
-                                ready={!loading}
                                 animateOnce
                                 delay={50}
                                 className='text-5xl text-rose-500 mb-2 hidden lg:block leading-4 xl:leading-7'
@@ -140,7 +128,6 @@ const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsC
                                 ×
                             </AnimateInViewport>
                             <AnimateInViewport
-                                ready={!loading}
                                 animateOnce
                                 delay={100}
                                 className='text-md lg:text-lg xl:text-xl font-bold mb-2 lg:mb-0 truncate'
@@ -149,7 +136,6 @@ const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsC
                                 <span className='text-[#3178c6]'>TypeScript</span> <span>etc.</span>
                             </AnimateInViewport>
                             <AnimateInViewport
-                                ready={!loading}
                                 animateOnce
                                 delay={150}
                                 className='text-5xl text-rose-500 mb-2 hidden lg:block leading-4 xl:leading-7'
@@ -157,7 +143,6 @@ const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsC
                                 ×
                             </AnimateInViewport>
                             <AnimateInViewport
-                                ready={!loading}
                                 animateOnce
                                 delay={200}
                                 className='text-md lg:text-lg xl:text-xl font-bold mb-2 lg:mb-0 truncate'
@@ -165,7 +150,6 @@ const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsC
                                 📍 DongGuan - <span className='text-red-500'>China.</span>
                             </AnimateInViewport>
                             <AnimateInViewport
-                                ready={!loading}
                                 animateOnce
                                 delay={250}
                                 className='text-5xl text-rose-500 mb-2 hidden lg:block leading-4 xl:leading-7'
@@ -173,13 +157,12 @@ const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsC
                                 ×
                             </AnimateInViewport>
                             <AnimateInViewport
-                                ready={!loading}
                                 animateOnce
                                 delay={250}
                                 className='text-md lg:text-lg xl:text-xl font-bold mb-6 truncate flex items-center lg:justify-center'
                             >
                                 <div className='w-4 h-4 lg:w-[20px] lg:h-[20px] relative'>
-                                    <Image layout='fill' src='https://www.dota2.com.cn/favicon.ico' alt=''></Image>
+                                    <Image fill sizes='20px' src='/img/dota2.svg' alt='' />
                                 </div>
                                 <div className='ml-[6px] lg:ml-2'>Let&apos;s play some dota!</div>
                             </AnimateInViewport>
@@ -187,7 +170,6 @@ const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsC
                     </div>
 
                     <AnimateInViewport
-                        ready={!loading}
                         animateOnce
                         className='mx-auto w-1/2 hidden lg:block border-b border-slate-200 mb-6'
                     />
@@ -208,7 +190,6 @@ const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsC
                         </div> */}
 
                         <AnimateInViewport
-                            ready={!loading}
                             animateOnce
                             className='hidden lg:flex justify-center mb-6 xl:mb-8 w-[25%] mx-auto'
                         >
@@ -224,16 +205,14 @@ const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsC
                         </AnimateInViewport>
 
                         <AnimateInViewport
-                            ready={!loading}
                             animateOnce
                             className='cursor-pointer hidden lg:block mb-6 xl:mb-8 w-[70%] mx-auto'
                             onClick={() => window.open('https://lycoris-recoil.com')}
                         >
-                            <Image layout='responsive' src={logo} alt='' />
+                            <Image className='h-auto w-full' src={logo} alt='' />
                         </AnimateInViewport>
 
                         <AnimateInViewport
-                            ready={!loading}
                             animateOnce
                             className='cursor-pointer hidden lg:block mb-6 xl:mb-8 w-[60%] mx-auto'
                             onClick={() => window.open('https://lycoris-recoil.com/cafe_lyco_reco/')}
@@ -241,14 +220,14 @@ const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsC
                             <Image src={bnr_cafe} alt=''></Image>
                         </AnimateInViewport>
 
-                        <AnimateInViewport ready={!loading} animateOnce className='hidden lg:flex justify-center w-[80%] mx-auto'>
+                        <AnimateInViewport animateOnce className='hidden lg:flex justify-center w-[80%] mx-auto'>
                             <a
                                 className='block w-3/5 shadow-2xl shadow-rose-400'
                                 href='//www.dota2.com.cn/main.htm'
                                 target='_blank'
                                 rel='noreferrer'
                             >
-                                <video className='w-full' preload='preload' muted={true} autoPlay loop={true} poster=''>
+                                <video className='w-full' preload='metadata' muted={true} autoPlay loop={true} poster=''>
                                     <source type='video/webm' src='//gamevideo.wmupd.com/dota2media/media/coverlogo180517.webm' />
                                     <source type='video/mp4' src='//gamevideo.wmupd.com/dota2media/media/coverlogo180517.mp4' />
                                 </video>
@@ -260,7 +239,6 @@ const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsC
 
             <div className='w-[91%] mx-auto max-w-[1500px]'>
                 <AnimateInViewport
-                    ready={!loading}
                     animateOnce
                     animateCssClass='animate__fadeInLeft'
                     className='font-mono font-black tracking-wider mb-5 lg:mb-7'
@@ -268,30 +246,28 @@ const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsC
                     <span className='text-4xl lg:text-7xl text-teal-500 font-serif font-semibold'>N</span>
                     <span className='text-3xl lg:text-6xl font-sans'>ewly</span>
                 </AnimateInViewport>
-                <AnimateInViewport ready={!loading} animateOnce className='h-[1px] bg-gray-300'></AnimateInViewport>
+                <AnimateInViewport animateOnce className='h-[1px] bg-gray-300'></AnimateInViewport>
                 <div {...dotShow}>
-                    {data?.map((article, i) => {
+                    {posts.map((article, i) => {
                         return (
-                            <AnimateInViewport ready={!loading} animateOnce key={article.id} delay={50 * (i + 1)}>
-                                <Link href={{ pathname: `/article/${article.id}` }}>
-                                    <a className='link'>
-                                        <ArticleListItem
-                                            cate={article.cate.name}
-                                            publishDate={article.createdAt}
-                                            title={article.title}
-                                            onTagClick={(tagId) =>
-                                                router.push({
-                                                    pathname: `/tag`,
-                                                    query: {
-                                                        tags: tagId,
-                                                    },
-                                                })
-                                            }
-                                            tags={article.tags}
-                                            viewCout={article.viewCount}
-                                        />
-                                        <div className='h-[1px] bg-gray-300'></div>
-                                    </a>
+                            <AnimateInViewport animateOnce key={article.id} delay={50 * (i + 1)}>
+                                <Link href={`/article/${article.id}`} className='link'>
+                                    <ArticleListItem
+                                        cate={article.cate.name}
+                                        publishDate={article.createdAt}
+                                        title={article.title}
+                                        onTagClick={(tagId) =>
+                                            router.push({
+                                                pathname: `/tag`,
+                                                query: {
+                                                    tags: tagId,
+                                                },
+                                            })
+                                        }
+                                        tags={article.tags}
+                                        viewCout={article.viewCount}
+                                    />
+                                    <div className='h-[1px] bg-gray-300'></div>
                                 </Link>
                             </AnimateInViewport>
                         )
@@ -302,7 +278,6 @@ const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsC
             <div className={styles.bg + ' overflow-hidden'}>
                 <div className='w-[91%] mx-auto max-w-[1500px] pt-5 lg:pt-10'>
                     <AnimateInViewport
-                        ready={!loading}
                         animateOnce
                         animateCssClass='animate__fadeInRight'
                         className='font-mono font-black tracking-wider pb-5 lg:pb-7 text-right'
@@ -313,31 +288,27 @@ const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsC
 
                     <div className='lg:flex justify-between gap-10 mb-10 lg:mb-12'>
                         <AnimateInViewport
-                            ready={!loading}
                             animateOnce
                             className='flex-1 h-56 sm:h-72 md:h-80 xl:h-96 rounded-lg mb-4 lg:mb-0 cursor-pointer shadow-md shadow-rose-300 brightness-95'
                         >
-                            <Link href='/category'>
-                                <a>
-                                    <Image priority className='rounded-lg' objectFit='cover' layout='fill' src={cateImg} alt='' />
-                                    <span
-                                        className={classNames([
-                                            styles.link_text,
-                                            'text-shadow-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-teal-500 font-sans font-semibold tracking-widest opacity-80 translate-y-2',
-                                        ])}
-                                    >
-                                        分类
-                                    </span>
-                                </a>
+                            <Link href='/category' className='relative block h-full'>
+                                <Image className='rounded-lg object-cover' fill sizes='(min-width: 1024px) 45vw, 91vw' src={cateImg} alt='' />
+                                <span
+                                    className={classNames([
+                                        styles.link_text,
+                                        'text-shadow-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-teal-500 font-sans font-semibold tracking-widest opacity-80 translate-y-2',
+                                    ])}
+                                >
+                                    分类
+                                </span>
                             </Link>
                         </AnimateInViewport>
 
                         <AnimateInViewport
-                            ready={!loading}
                             animateOnce
                             className='flex-1 relative h-56 sm:h-60 md:h-80 xl:h-96 rounded-lg mb-4 lg:mb-0 cursor-pointer shadow-md shadow-rose-300 brightness-95'
                         >
-                            <Image priority className='rounded-lg' objectFit='cover' layout='fill' src={linkImg} alt='' />
+                            <Image className='rounded-lg object-cover' fill sizes='(min-width: 1024px) 45vw, 91vw' src={linkImg} alt='' />
                             <span
                                 className={classNames([
                                     styles.link_text,
@@ -350,7 +321,6 @@ const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsC
                     </div>
 
                     <AnimateInViewport
-                        ready={!loading}
                         animateOnce
                         animateCssClass='animate__fadeInLeft'
                         className='font-mono font-black tracking-wider pb-5 lg:pb-7 text-left'
@@ -366,11 +336,10 @@ const Home: NextPage<{ posts: API.Article[]; staticsCount: API.PortalStatisticsC
     )
 }
 
-export default observer(Home)
+export default Home
 
-export const getStaticProps: GetStaticProps = async (context) => {
-    const posts = await getPostMany({ take: 8 })
-    const staticsCount = await getPortalStatisticsCount()
+export const getStaticProps: GetStaticProps = async () => {
+    const [posts, staticsCount] = await Promise.all([getPostSummaries({ take: 8 }), getPortalStatisticsCount()])
 
     return {
         props: {

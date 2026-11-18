@@ -1,14 +1,12 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef } from 'react'
 import Image, { StaticImageData } from 'next/image'
 import styles from './index.module.scss'
 import classNames from 'classnames'
 import { useControllableValue } from 'ahooks'
 import { useStore } from '@/store'
 import { observer } from 'mobx-react-lite'
-import { canCSSPropertiesUsed } from '@/utils/canCSSPropertiesUsed'
-import dynamic from 'next/dynamic'
 
-const AnimateInViewport = dynamic(() => import('@/components/animateInViewport'))
+import AnimateInViewport from '@/components/animateInViewport'
 interface BannerProps {
     autoPlay?: boolean
     imgList?: (string | StaticImageData)[]
@@ -21,8 +19,8 @@ const Banner = (props: BannerProps) => {
     const { allowBannerAutoPlay, loading, setLoading, setAllowBannerAutoPlay } = useStore('globalStore')
     const { autoPlay = true, imgList, onTransitionEnd } = props
     const allowTransition = useRef(true)
-    const loadedIndex = useRef(0)
-    const [imageLayout, setImageLayout] = useState<'fixed' | 'responsive' | 'fill' | 'intrinsic' | undefined>()
+    const loadedSlides = useRef(new Set<number>())
+    const slideCount = imgList?.length ?? 0
 
     const [activeIndex, setActiveIndex] = useControllableValue<number>(props, {
         valuePropName: 'activeIndex',
@@ -30,21 +28,17 @@ const Banner = (props: BannerProps) => {
     })
 
     useEffect(() => {
-        if (!allowBannerAutoPlay) return
+        if (!allowBannerAutoPlay || !autoPlay || slideCount < 2) return
         const timer = setInterval(() => {
-            if (!allowTransition.current || !autoPlay) return
+            if (!allowTransition.current) return
             allowTransition.current = false
-            setActiveIndex((activeIndex + 1) % 3)
+            setActiveIndex((activeIndex + 1) % slideCount)
         }, 5000)
 
         return () => {
             clearInterval(timer)
         }
-    }, [activeIndex, autoPlay, setActiveIndex, allowBannerAutoPlay])
-
-    useEffect(() => {
-        setImageLayout(canCSSPropertiesUsed('aspectRatio') ? 'fill' : 'responsive')
-    }, [])
+    }, [activeIndex, autoPlay, setActiveIndex, allowBannerAutoPlay, slideCount])
 
     return (
         <div className={classNames([styles['banner-wrap']])}>
@@ -57,44 +51,44 @@ const Banner = (props: BannerProps) => {
                 <div className='text-5xl lg:text-7xl font-bold'>BBF&apos;s Blog</div>
                 <div className='text-2xl'>想做的事最优先~</div>
             </AnimateInViewport>
-            {imageLayout &&
-                imgList?.map((img, index) => {
-                    return (
-                        <div
-                            key={index}
-                            className={classNames(styles['img-wrap'], {
-                                [styles.active]: activeIndex === index,
-                            })}
-                            onTransitionEnd={() => {
-                                if (index === activeIndex) {
-                                    allowTransition.current = true
-                                    onTransitionEnd?.()
+            {imgList?.map((img, index) => {
+                return (
+                    <div
+                        key={index}
+                        className={classNames(styles['img-wrap'], {
+                            [styles.active]: activeIndex === index,
+                        })}
+                        onTransitionEnd={() => {
+                            if (index === activeIndex) {
+                                allowTransition.current = true
+                                onTransitionEnd?.()
+                            }
+                        }}
+                    >
+                        <Image
+                            fill
+                            sizes='(min-width: 1024px) 50vw, 100vw'
+                            className={classNames(styles.scale, 'object-cover object-left-top')}
+                            src={img}
+                            alt=''
+                            onLoad={() => {
+                                loadedSlides.current.add(index)
+                                if (index === 0) {
+                                    setLoading(false)
+                                }
+                                /** 所有图片加载完成后才可以进行轮播 */
+                                if (loadedSlides.current.size === slideCount) {
+                                    setAllowBannerAutoPlay(true)
                                 }
                             }}
-                        >
-                            <Image
-                                objectPosition='left top'
-                                objectFit='cover'
-                                layout={imageLayout}
-                                className={classNames([styles['scale']])}
-                                src={img}
-                                alt=''
-                                onLoadingComplete={() => {
-                                    loadedIndex.current += 1
-                                    if (index === 0) {
-                                        setLoading(false)
-                                    }
-                                    /** 所有图片加载完成后才可以进行轮播 */
-                                    if (loadedIndex.current === imgList.length) {
-                                        setAllowBannerAutoPlay(true)
-                                    }
-                                }}
-                                priority
-                                quality={50}
-                            />
-                        </div>
-                    )
-                })}
+                            preload={index === 0}
+                            loading={index === 0 ? undefined : loading && activeIndex !== index ? 'lazy' : 'eager'}
+                            fetchPriority={index === 0 ? undefined : 'low'}
+                            quality={50}
+                        />
+                    </div>
+                )
+            })}
         </div>
     )
 }

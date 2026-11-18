@@ -34,9 +34,8 @@ export function useScrollRestoration(router: NextRouter, scrollDomId: string) {
 
         window.history.scrollRestoration = 'manual'
 
-        const onBeforeUnload = (event: BeforeUnloadEvent) => {
+        const onBeforeUnload = () => {
             saveScrollPos(router.asPath, scrollDom)
-            delete event['returnValue']
         }
 
         const onRouteChangeStart = () => {

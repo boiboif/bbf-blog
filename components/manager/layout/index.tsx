@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router'
-import React, { PropsWithChildren, useEffect, useState } from 'react'
+import React, { PropsWithChildren, useEffect } from 'react'
 import { Layout, Menu, Popconfirm } from 'antd'
-import { findParents } from 'bbf-tree-utils'
 import { useRequest } from 'ahooks'
+import { isAxiosError } from 'axios'
 import { getUserInfoById } from '@/clientApi'
 import { useStore } from '@/store'
 import { isBrowser } from '@/utils/isBrowser'
@@ -17,49 +17,40 @@ const routes = [
 ]
 
 const ManagerLayout = (props: PropsWithChildren) => {
-    const [loading, setLoading] = useState(true)
-    const [readyRequest, setReadyRequest] = useState(false)
     const userId = isBrowser() ? localStorage.getItem('userId') : ''
     const router = useRouter()
     const userInfoStore = useStore('userInfoStore')
-    const [selectedKeys, setSelectedKeys] = useState<string[]>([])
-    const [openKeys, setOpenKeys] = useState<string[]>([])
 
     useEffect(() => {
-        setSelectedKeys([router.pathname])
-        setOpenKeys(findParents(routes, router.pathname, 'key').map((item) => item.key))
-    }, [router.pathname])
-
-    useEffect(() => {
-        setReadyRequest(!!userId)
-
         if (!userId) {
             router.replace('/')
             userInfoStore.setUserInfo(undefined)
         }
     }, [router, userInfoStore, userId])
 
-    useRequest(() => getUserInfoById(userId!)().then((res) => res?.data), {
-        ready: readyRequest,
+    const { data: user, error, refresh } = useRequest(() => getUserInfoById(userId!)().then((res) => res?.data), {
+        ready: !!userId,
+        refreshDeps: [userId],
         onSuccess: (data) => {
             userInfoStore.setUserInfo(data)
             if (!data?.roles.includes('admin')) {
                 router.replace('/noPermission')
             }
         },
-        onError: () => {
+        onError: (requestError) => {
+            if (!isAxiosError(requestError) || requestError.response?.status !== 401) return
             localStorage.removeItem('userId')
             localStorage.removeItem('token')
             userInfoStore.setUserInfo(undefined)
             router.replace('/')
         },
-        onFinally: () => {
-            setLoading(false)
-        },
     })
 
-    if (loading) {
-        return <div>获取用户信息中。。。</div>
+    if (userId && error) {
+        return <button onClick={refresh}>获取用户信息失败，点击重试</button>
+    }
+    if (!userId || !user?.roles.includes('admin')) {
+        return <div>正在确认管理权限…</div>
     }
 
     const logout = () => {
@@ -87,9 +78,7 @@ const ManagerLayout = (props: PropsWithChildren) => {
             <div className='flex' style={{ background: '#f0f2f5' }}>
                 <Sider theme='light' breakpoint='lg' style={{ height: '300vh' }} collapsedWidth={0}>
                     <Menu
-                        onOpenChange={setOpenKeys}
-                        selectedKeys={selectedKeys}
-                        openKeys={openKeys}
+                        selectedKeys={[router.pathname]}
                         onClick={({ key }) => {
                             router.push(key)
                         }}

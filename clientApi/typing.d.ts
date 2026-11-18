@@ -1,23 +1,25 @@
-import { post_cate, tag, post, user, contactInfo } from '@prisma/client'
+import { post_cate, tag, post, user } from '@prisma/client'
 
 declare namespace API {
     type Cate = DateToString<post_cate>
 
     type Tag = DateToString<tag>
 
+    type ArticleSummary = Pick<Article, 'id' | 'title' | 'createdAt' | 'cateId' | 'viewCount'> & {
+        cate: Pick<Cate, 'name'>
+        tags: Pick<Tag, 'id' | 'name'>[]
+    }
+
     type Article = DateToString<post> & {
         tags?: Tag[]
         author: {
             username: string
         }
-        cate: {
-            name: string
-        }
+        cate: Cate
     }
 
-    type User = DateToString<user> & {
+    type User = Pick<user, 'id' | 'username' | 'nickName'> & {
         roles: string[]
-        contactInfo?: contactInfo
     }
 
     type PortalStatisticsCount = {

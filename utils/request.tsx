@@ -1,7 +1,7 @@
 import type { AxiosError } from 'axios'
 import axios from 'axios'
 
-export const codeMessage = {
+export const codeMessage: Record<string, string> = {
     200: '服务器成功返回请求的数据。',
     201: '新建或修改数据成功。',
     202: '一个请求已经进入后台排队（异步任务）。',
@@ -23,16 +23,6 @@ export const codeMessage = {
 const service = axios.create({
     withCredentials: false,
 })
-// request interceptor
-service.interceptors.request.use(
-    (config) => {
-        return config
-    },
-    (error) => {
-        console.log(error) // for debug
-        return Promise.reject(error)
-    }
-)
 // response interceptor
 service.interceptors.response.use(
     (response) => {

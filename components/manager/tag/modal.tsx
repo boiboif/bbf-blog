@@ -46,7 +46,7 @@ const TagModal = (props: ModalProps) => {
         <Modal
             className='!w-full lg:!w-[800px]'
             title={title ? title : record ? '编辑' : '新增'}
-            visible={visible}
+            open={visible}
             onCancel={handleCancel}
             footer={
                 <div className='flex justify-end'>

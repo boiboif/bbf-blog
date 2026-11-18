@@ -27,27 +27,31 @@ const Controller = (props: ControllerProps) => {
         <>
             {imgList?.map((img, index) => {
                 return (
-                    <div className={cn(['relative', props.className])} key={index} onClick={() => handleClick(index)}>
-                        <div
+                    <button
+                        type='button'
+                        className={cn(['relative block', props.className])}
+                        key={index}
+                        aria-label={`切换到第 ${index + 1} 张封面`}
+                        aria-pressed={activeIndex === index}
+                        onClick={() => handleClick(index)}
+                    >
+                        <span
                             className={cn([
-                                'absolute w-full z-10 transition-opacity',
+                                'absolute inset-0 w-full z-10 transition-opacity',
                                 styles['img-on-wrap'],
                                 { [styles.active]: activeIndex === index },
                             ])}
                         >
                             <Image
                                 quality={50}
-                                priority
+                                className='w-full h-auto'
                                 src={img.on}
                                 alt=''
-                                layout='responsive'
                                 onDragStart={(e) => e.preventDefault()}
                             ></Image>
-                        </div>
-                        <div>
-                            <Image quality={50} priority src={img.off} alt='' layout='responsive'></Image>
-                        </div>
-                    </div>
+                        </span>
+                        <Image className='w-full h-auto' quality={50} src={img.off} alt='' />
+                    </button>
                 )
             })}
         </>

@@ -1,6 +1,6 @@
 import { Button, Modal, Form, Input, message, Space } from 'antd'
 import { useEffect } from 'react'
-import { addCate, putCate, revalidated } from '@/clientApi'
+import { addCate, putCate } from '@/clientApi'
 
 interface ModalProps {
     title?: string
@@ -37,7 +37,6 @@ const CateModal = (props: ModalProps) => {
             ...vals,
         })
 
-        // revalidated({ path: '/category' })
 
         message.success('提交成功！')
         handleCancel()
@@ -48,7 +47,7 @@ const CateModal = (props: ModalProps) => {
         <Modal
             className='!w-full lg:!w-[800px]'
             title={title ? title : record ? '编辑' : '新增'}
-            visible={visible}
+            open={visible}
             onCancel={handleCancel}
             footer={
                 <div className='flex justify-end'>

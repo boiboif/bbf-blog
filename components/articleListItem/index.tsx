@@ -11,13 +11,14 @@ interface ArticleListItemProps {
     onClick?: () => void
     onTagClick?: (tagId: string) => void
     size?: 'large' | 'middle'
-    tags?: API.Tag[]
+    tags?: Pick<API.Tag, 'id' | 'name'>[]
     viewCout?: number
 }
 
 const ArticleListItem = (props: ArticleListItemProps) => {
     const { publishDate, cate, title, onClick, size, tags = [], onTagClick, viewCout = 0 } = props
     const dotColorProps = useDotColor()
+    const Title = size === 'large' ? 'h1' : 'div'
 
     return (
         <div
@@ -55,7 +56,7 @@ const ArticleListItem = (props: ArticleListItemProps) => {
                 <EyeOutlined className='mr-1 !text-teal-500 hover:text-rose-500 transition-colors' />
                 <span>{viewCout}</span>
             </div>
-            <div
+            <Title
                 className={classnames([
                     'w-full mt-3 font-sans lg:mt-0 leading-6 text-base lg:w-auto mr-4',
                     {
@@ -68,7 +69,7 @@ const ArticleListItem = (props: ArticleListItemProps) => {
                 ])}
             >
                 {title}
-            </div>
+            </Title>
             {tags.length > 0 && (
                 <div className='hidden lg:flex items-center mt-1 text-gray-500'>
                     <TagsOutlined className='mr-1 !text-teal-500 group-hover:!text-rose-500 transition-colors' />

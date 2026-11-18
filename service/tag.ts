@@ -25,7 +25,7 @@ export const updateTag = async (
     where: {
       id: param.id,
     },
-    data: param,
+    data: { name: param.name },
   });
 
   return res;

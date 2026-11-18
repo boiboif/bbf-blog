@@ -1,37 +1,37 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# BBF 的个人博客
 
-在线地址：
-[https://bbfbbf.cn](https://bbfbbf.cn)
+[bbfbbf.cn](https://bbfbbf.cn) 使用 Next.js Pages Router、TypeScript 和 Prisma。首页、文章、分类和标签采用增量静态生成（ISR）。
 
-## Getting Started
+## 本地开发
 
-First, run the development server:
+使用 Node.js 22.12 或更高版本和 `package.json` 指定的 pnpm 版本。在仓库根目录的 `.env` 配置开发用的 `DATABASE_URL`（MySQL 连接串）和 `JWT_SECRET`（随机生成的会话签名密钥）。构建时需要读取文章，运行时还需要执行后台写入。开发和生产应分别配置数据库与密钥。
 
-```bash
-npm run dev
-# or
-yarn dev
+```sh
+corepack pnpm install --frozen-lockfile
+corepack pnpm exec prisma generate
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+第一次使用**空的本地测试库**时，运行 `corepack pnpm exec prisma db push` 创建表。随后运行 `corepack pnpm dev`，访问 [本地博客](http://localhost:8010)。
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## 管理员和发布
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+首次建站时，将初始管理员密码放入进程环境变量 `ADMIN_PASSWORD`，可用 `ADMIN_USERNAME` 设置用户名，默认值为 `admin`。运行 `corepack pnpm db:bootstrap` 后即可清除初始密码环境变量。对已有管理员重复执行命令会保留原密码。
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+```sh
+corepack pnpm lint
+corepack pnpm typecheck
+corepack pnpm build
+corepack pnpm start
+```
 
-## Learn More
+生产服务默认监听 3000 端口。构建只生成 Prisma 客户端并读取页面数据。文章发布、修改和删除后，服务端刷新首页、分类、标签和对应的文章页。页面保留 60 秒的 ISR 周期，后台刷新出错时可在后续访问中重试。已有文章链接、分类查询参数 `cateId` 和标签查询参数 `tags` 可继续使用。
 
-To learn more about Next.js, take a look at the following resources:
+## 验证发布流程
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+在独立测试库上初始化管理员，运行生产构建并通过 `corepack pnpm exec next start -p 8010` 启动。设置 `TEST_ADMIN_PASSWORD`（如自定义用户名则同时设置 `TEST_ADMIN_USERNAME`），然后运行：
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+```sh
+node --test tests/*.test.mjs
+```
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+默认测试地址为 `http://127.0.0.1:8010`，可通过 `TEST_BLOG_ORIGIN` 指向其他本机端口。发布回归会新建两篇带分类和标签的测试文章，验证首屏正文、摘要、浏览计数、编辑和删除后的缓存，结束时清理这些内容。

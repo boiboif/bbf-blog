@@ -1,6 +1,6 @@
 import { Button, Modal, Form, Input, message, Select, Space } from 'antd'
-import { useEffect, useState } from 'react'
-import { addArticle, putArticle, revalidated } from '@/clientApi'
+import { useState } from 'react'
+import { addArticle, putArticle } from '@/clientApi'
 import { Editor } from '@bytemd/react'
 import zh from 'bytemd/locales/zh_Hans.json'
 import highlight from '@bytemd/plugin-highlight-ssr'
@@ -27,7 +27,6 @@ const plugins = [
     mermaid({ locale: mermaidLocales }),
     gemoji(),
     breaks(),
-    // Add more plugins here
 ]
 
 interface ModalProps {
@@ -43,25 +42,7 @@ interface ModalProps {
 const ArticleModal = (props: ModalProps) => {
     const { visible, record, onCancel, title, callback, cateList, tagList } = props
     const [form] = Form.useForm()
-    const [value, setValue] = useState('')
-
-    useEffect(() => {
-        if (record && visible) {
-            form.setFieldsValue({
-                ...record,
-                tags: record.tags?.map((t) => t.id),
-            })
-            setValue(record.content)
-        }
-    }, [visible, record, form])
-
-    const handleCancel = () => {
-        if (record) {
-            setValue('')
-        }
-        form.resetFields()
-        onCancel()
-    }
+    const [value, setValue] = useState(record?.content ?? '')
 
     const handleSubmit = async () => {
         const vals = await form.validateFields()
@@ -72,19 +53,14 @@ const ArticleModal = (props: ModalProps) => {
 
         const submitApi = record ? putArticle : addArticle
 
-        const res = await submitApi({
+        await submitApi({
             id: record?.id,
             ...vals,
             content: value,
         })
 
-        // revalidated({ path: '/' })
-        // revalidated({ path: '/category' })
-        // revalidated({ path: `/article/${res.data.id}` })
-
         message.success('提交成功！')
-        setValue('')
-        handleCancel()
+        onCancel()
         callback?.()
     }
 
@@ -92,13 +68,13 @@ const ArticleModal = (props: ModalProps) => {
         <Modal
             className='!w-full lg:!w-[1500px]'
             title={title ? title : record ? '编辑' : '新增'}
-            visible={visible}
-            onCancel={handleCancel}
+            open={visible}
+            onCancel={onCancel}
             footer={
                 <div className='flex justify-end'>
                     <Space>
                         <Button onClick={() => setValue('')}>重置</Button>
-                        <Button onClick={handleCancel}>取消</Button>
+                        <Button onClick={onCancel}>取消</Button>
                         <Button type='primary' onClick={handleSubmit}>
                             提交
                         </Button>
@@ -107,7 +83,14 @@ const ArticleModal = (props: ModalProps) => {
             }
             destroyOnClose
         >
-            <Form form={form}>
+            <Form
+                form={form}
+                initialValues={{
+                    title: record?.title,
+                    cateId: record?.cateId,
+                    tags: record?.tags?.map(tag => tag.id),
+                }}
+            >
                 <Form.Item name='cateId' label='分类' rules={[{ required: true }]}>
                     <Select>
                         {cateList?.map((cate) => {
@@ -138,9 +121,7 @@ const ArticleModal = (props: ModalProps) => {
             <Editor
                 value={value}
                 plugins={plugins}
-                onChange={(v) => {
-                    setValue(v)
-                }}
+                onChange={setValue}
                 locale={zh}
             />
         </Modal>

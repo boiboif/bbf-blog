@@ -1,46 +1,44 @@
-/* eslint-disable no-case-declarations */
+import type { NextApiRequest, NextApiResponse } from 'next'
+import { Prisma } from '@prisma/client'
 import { addTag, deleteTag, getTagPage, updateTag } from '@/service/tag'
-import { authMiddleware } from '@/utils/jwt'
-import { NextApiRequest, NextApiResponse } from 'next'
+import { listParams, namedRecordChange } from '@/utils/apiInput'
+import { requireUser } from '@/utils/jwt'
+import { refreshBlogPages } from '@/utils/revalidate'
 
 export default async function index(req: NextApiRequest, res: NextApiResponse) {
-    switch (req.method) {
-        case 'GET':
-            const allCate = await getTagPage({ skip: Number(req.query.page) || undefined, take: Number(req.query.size) || undefined })
-            res.status(200).json({
-                data: allCate,
-                success: true,
-            })
-            break
+    if (req.method === 'GET') {
+        const filters = listParams(req.query, 'name')
+        if (!filters) return res.status(400).json({ success: false, message: '查询参数无效' })
+        const data = await getTagPage({ skip: filters.skip, take: filters.take, name: filters.search })
+        return res.status(200).json({ success: true, data })
+    }
+    if (!['POST', 'PUT', 'DELETE'].includes(req.method ?? '')) {
+        res.setHeader('Allow', 'GET, POST, PUT, DELETE')
+        return res.status(405).json({ success: false, message: 'Method not allowed' })
+    }
+    if (!(await requireUser(req, res, 'admin'))) return
+    const change = namedRecordChange(req, 255)
+    if (!change) return res.status(400).json({ success: false, message: '标签参数无效' })
 
-        case 'POST':
-            await authMiddleware(req, res)
-            const cate = await addTag(req.body)
-            res.status(200).json({
-                data: cate,
-                success: true,
-            })
-
-            break
-
-        case 'PUT':
-            await authMiddleware(req, res)
-            const updateData = await updateTag(req.body)
-            res.status(200).json({
-                data: updateData,
-                success: true,
-            })
-            break
-
-        case 'DELETE':
-            await authMiddleware(req, res)
-            await deleteTag({ id: req.body.id })
-            res.status(200).json({
-                success: true,
-            })
-            break
-
-        default:
-            res.status(405).json({ error: 'Method not allowed' })
+    try {
+        let data
+        switch (change.method) {
+            case 'POST':
+                data = await addTag({ name: change.name })
+                break
+            case 'PUT':
+                data = await updateTag({ id: change.id, name: change.name })
+                break
+            case 'DELETE':
+                await deleteTag({ id: change.id })
+                break
+        }
+        await refreshBlogPages(res)
+        return res.status(200).json({ success: true, data })
+    } catch (error) {
+        if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
+            return res.status(404).json({ success: false, message: '标签不存在' })
+        }
+        throw error
     }
 }

@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+    --primary-color: #f0555a;
+}
+
+.blog-avatar:hover {
+    animation: swing 1s;
+}
+
 html,
 body {
     padding: 0;
