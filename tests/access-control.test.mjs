@@ -9,13 +9,15 @@ import ts from 'typescript'
 
 // Execute the repository's TypeScript handlers with an in-memory Prisma adapter.
 const requirePackage = createRequire(import.meta.url)
+const prismaRuntime = requirePackage('@prisma/client/runtime/client')
+const sharedDependencies = { '@/generated/prisma/client': { Prisma: prismaRuntime } }
 function loadModule(path, dependencies) {
     const source = readFileSync(new URL('../' + path, import.meta.url), 'utf8')
     const { outputText } = ts.transpileModule(source, {
         compilerOptions: { target: ts.ScriptTarget.ES2017, module: ts.ModuleKind.CommonJS, esModuleInterop: true },
     })
     const exports = {}
-    const resolve = (name) => dependencies[name] ?? requirePackage(name)
+    const resolve = (name) => dependencies[name] ?? sharedDependencies[name] ?? requirePackage(name)
     compileFunction(outputText, ['exports', 'require'])(exports, resolve)
     return exports
 }
@@ -75,11 +77,18 @@ test('registration assigns a reader role and reserves the bootstrap username', a
     const account = { id: 3, username: 'reader', nickName: null, roles: [] }
     const writes = []
     let reserved = false
+    let duplicate = false
     const register = loadModule('pages/api/register.ts', {
         '@/utils/jwt': { signToken: () => 'session', sessionUserSelect: {} },
         'bcryptjs': { hash: async () => 'test hash' },
         '@/utils/prismaClient': { $transaction: async (work) => work({ user: {
-            create: async ({ data }) => { writes.push(data); return account },
+            create: async ({ data }) => {
+                if (duplicate) throw new prismaRuntime.PrismaClientKnownRequestError('Unique constraint', {
+                    code: 'P2002', clientVersion: '7.10.1',
+                })
+                writes.push(data)
+                return account
+            },
             findFirst: async () => reserved ? { id: account.id } : null,
         } }) },
     }).default
@@ -93,6 +102,11 @@ test('registration assigns a reader role and reserves the bootstrap username', a
     await register(req, conflict)
     assert.equal(conflict.code, 409)
     assert.equal(conflict.body.success, false)
+    reserved = false
+    duplicate = true
+    const duplicateResponse = response()
+    await register(req, duplicateResponse)
+    assert.equal(duplicateResponse.code, 409)
 })
 
 test('content changes and manual revalidation require an administrator', async () => {

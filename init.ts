@@ -1,5 +1,7 @@
-const bcrypt = require('bcryptjs')
-const { PrismaClient } = require('@prisma/client')
+import { loadEnvConfig } from '@next/env'
+import bcrypt from 'bcryptjs'
+
+loadEnvConfig(process.cwd(), process.env.NODE_ENV !== 'production')
 
 async function init() {
     const username = process.env.ADMIN_USERNAME || 'admin'
@@ -7,7 +9,7 @@ async function init() {
     if (!password || Buffer.byteLength(password) > 72) {
         throw new Error('Set ADMIN_PASSWORD to a password of at most 72 UTF-8 bytes')
     }
-    const prisma = new PrismaClient()
+    const { default: prisma } = await import('./utils/prismaClient')
     try {
         const user = await prisma.user.upsert({
             where: { username },

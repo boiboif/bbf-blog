@@ -1,4 +1,4 @@
-import { Prisma } from '@prisma/client'
+import { Prisma } from '@/generated/prisma/client'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { getPostSummaries } from '@/service'
 import { isRecordId, listParams } from '@/utils/apiInput'

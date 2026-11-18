@@ -1,4 +1,4 @@
-import { post_cate, tag, post, user } from '@prisma/client'
+import type { post_cate, tag, post, user } from '@/generated/prisma/browser'
 
 declare namespace API {
     type Cate = DateToString<post_cate>

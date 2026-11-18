@@ -1,6 +1,6 @@
 import prisma from "@/utils/prismaClient";
 import { formatObjArrDate } from "@/utils/time";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/generated/prisma/client";
 
 interface GetTagPageParam {
   name?: string;

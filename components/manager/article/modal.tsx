@@ -1,31 +1,10 @@
 import { App, Button, Modal, Form, Input, Select, Space } from 'antd'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { addArticle, putArticle } from '@/clientApi'
 import { Editor } from '@bytemd/react'
 import zh from 'bytemd/locales/zh_Hans.json'
-import highlight from '@bytemd/plugin-highlight-ssr'
-import gfm from '@bytemd/plugin-gfm'
-import frontmatter from '@bytemd/plugin-frontmatter'
-import mediumZoom from '@bytemd/plugin-medium-zoom'
-import mermaid from '@bytemd/plugin-mermaid'
-import gemoji from '@bytemd/plugin-gemoji'
-import breaks from '@bytemd/plugin-breaks'
-import gfmLocales from '@bytemd/plugin-gfm/locales/zh_Hans.json'
-import mermaidLocales from '@bytemd/plugin-mermaid/locales/zh_Hans.json'
-import 'highlight.js/styles/vs.css'
-import 'github-markdown-css' // placed after highlight styles to override `code` padding
-
-const plugins = [
-    gfm({
-        locale: gfmLocales,
-    }),
-    highlight(),
-    frontmatter(),
-    mediumZoom(),
-    mermaid({ locale: mermaidLocales }),
-    gemoji(),
-    breaks(),
-]
+import { markdownPlugins } from '@/components/markdown/plugins'
+import { useArticleImages } from './images'
 
 interface ModalProps {
     title?: string
@@ -42,6 +21,8 @@ const ArticleModal = (props: ModalProps) => {
     const { visible, record, onCancel, title, callback, cateList, tagList } = props
     const [form] = Form.useForm()
     const [value, setValue] = useState(record?.content ?? '')
+    const { plugin, uploading, dialog } = useArticleImages()
+    const editorPlugins = useMemo(() => [...markdownPlugins, plugin], [plugin])
 
     const handleSubmit = async () => {
         const vals = await form.validateFields()
@@ -72,10 +53,10 @@ const ArticleModal = (props: ModalProps) => {
             footer={
                 <div className='flex justify-end'>
                     <Space>
-                        <Button onClick={() => setValue('')}>重置</Button>
+                        <Button disabled={uploading} onClick={() => setValue('')}>重置</Button>
                         <Button onClick={onCancel}>取消</Button>
-                        <Button type='primary' onClick={handleSubmit}>
-                            提交
+                        <Button type='primary' disabled={uploading} onClick={handleSubmit}>
+                            {uploading ? '图片上传中' : '提交'}
                         </Button>
                     </Space>
                 </div>
@@ -109,10 +90,11 @@ const ArticleModal = (props: ModalProps) => {
 
             <Editor
                 value={value}
-                plugins={plugins}
+                plugins={editorPlugins}
                 onChange={setValue}
                 locale={zh}
             />
+            {dialog}
         </Modal>
     )
 }

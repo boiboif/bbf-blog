@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { Prisma } from '@prisma/client'
+import { Prisma } from '@/generated/prisma/client'
 import { getCateMany } from '@/service'
 import { listParams, namedRecordChange } from '@/utils/apiInput'
 import { requireUser } from '@/utils/jwt'

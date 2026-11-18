@@ -25,7 +25,7 @@ async function html(path) {
 test('publishing refreshes the public pages and preserves independent article views', async (t) => {
     const password = process.env.TEST_ADMIN_PASSWORD
     assert.ok(password, 'Set TEST_ADMIN_PASSWORD for the disposable database')
-    const { token } = await api('/api/login', {
+    const { token, id: userId } = await api('/api/login', {
         method: 'POST', data: { username: process.env.TEST_ADMIN_USERNAME ?? 'admin', password },
     })
     const label = randomUUID()
@@ -41,8 +41,12 @@ test('publishing refreshes the public pages and preserves independent article vi
             const name = `${label}-${suffix}`
             const cate = await create('/api/cate', { name: `Category-${name}` })
             const tag = await create('/api/tag', { name: `Tag-${name}` })
+            const content = [
+                `## Heading-${name}`, `Body-${name}`, '[Article link](/category)',
+                '```js\nconst answer = 42\n```', '![Cover illustration](/img/avatar.jpg)',
+            ].join('\n\n')
             const post = await create('/api/post', {
-                title: name, content: `## Heading-${name}\n\nBody-${name}`,
+                title: name, content,
                 cateId: cate.id, tags: [tag.id],
             })
             articles.push(post)
@@ -89,6 +93,57 @@ test('publishing refreshes the public pages and preserves independent article vi
                 assert.ok(await page.locator('.markdown-body').getByText(`Body-${first.title}`).isVisible())
                 // The server-rendered tag row relies on Ant Design's stylesheet.
                 assert.equal(await page.locator('.ant-space').first().evaluate(el => getComputedStyle(el).display), 'inline-flex')
+            } finally {
+                await browser.close()
+            }
+        })
+
+        await t.test('Markdown stays legible in both themes in the editor and the published article', {
+            skip: !process.env.TEST_BROWSER_PATH && 'Set TEST_BROWSER_PATH for browser checks',
+        }, async () => {
+            const { chromium } = await import('playwright-core')
+            const browser = await chromium.launch({ executablePath: process.env.TEST_BROWSER_PATH })
+            try {
+                const page = await browser.newPage({ viewport: { width: 1440, height: 900 } })
+                await page.addInitScript(session => {
+                    localStorage.setItem('userId', String(session.userId))
+                    localStorage.setItem('token', session.token)
+                }, { userId, token })
+
+                async function checkPreview(markdown) {
+                    await markdown.getByText(`Body-${first.title}`, { exact: true }).waitFor()
+                    const image = markdown.getByRole('img', { name: 'Cover illustration' })
+                    await image.evaluate(img => img.decode())
+                    for (const theme of ['light', 'dark']) {
+                        await page.emulateMedia({ colorScheme: theme })
+                        const palette = await markdown.evaluate(root => {
+                            const luminance = color => {
+                                const [r, g, b] = color.match(/[\d.]+/g).slice(0, 3).map(Number).map(channel => {
+                                    const value = channel / 255
+                                    return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4
+                                })
+                                return r * 0.2126 + g * 0.7152 + b * 0.0722
+                            }
+                            const style = getComputedStyle(root)
+                            const background = luminance(style.backgroundColor)
+                            const contrast = color => {
+                                const text = luminance(color)
+                                return (Math.max(text, background) + 0.05) / (Math.min(text, background) + 0.05)
+                            }
+                            return { background: style.backgroundColor, light: background > 0.5,
+                                textContrast: contrast(style.color), linkContrast: contrast(getComputedStyle(root.querySelector('a')).color) }
+                        })
+                        assert.notEqual(palette.background, 'rgba(0, 0, 0, 0)', 'Markdown needs an explicit surface in both themes')
+                        assert.equal(palette.light, theme === 'light')
+                        assert.ok(palette.textContrast >= 4.5 && palette.linkContrast >= 4.5, `${theme} ${JSON.stringify(palette)}`)
+                    }
+                }
+
+                await page.goto(new URL(`/article/${first.id}`, origin).href)
+                await checkPreview(page.locator('.markdown-body'))
+                await page.goto(new URL('/manager/article', origin).href)
+                await page.getByRole('row').filter({ hasText: first.title }).getByText('编辑', { exact: true }).click()
+                await checkPreview(page.locator('.bytemd-preview .markdown-body'))
             } finally {
                 await browser.close()
             }

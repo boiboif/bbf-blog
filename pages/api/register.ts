@@ -1,6 +1,6 @@
 import { sessionUserSelect, signToken } from '@/utils/jwt'
 import prisma from '@/utils/prismaClient'
-import { Prisma } from '@prisma/client'
+import { Prisma } from '@/generated/prisma/client'
 import bcrypt from 'bcryptjs'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
