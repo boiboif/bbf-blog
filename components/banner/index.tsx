@@ -62,7 +62,7 @@ const Banner = (props: BannerProps) => {
                         <Image
                             fill
                             sizes='(min-width: 1024px) 50vw, 100vw'
-                            className={classNames(styles.scale, 'object-cover object-left-top')}
+                            className={classNames(styles.scale, 'object-cover object-top-left')}
                             src={img}
                             alt=''
                             onLoad={() => {

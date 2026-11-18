@@ -6,8 +6,9 @@ const theme = require('./antd-theme.json')
 // Compile the shared theme into Next's stylesheet so the first paint also works without JavaScript.
 module.exports = () => ({
     postcssPlugin: 'blog-antd-styles',
-    AtRule: {
-        'antd-styles'(rule, { postcss }) {
+    // Expand the marker before Tailwind processes cascade layers.
+    Once(root, { postcss }) {
+        root.walkAtRules('antd-styles', rule => {
             const css = extractStyle({
                 includes: [
                     // Form renders no grid until it contains a Form.Item, so extract Row and Col explicitly.
@@ -18,7 +19,7 @@ module.exports = () => ({
                 customTheme: children => createElement(ConfigProvider, { theme }, children),
             })
             rule.replaceWith(postcss.parse(css).nodes)
-        },
+        })
     },
 })
 module.exports.postcss = true

@@ -296,7 +296,7 @@ const Home: NextPage<{ posts: API.ArticleSummary[]; staticsCount: API.PortalStat
                                 <span
                                     className={classNames([
                                         styles.link_text,
-                                        'text-shadow-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-teal-500 font-sans font-semibold tracking-widest opacity-80 translate-y-2',
+                                        'text-shadow-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-teal-500 font-sans font-semibold tracking-widest opacity-80',
                                     ])}
                                 >
                                     分类
@@ -312,7 +312,7 @@ const Home: NextPage<{ posts: API.ArticleSummary[]; staticsCount: API.PortalStat
                             <span
                                 className={classNames([
                                     styles.link_text,
-                                    'text-shadow-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-teal-500 font-sans font-semibold tracking-widest opacity-80 translate-y-2',
+                                    'text-shadow-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-teal-500 font-sans font-semibold tracking-widest opacity-80',
                                 ])}
                             >
                                 友链

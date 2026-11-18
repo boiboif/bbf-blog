@@ -66,7 +66,7 @@ const ManagerLayout = (props: PropsWithChildren) => {
             <Header className='!px-4 flex items-center justify-between !text-white'>
                 <div className='text-2xl font-semibold'>后台管理</div>
                 <div className='flex gap-4'>
-                    <div className='text-md flex-grow-0'>
+                    <div className='text-md grow-0'>
                         <Popconfirm title='退出登录' onConfirm={logout} okText='确定' cancelText='取消'>
                             <button type='button'>{userInfoStore.userInfo?.nickName ?? userInfoStore.userInfo?.username}</button>
                         </Popconfirm>
