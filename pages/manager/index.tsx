@@ -1,23 +1,22 @@
-import { getUserAll } from '@/clientApi'
+import type { GetStaticProps, InferGetStaticPropsType } from 'next'
+import Link from 'next/link'
+import type { ReactElement } from 'react'
 import ManagerLayout from '@/components/manager/layout'
-import { useRequest } from 'ahooks'
-import React from 'react'
-import { observer } from 'mobx-react-lite'
-import { useStore } from '@/store'
+import { getPortalStatisticsCount } from '@/service/statistics'
 
-/**
- *
- * @returns 后台管理 - 首页
- */
-const ManagerIndex = () => {
-    const counterStore = useStore('counterStore')
-    useRequest(() => getUserAll())
+export const getStaticProps = (async () => ({
+    props: { counts: await getPortalStatisticsCount() },
+    revalidate: 60,
+})) satisfies GetStaticProps
 
-    return <div onClick={() => counterStore.add(1)}>{counterStore.count}</div>
+export default function ManagerIndex({ counts }: InferGetStaticPropsType<typeof getStaticProps>) {
+    return (
+        <div className="card flex flex-wrap gap-6">
+            <Link href="/manager/article">文章（{counts.postCount}）</Link>
+            <Link href="/manager/cate">分类（{counts.cateCount}）</Link>
+            <Link href="/manager/tag">标签（{counts.tagCount}）</Link>
+        </div>
+    )
 }
 
-ManagerIndex.getLayout = (page: any) => {
-    return <ManagerLayout>{page}</ManagerLayout>
-}
-
-export default observer(ManagerIndex)
+ManagerIndex.getLayout = (page: ReactElement) => <ManagerLayout>{page}</ManagerLayout>

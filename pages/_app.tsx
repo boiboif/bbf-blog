@@ -1,22 +1,24 @@
 import '../styles/globals.css'
+import antTheme from '@/styles/antd-theme.json'
 import type { AppProps } from 'next/app'
 import { NextPage } from 'next'
-import { ReactElement, ReactNode, useEffect } from 'react'
-import { ConfigProvider } from 'antd'
-import zhCN from 'antd/lib/locale/zh_CN'
+import { ReactElement, ReactNode, useEffect, useState } from 'react'
+import { App as AntApp, ConfigProvider } from 'antd'
+import zhCN from 'antd/locale/zh_CN'
+import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
+import { ApiFeedback } from '@/clientApi/feedback'
 import moment from 'moment'
 import 'moment/locale/zh-cn'
-import 'antd/dist/antd.min.css'
 import '@/components/menuButton/index.scss'
-import '@/components/loader/index.scss'
 import 'bytemd/dist/index.min.css'
+import '@/styles/markdown.css'
 import NProgress from 'nprogress'
 import { createStore, RootContext } from '@/store'
-import dynamic from 'next/dynamic'
 import 'nprogress/nprogress.css'
 import 'animate.css'
 
-const CustomLayout = dynamic(() => import('@/components/customLayout'))
+import CustomLayout from '@/components/customLayout'
 
 moment.locale('zh-cn')
 
@@ -29,25 +31,32 @@ type AppPropsWithLayout = AppProps & {
 }
 
 function MyApp({ Component, pageProps, router }: AppPropsWithLayout) {
+    const [store] = useState(createStore)
     useEffect(() => {
-        router.events.on('routeChangeStart', () => {
-            NProgress.start()
-        })
-        router.events.on('routeChangeComplete', () => {
-            NProgress.done()
-        })
-        router.events.on('routeChangeError', () => {
-            NProgress.done()
-        })
+        const start = () => { NProgress.start() }
+        const done = () => { NProgress.done() }
+        router.events.on('routeChangeStart', start)
+        router.events.on('routeChangeComplete', done)
+        router.events.on('routeChangeError', done)
+        return () => {
+            router.events.off('routeChangeStart', start)
+            router.events.off('routeChangeComplete', done)
+            router.events.off('routeChangeError', done)
+        }
     }, [router.events])
 
     const getLayout = Component.getLayout ?? ((page) => <CustomLayout>{page}</CustomLayout>)
 
-    return getLayout(
-        <ConfigProvider locale={zhCN}>
-            <RootContext.Provider value={createStore()}>
-                <Component {...pageProps} />
-            </RootContext.Provider>
+    return (
+        <ConfigProvider locale={zhCN} theme={{ ...antTheme, zeroRuntime: true }}>
+            <AntApp>
+                <ApiFeedback />
+                <RootContext.Provider value={store}>
+                    {getLayout(<Component {...pageProps} />)}
+                </RootContext.Provider>
+            </AntApp>
+            <Analytics />
+            <SpeedInsights />
         </ConfigProvider>
     )
 }

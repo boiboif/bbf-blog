@@ -1,12 +1,17 @@
 import prisma from "@/utils/prismaClient";
 import { formatObjArrDate } from "@/utils/time";
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/generated/prisma/client";
 
 interface GetTagPageParam {
   name?: string;
   skip?: number;
   take?: number;
 }
+
+const getTaggedPostIds = (id: number) => prisma.post.findMany({
+  where: { tags: { some: { id } } },
+  select: { id: true },
+});
 
 /** 新增标签 */
 export const addTag = async (param: Prisma.tagCreateInput) => {
@@ -21,25 +26,21 @@ export const addTag = async (param: Prisma.tagCreateInput) => {
 export const updateTag = async (
   param: Prisma.tagCreateInput & { id: number }
 ) => {
-  const res = await prisma.tag.update({
-    where: {
-      id: param.id,
-    },
-    data: param,
-  });
-
-  return res;
+  const [tag, posts] = await prisma.$transaction([
+    prisma.tag.update({ where: { id: param.id }, data: { name: param.name } }),
+    getTaggedPostIds(param.id),
+  ]);
+  return { tag, posts };
 };
 
 /** 删除标签 */
 export const deleteTag = async (param: { id: number }) => {
-  const res = await prisma.tag.delete({
-    where: {
-      id: param.id,
-    },
-  });
-
-  return res;
+  const [posts] = await prisma.$transaction([
+    getTaggedPostIds(param.id),
+    prisma.tag.update({ where: { id: param.id }, data: { posts: { set: [] } } }),
+    prisma.tag.delete({ where: { id: param.id } }),
+  ]);
+  return posts;
 };
 
 /** 获取所有标签 */

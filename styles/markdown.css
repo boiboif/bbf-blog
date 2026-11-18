@@ -1,0 +1,170 @@
+@import 'highlight.js/styles/github.css';
+@import 'highlight.js/styles/github-dark.css' (prefers-color-scheme: dark);
+@import 'github-markdown-css/github-markdown.css';
+
+:root {
+    --markdown-zoom-background: #ffffff;
+}
+
+.medium-zoom-overlay {
+    z-index: 1100;
+}
+
+.medium-zoom-image--opened {
+    z-index: 1101;
+}
+
+.markdown-body {
+    box-sizing: border-box;
+    max-width: 980px;
+    margin-inline: auto;
+    padding: clamp(16px, 4vw, 45px) clamp(16px, 3vw, 36px);
+}
+
+.markdown-body ol {
+    list-style: decimal;
+}
+
+.markdown-body ul {
+    list-style: disc;
+}
+
+.markdown-body a:any-link {
+    color: var(--fgColor-accent);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+    /* Switch text and surface together, including while a system theme is changing. */
+    transition: none;
+}
+
+.markdown-body a:visited {
+    color: var(--color-prettylights-syntax-entity);
+}
+
+.markdown-body pre code.hljs {
+    padding: 0;
+    background: transparent;
+}
+
+.markdown-body :is(.hljs-keyword, .hljs-type, .hljs-doctag, .hljs-template-tag, .hljs-template-variable),
+.markdown-body .hljs-variable.language_ {
+    color: var(--color-prettylights-syntax-keyword);
+}
+
+.markdown-body :is(.hljs-built_in, .hljs-symbol) {
+    color: var(--color-prettylights-syntax-variable);
+}
+
+.markdown-body :is(.hljs-name, .hljs-selector-tag, .hljs-selector-pseudo, .hljs-quote) {
+    color: var(--color-prettylights-syntax-entity-tag);
+}
+
+.markdown-body .hljs-section {
+    color: var(--fgColor-accent);
+}
+
+.markdown-body .hljs-addition {
+    color: var(--color-prettylights-syntax-markup-inserted-text);
+    background-color: var(--color-prettylights-syntax-markup-inserted-bg);
+}
+
+.markdown-body .hljs-deletion {
+    color: var(--color-prettylights-syntax-markup-deleted-text);
+    background-color: var(--color-prettylights-syntax-markup-deleted-bg);
+}
+
+.markdown-body .bytemd-mermaid {
+    overflow-x: auto;
+}
+
+.markdown-body .bytemd-mermaid svg {
+    display: block;
+    margin-inline: auto;
+}
+
+.bytemd-preview .markdown-body {
+    min-height: 100%;
+}
+
+/* Keep the status row inside the editor when the toolbar wraps. */
+.bytemd:not(.bytemd-split) {
+    display: flex;
+    flex-direction: column;
+}
+
+.bytemd:not(.bytemd-split) .bytemd-body {
+    flex: 1;
+    min-height: 0;
+}
+
+.bytemd:not(.bytemd-split) .bytemd-status {
+    display: flow-root;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --markdown-zoom-background: #0d1117;
+    }
+
+    .bytemd,
+    .tippy-box:has(.bytemd-dropdown) {
+        --editor-canvas: #0d1117;
+        --editor-panel: #151b23;
+        --editor-line: #3d444d;
+        --editor-text: #f0f6fc;
+        --editor-muted: #a0a9b5;
+        --editor-accent: #79c0ff;
+        color-scheme: dark;
+        color: var(--editor-text);
+        border-color: var(--editor-line);
+        background: var(--editor-canvas);
+    }
+
+    .bytemd :is(.bytemd-toolbar, .bytemd-status, .bytemd-sidebar, .CodeMirror-gutters),
+    .tippy-box:has(.bytemd-dropdown) {
+        background: var(--editor-panel);
+        border-color: var(--editor-line);
+    }
+
+    .bytemd :is(.CodeMirror, .CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler, .bytemd-preview) {
+        color: var(--editor-text);
+        background: var(--editor-canvas);
+        border-color: var(--editor-line);
+    }
+
+    .bytemd :is(.bytemd-toolbar-tab-active, .bytemd-toolbar-icon-active, .bytemd-toc-active) {
+        color: var(--editor-accent);
+    }
+
+    .bytemd :is(.bytemd-toolbar-icon:hover, .bytemd-toc-active),
+    .bytemd-dropdown .bytemd-dropdown-item:hover {
+        background: var(--editor-line);
+    }
+
+    .bytemd :is(.CodeMirror-linenumber, .cm-comment, .cm-quote, .cm-hr, .cm-meta, .bytemd-sidebar ul),
+    .bytemd-dropdown .bytemd-dropdown-title {
+        color: var(--editor-muted);
+        border-color: var(--editor-line);
+    }
+
+    .bytemd .CodeMirror-cursor {
+        border-color: var(--editor-text);
+    }
+
+    .bytemd .CodeMirror-selected,
+    .bytemd .CodeMirror-focused .CodeMirror-selected {
+        background: #244568;
+    }
+
+    .bytemd .cm-s-default :is(.cm-header, .cm-link, .cm-def, .cm-attribute, .cm-variable-2, .cm-builtin) {
+        color: var(--editor-accent);
+    }
+
+    .bytemd .cm-s-default :is(.cm-string, .cm-string-2, .cm-atom, .cm-number, .cm-tag, .cm-type, .cm-variable-3) {
+        color: #a5d6a7;
+    }
+
+    .bytemd .cm-s-default :is(.cm-keyword, .cm-error, .cm-negative) {
+        color: #ff9b9b;
+    }
+}

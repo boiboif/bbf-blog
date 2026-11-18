@@ -1,6 +1,6 @@
 module.exports = {
   plugins: {
-    tailwindcss: {},
-    autoprefixer: {},
+    [require.resolve('./styles/antd-postcss.cjs')]: {},
+    '@tailwindcss/postcss': {},
   },
 }

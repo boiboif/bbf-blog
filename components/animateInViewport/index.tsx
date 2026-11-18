@@ -1,74 +1,95 @@
-import { useInViewportOnce } from '@/hook/useInViewportOnce'
-import { useInViewport } from 'ahooks'
-import React, { HTMLAttributes, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
-export interface AnimateInViewportProps<T = HTMLDivElement> extends HTMLAttributes<T> {
-    children?: React.ReactNode
+interface AnimateInViewportProps extends React.HTMLAttributes<HTMLDivElement> {
     delay?: number
     animateCssClass?: string
     animateOnce?: boolean
-    className?: string
-    style?: React.CSSProperties
-    wrapperElement?: keyof React.ReactHTML
-    testMode?: boolean
     ready?: boolean
     duration?: number
 }
 
-/**
- * 组件出现在可视区域时添加animate.css类名
- */
-const AnimateInViewport = <T extends HTMLElement = HTMLDivElement>(props: AnimateInViewportProps<T>) => {
-    const {
-        children,
-        delay = 0,
-        animateCssClass = 'animate__fadeInUp',
-        animateOnce = false,
-        className = '',
-        style,
-        wrapperElement = 'div',
-        testMode,
-        ready = true,
-        duration = 1000,
-        ...htmlAttributes
-    } = props
+const AnimateInViewport = ({
+    children,
+    delay = 0,
+    animateCssClass = 'animate__fadeInUp',
+    animateOnce = false,
+    className = '',
+    style,
+    ready = true,
+    duration = 1000,
+    ...attributes
+}: AnimateInViewportProps) => {
     const ref = useRef<HTMLDivElement>(null)
-
-    const [inViewportOnce] = useInViewportOnce(ref)
-    const [inViewport] = useInViewport(ref)
-    const [animating, setAnimating] = useState(false)
-
-    const inViewPortFlag = animating ? true : animateOnce ? inViewportOnce : inViewport
-
+    const [phase, setPhase] = useState<'visible' | 'waiting' | 'playing'>('visible')
     useEffect(() => {
-        if (inViewPortFlag) {
-            setAnimating(true)
+        const element = ref.current
+        if (!element || !ready || typeof IntersectionObserver === 'undefined') return
+        const motion = window.matchMedia('(prefers-reduced-motion: reduce)')
+        const threshold = Math.min(0.15, 24 / Math.max(element.offsetHeight, 1))
+        let armed = true
+        let firstObservation = true
+        const observer = new IntersectionObserver(entries => {
+            if (motion.matches) return
+            const entry = entries[entries.length - 1]
+            const leftViewport = entries.some(change => change.intersectionRatio === 0)
+            const alreadyVisible = firstObservation && !leftViewport && entries[0].intersectionRatio >= threshold
+            firstObservation = false
+            if (leftViewport) armed = true
+            if (!armed) return
+            if (entry.intersectionRatio < threshold) {
+                setPhase('waiting')
+                return
+            }
+            armed = false
+            if (alreadyVisible || element.matches(':focus-within')) {
+                setPhase('visible')
+                if (animateOnce) observer.unobserve(element)
+                return
+            }
+            // A transform on the animated element changes its observed bounds.
+            observer.unobserve(element)
+            setPhase('playing')
+        }, { threshold: [0, threshold] })
+        const finish = (event: AnimationEvent) => {
+            if (event.target !== element) return
+            setPhase('visible')
+            if (!animateOnce && !motion.matches) observer.observe(element)
         }
-    }, [inViewPortFlag])
+        const updatePreference = () => {
+            if (motion.matches) {
+                observer.disconnect()
+                setPhase('visible')
+            } else if (!animateOnce || armed) {
+                firstObservation = true
+                observer.observe(element)
+            }
+        }
+        if (!motion.matches) observer.observe(element)
+        motion.addEventListener('change', updatePreference)
+        element.addEventListener('animationend', finish)
+        element.addEventListener('animationcancel', finish)
+        return () => {
+            observer.disconnect()
+            motion.removeEventListener('change', updatePreference)
+            element.removeEventListener('animationend', finish)
+            element.removeEventListener('animationcancel', finish)
+        }
+    }, [animateOnce, ready])
 
-    if (testMode) {
-        // console.log(inViewportOnce, 'inViewportOnce')
-        // console.log(inViewport, 'inViewport')
-        // console.log(animating)
-    }
-
-    return React.createElement(
-        wrapperElement,
-        {
-            ref,
-            style: {
-                '--animate-delay': `${delay}ms`,
+    return (
+        <div
+            {...attributes}
+            ref={ref}
+            data-viewport-entry={ready ? phase : 'visible'}
+            className={ready && phase === 'playing' ? `${className} animate__animated ${animateCssClass}` : className}
+            style={{
+                animationDelay: `${delay}ms`,
                 '--animate-duration': `${duration}ms`,
-                visibility: ready && inViewPortFlag ? 'visible' : 'hidden',
                 ...style,
-            } as React.CSSProperties,
-            className: ready && inViewPortFlag ? `${className} animate__animated ${animateCssClass} animate__delay-1s` : className,
-            onAnimationEnd: () => {
-                setAnimating(false)
-            },
-            ...htmlAttributes,
-        },
-        children
+            } as React.CSSProperties}
+        >
+            {children}
+        </div>
     )
 }
 

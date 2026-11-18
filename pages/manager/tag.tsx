@@ -4,19 +4,20 @@ import CustomForm from '@/components/manager/customForm'
 import ManagerLayout from '@/components/manager/layout'
 import TableMoreAction from '@/components/manager/tableMoreAction'
 import { useRequest } from 'ahooks'
-import { Button, message, Space, Table } from 'antd'
-import { ColumnsType } from 'antd/lib/table'
+import { App, Button, Space, Table } from 'antd'
+import type { TableColumnsType } from 'antd'
 import TagModal from '@/components/manager/tag/modal'
 import useRecord from '@/hook/useRecord'
 
 const Tag = () => {
+    const { message } = App.useApp()
     const [searchParam, setSearchParams] = useState({ name: '' })
     const { data, refresh, loading } = useRequest(() => getTagAll(searchParam).then((res) => res?.data), {
         refreshDeps: [searchParam],
     })
     const tagModal = useRecord<API.Tag>()
 
-    const columns: ColumnsType<API.Tag> = [
+    const columns: TableColumnsType<API.Tag> = [
         { title: '编号', dataIndex: 'id' },
         { title: '标签名称', dataIndex: 'name' },
         {
@@ -24,7 +25,7 @@ const Tag = () => {
             render: (_, record) => {
                 return (
                     <Space>
-                        <a onClick={() => tagModal.show(record)}>编辑</a>
+                        <Button type='link' onClick={() => tagModal.show(record)}>编辑</Button>
                         <TableMoreAction
                             record={record}
                             menuList={[
@@ -58,7 +59,7 @@ const Tag = () => {
                 </Button>
             </div>
 
-            <Table loading={loading} columns={columns} dataSource={data} rowKey='id' bordered size='middle'></Table>
+            <Table loading={loading} columns={columns} dataSource={data} rowKey='id' bordered size='medium'></Table>
         </div>
     )
 }

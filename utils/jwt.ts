@@ -1,53 +1,49 @@
 import jwt from 'jsonwebtoken'
-import { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest, NextApiResponse } from 'next'
+import prisma from '@/utils/prismaClient'
 
-const secret = process.env.JWT_SECRET
+export const sessionUserSelect = {
+    id: true,
+    username: true,
+    nickName: true,
+    roles: true,
+} as const
 
-interface TokenUserInfo {
-    id: number
-    username: string
-    roles: string[]
+function getSecret() {
+    const secret = process.env.JWT_SECRET
+    if (!secret) throw new Error('JWT_SECRET is required')
+    return secret
 }
 
-export function signToken(userinfo: TokenUserInfo) {
-    if (!secret) throw new Error('Environment variable JWT_SECRET is not defined!')
-    return new Promise<string>((resolve, reject) => {
-        jwt.sign({ id: userinfo.id, username: userinfo.username, roles: userinfo.roles }, secret, {}, (err, token) => {
-            if (err || !token) return reject(err)
-            resolve(token)
-        })
-    })
+export function signToken(id: number) {
+    return jwt.sign({ id }, getSecret(), { algorithm: 'HS256', expiresIn: '7d' })
 }
 
-export function verifyToken(token: string) {
-    if (!secret) throw new Error('Environment variable JWT_SECRET is not defined!')
-    return new Promise<TokenUserInfo>((resolve, reject) => {
-        jwt.verify(token, secret, (err, payload) => {
-            if (err || !payload || !payload) return reject(err)
-            resolve(payload as TokenUserInfo)
-        })
-    })
-}
-
-export const authMiddleware = (req: NextApiRequest, res: NextApiResponse, auth?: string[]) => {
-    return new Promise<TokenUserInfo>(async (resolve) => {
-        try {
-            const data = await verifyToken(req.headers.authorization!)
-            if (auth) {
-                if (data.roles.some((r) => auth?.includes(r))) {
-                    resolve(data)
-                } else {
-                    return res.status(401).json({
-                        message: '无权限',
-                    })
-                }
-            } else {
-                resolve(data)
-            }
-        } catch (error) {
-            return res.status(401).json({
-                message: 'token格式不符合规范, 请重试!',
-            })
+export async function requireUser(req: NextApiRequest, res: NextApiResponse, role?: 'admin') {
+    const secret = getSecret()
+    let id: number
+    try {
+        const token = req.headers.authorization || ''
+        const payload = jwt.verify(token, secret, { algorithms: ['HS256'], maxAge: '7d' })
+        if (typeof payload === 'string' || !Number.isSafeInteger(payload.id) || payload.id <= 0) {
+            throw new Error('Invalid account ID')
         }
-    })
+        id = payload.id
+    } catch {
+        res.status(401).json({ success: false, message: '请重新登录' })
+        return null
+    }
+
+    const user = await prisma.user.findUnique({ where: { id }, select: sessionUserSelect })
+    if (!user) {
+        res.status(401).json({ success: false, message: '请重新登录' })
+        return null
+    }
+    // Read current roles so removing access takes effect on existing sessions.
+    const roles = Array.isArray(user.roles) ? user.roles.filter((value): value is string => typeof value === 'string') : []
+    if (role && !roles.includes(role)) {
+        res.status(403).json({ success: false, message: '无权限' })
+        return null
+    }
+    return { ...user, roles }
 }

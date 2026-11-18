@@ -1,52 +1,42 @@
-import { getPostById, getPostMany, getCateMany } from '@/service'
+import { getPostById, getPostIds, getCateMany, parsePostId } from '@/service'
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next'
-import React from 'react'
-import dynamic from 'next/dynamic'
+import React, { useEffect, useRef, useState } from 'react'
 import { Viewer } from '@bytemd/react'
-import breaks from '@bytemd/plugin-breaks'
-import frontmatter from '@bytemd/plugin-frontmatter'
-import gemoji from '@bytemd/plugin-gemoji'
-import gfm from '@bytemd/plugin-gfm'
-import mediumZoom from '@bytemd/plugin-medium-zoom'
-import gfmLocales from '@bytemd/plugin-gfm/locales/zh_Hans.json'
-import mermaidLocales from '@bytemd/plugin-mermaid/locales/zh_Hans.json'
-import mermaid from '@bytemd/plugin-mermaid'
-import highlight from '@bytemd/plugin-highlight-ssr'
-import 'highlight.js/styles/vs.css'
-import 'github-markdown-css' // placed after highlight styles to override `code` padding
-import moment from 'moment'
+import { markdownPlugins } from '@/components/markdown/plugins'
+import { formatDate } from '@/utils/time'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 import { useDotShow } from '@/hook/useDotShow'
-import { useRequest } from 'ahooks'
-import { getArticleById } from '@/clientApi'
 
-const ArticleLayout = dynamic(() => import('@/components/articleLayout'))
-const ArticleListItem = dynamic(() => import('@/components/articleListItem'))
-const BackButton = dynamic(() => import('@/components/backButton'))
+import ArticleLayout from '@/components/articleLayout'
+import ArticleListItem from '@/components/articleListItem'
+import BackButton from '@/components/backButton'
 
-const plugins = [
-    gfm({
-        locale: gfmLocales,
-    }),
-    highlight(),
-    frontmatter(),
-    mediumZoom(),
-    mermaid({ locale: mermaidLocales }),
-    gemoji(),
-    breaks(),
-    // Add more plugins here
-]
-
-const ArticleDetail: NextPage<{ article: API.Article | null; cateList: API.Cate[] }> = (props) => {
-    const { article, cateList } = props
+const ArticleDetail: NextPage<{ article: API.Article; cateList: API.Cate[]; publishDate: string }> = (props) => {
+    const { article, cateList, publishDate } = props
     const dotShow = useDotShow()
     const router = useRouter()
 
-    const { data = article } = useRequest(() => getArticleById(article!.id.toString())().then((res) => res?.data), {
-        ready: !!article,
-        cacheKey: 'getArticleById',
-    })
+    const viewRequest = useRef<{ id: number; promise: Promise<number | undefined> } | null>(null)
+    const [view, setView] = useState<{ id: number; count: number } | null>(null)
+    useEffect(() => {
+        const id = article.id
+        // Reuse this visit's request when Strict Mode re-runs the effect.
+        if (viewRequest.current?.id !== id) {
+            const promise = fetch(`/api/post/${id}/view`, { method: 'POST' })
+                .then(async (res) => {
+                    if (!res.ok) return
+                    const result: CustomResponse<{ viewCount: number }> = await res.json()
+                    return result.data.viewCount
+                })
+            viewRequest.current = { id, promise }
+        }
+        let current = true
+        viewRequest.current.promise.then(count => {
+            if (current && typeof count === 'number') setView({ id, count })
+        }).catch(() => { /* Keep the static count if reporting fails. */ })
+        return () => { current = false }
+    }, [article.id])
 
     const toTag = (tagId: string) => {
         router.push({
@@ -58,23 +48,24 @@ const ArticleDetail: NextPage<{ article: API.Article | null; cateList: API.Cate[
     }
 
     return (
-        <ArticleLayout cateList={cateList} activeKey={data?.cateId.toString()}>
+        <ArticleLayout cateList={cateList} activeKey={article.cateId.toString()}>
             <Head>
-                <title>{'BBF的个人博客 - ' + data?.title}</title>
+                <title>{'BBF的个人博客 - ' + article.title}</title>
+                {article.desc && <meta name='description' content={article.desc} />}
             </Head>
             <div {...dotShow}>
                 <ArticleListItem
                     size='large'
-                    title={data?.title}
-                    cate={data?.cate.name}
-                    publishDate={moment(data?.createdAt).format('YYYY-MM-DD')}
-                    tags={data?.tags}
+                    title={article.title}
+                    cate={article.cate.name}
+                    publishDate={publishDate}
+                    tags={article.tags}
                     onTagClick={toTag}
-                    viewCout={data?.viewCount}
+                    viewCout={view?.id === article.id ? view.count : article.viewCount}
                 ></ArticleListItem>
             </div>
             <div className='h-[1px] bg-gray-300'></div>
-            <Viewer plugins={plugins} value={data?.content || ''}></Viewer>
+            <Viewer plugins={markdownPlugins} value={article.content} />
             <div className='text-center'>
                 <BackButton onClick={() => router.back()}></BackButton>
             </div>
@@ -82,8 +73,8 @@ const ArticleDetail: NextPage<{ article: API.Article | null; cateList: API.Cate[
     )
 }
 
-export const getStaticPaths: GetStaticPaths = async (params) => {
-    const posts = await getPostMany()
+export const getStaticPaths: GetStaticPaths = async () => {
+    const posts = await getPostIds()
 
     return {
         paths: posts.map((item) => ({ params: { id: item.id.toString() } })),
@@ -92,36 +83,23 @@ export const getStaticPaths: GetStaticPaths = async (params) => {
 }
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
-    const article = await getPostById(params!.id as string)
-    const allCate = await getCateMany()
-
-    if (!article) {
-        return {
-            notFound: true,
-        }
+    const id = parsePostId(params?.id)
+    if (id === null) return { notFound: true }
+    if (params?.id !== String(id)) {
+        return { redirect: { destination: `/article/${id}`, permanent: true } }
     }
+    const article = await getPostById(id)
+    if (!article) return { notFound: true, revalidate: 60 }
+    const allCate = await getCateMany()
 
     return {
         props: {
             article,
+            publishDate: formatDate(article.createdAt),
             cateList: allCate ?? [],
         },
         revalidate: 60,
     }
 }
-
-// export const getServerSideProps: GetServerSideProps = async (context) => {
-//     const { id } = context.query
-
-// const article = await getPostById(id as string)
-// const allCate = await getCateMany()
-
-// return {
-//     props: {
-//         article,
-//         cateList: allCate ?? [],
-//     },
-// }
-// }
 
 export default ArticleDetail
