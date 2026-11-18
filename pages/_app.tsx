@@ -5,6 +5,8 @@ import { NextPage } from 'next'
 import { ReactElement, ReactNode, useEffect, useState } from 'react'
 import { App as AntApp, ConfigProvider } from 'antd'
 import zhCN from 'antd/locale/zh_CN'
+import { Analytics } from '@vercel/analytics/next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import { ApiFeedback } from '@/clientApi/feedback'
 import moment from 'moment'
 import 'moment/locale/zh-cn'
@@ -53,6 +55,8 @@ function MyApp({ Component, pageProps, router }: AppPropsWithLayout) {
                     {getLayout(<Component {...pageProps} />)}
                 </RootContext.Provider>
             </AntApp>
+            <Analytics />
+            <SpeedInsights />
         </ConfigProvider>
     )
 }
