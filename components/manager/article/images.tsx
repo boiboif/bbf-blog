@@ -1,7 +1,7 @@
 import { App, Form, Input, Modal } from 'antd'
 import type { BytemdEditorContext, BytemdPlugin } from 'bytemd'
 import { useMemo, useState } from 'react'
-import { imageExtensions, imageFormatsHelp, imageMarkdown, maxImageBytes } from '@/utils/markdownImage'
+import { imageExtensions, imageFormatsHelp, imageMarkdown, maxImageBytes, maxServerImageBytes, readImageType } from '@/utils/markdownImage'
 
 type Editor = BytemdEditorContext['editor']
 
@@ -11,16 +11,38 @@ const photo = '<rect x="2" y="3" width="16" height="16" rx="2"/><path d="m2 15 5
 const uploadIcon = icon('上传本地图片', photo + '<path d="M19 22v-7m-3 3 3-3 3 3"/>')
 const urlIcon = icon('插入网络图片', '<path d="m10 13 4-4m-6 2-3 3a4 4 0 0 0 6 6l3-3m-4-9 3-3a4 4 0 0 1 6 6l-3 3"/>')
 
-async function upload(file: File) {
-    if (file.size > maxImageBytes || !file.size) throw new Error(imageFormatsHelp)
-    const response = await fetch('/api/images', {
+async function requestUpload(path: string, body: File | Record<string, unknown>) {
+    const isFile = body instanceof File
+    const response = await fetch(path, {
         method: 'POST',
-        headers: { authorization: localStorage.getItem('token') ?? '' },
-        body: file,
+        headers: {
+            authorization: localStorage.getItem('token') ?? '',
+            ...(!isFile && { 'content-type': 'application/json' }),
+        },
+        body: isFile ? body : JSON.stringify(body),
     })
     const result = await response.json().catch(() => null)
-    if (!response.ok || !result?.data?.url) throw new Error(result?.message || '上传失败，请重试')
-    return imageMarkdown(result.data.url, file.name.replace(/\.[^.]+$/, ''))
+    if (!response.ok || !result?.data) throw new Error(result?.message || '上传失败，请重试')
+    return result.data
+}
+
+async function uploadLarge(file: File) {
+    const contentType = await readImageType(file.size, async length => new Uint8Array(await file.slice(0, length).arrayBuffer()))
+    if (!contentType) throw new Error(imageFormatsHelp)
+    const path = '/api/images/direct'
+    const { uploadUrl, ticket } = await requestUpload(path, { action: 'prepare', size: file.size, contentType })
+    const response = await fetch(uploadUrl, {
+        method: 'PUT', credentials: 'omit', referrerPolicy: 'no-referrer',
+        headers: { 'content-type': 'application/octet-stream' }, body: file,
+    })
+    if (!response.ok) throw new Error('图片直传失败，请重试')
+    return requestUpload(path, { action: 'complete', ticket })
+}
+
+async function upload(file: File) {
+    if (file.size > maxImageBytes || !file.size) throw new Error(imageFormatsHelp)
+    const { url } = file.size > maxServerImageBytes ? await uploadLarge(file) : await requestUpload('/api/images', file)
+    return imageMarkdown(url, file.name.replace(/\.[^.]+$/, ''))
 }
 
 function ImageUrlDialog({ editor, close }: { editor: Editor; close: () => void }) {

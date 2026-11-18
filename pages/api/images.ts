@@ -2,25 +2,11 @@ import { randomUUID } from 'node:crypto'
 import { put } from '@vercel/blob'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { requireUser } from '@/utils/jwt'
-import { imageExtensions, imageFormatsHelp, maxImageBytes } from '@/utils/markdownImage'
+import { imageExtensions, imageFormatsHelp, imageType, maxServerImageBytes } from '@/utils/markdownImage'
 
 export const config = { api: { bodyParser: false } }
 
-function imageType(bytes: Buffer): keyof typeof imageExtensions | undefined {
-    if (bytes.length >= 3 && bytes.readUIntBE(0, 3) === 0xffd8ff) return 'image/jpeg'
-    if (bytes.subarray(0, 8).equals(Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]))) return 'image/png'
-    const header = bytes.toString('latin1', 0, 12)
-    if (header.startsWith('GIF87a') || header.startsWith('GIF89a')) return 'image/gif'
-    if (header.startsWith('RIFF') && header.endsWith('WEBP')) return 'image/webp'
-    if (bytes.length >= 16 && header.slice(4, 8) === 'ftyp') {
-        const boxSize = bytes.readUInt32BE(0)
-        if (boxSize < 16 || boxSize > bytes.length) return
-        for (let offset = 8; offset + 4 <= boxSize; offset += 4) {
-            if (offset === 12) continue // Minor version sits between the major brand and compatible brands.
-            if (['avif', 'avis'].includes(bytes.toString('latin1', offset, offset + 4))) return 'image/avif'
-        }
-    }
-}
+const directHelp = '超过 3 MiB 的图片请通过文章编辑器直传，单张最多 20 MiB'
 
 export default async function uploadImage(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'POST') {
@@ -28,17 +14,17 @@ export default async function uploadImage(req: NextApiRequest, res: NextApiRespo
         return res.status(405).json({ success: false, message: '请使用 POST 上传图片' })
     }
     if (!await requireUser(req, res, 'admin')) return
-    if (Number(req.headers['content-length']) > maxImageBytes) {
-        return res.status(413).json({ success: false, message: imageFormatsHelp })
+    if (Number(req.headers['content-length']) > maxServerImageBytes) {
+        return res.status(413).json({ success: false, message: directHelp })
     }
 
     const chunks: Buffer[] = []
     let size = 0
     for await (const chunk of req.iterator({ destroyOnReturn: false })) {
         size += chunk.length
-        if (size > maxImageBytes) {
+        if (size > maxServerImageBytes) {
             req.resume()
-            return res.status(413).json({ success: false, message: imageFormatsHelp })
+            return res.status(413).json({ success: false, message: directHelp })
         }
         chunks.push(chunk)
     }
