@@ -24,6 +24,8 @@ import { useRouter } from 'next/router'
 import { getPortalStatisticsCount } from '@/service/statistics'
 import { useDotShow } from '@/hook/useDotShow'
 import classNames from 'classnames'
+import { GithubOutlined } from '@ant-design/icons'
+import { App } from 'antd'
 
 import Banner from '@/components/banner'
 import Controller from '@/components/banner/controller'
@@ -43,6 +45,7 @@ const Home: NextPage<{ posts: API.ArticleSummary[]; staticsCount: API.PortalStat
     const readyChangeCover = useRef(true)
     const dotShow = useDotShow()
     const router = useRouter()
+    const { message } = App.useApp()
 
     return (
         <div>
@@ -83,18 +86,55 @@ const Home: NextPage<{ posts: API.ArticleSummary[]; staticsCount: API.PortalStat
                 </div>
 
                 <div className='w-[91%] lg:w-0 lg:flex-1 mx-auto pt-5 lg:pt-11 flex lg:items-center lg:flex-col flex-wrap'>
-                    <div className='w-full lg:text-center flex items-center flex-wrap sm:flex-nowrap lg:block'>
-                        <AnimateInViewport className='inline-block' animateCssClass='animate__swing'>
-                            <div
-                                className={classNames([
-                                    'blog-avatar',
-                                    'w-20 h-20 lg:w-32 lg:h-32 xl:w-40 xl:h-40 relative rounded-[50%] overflow-hidden mb-4 mr-8 sm:mr-4 lg:mx-auto shadow-lg shadow-rose-300',
-                                ])}
-                            >
-                                <Image fill sizes='(min-width: 1280px) 160px, (min-width: 1024px) 128px, 80px' src={avatar} alt='' />
+                    <div className='w-full lg:text-center flex items-center flex-wrap lg:block'>
+                        <div className='mb-4 mr-3 flex items-end lg:mr-0 lg:grid lg:grid-cols-[1fr_auto_1fr]'>
+                            <AnimateInViewport className='lg:col-start-2' animateCssClass='animate__swing'>
+                                <div className='blog-avatar relative size-20 overflow-hidden rounded-full shadow-lg shadow-rose-300 lg:size-32 xl:size-40'>
+                                    <Image fill sizes='(min-width: 1280px) 160px, (min-width: 1024px) 128px, 80px' src={avatar} alt='' />
+                                </div>
+                            </AnimateInViewport>
+                            <div className='flex flex-col lg:justify-self-start'>
+                                <a
+                                    href='https://github.com/boiboif'
+                                    target='_blank'
+                                    rel='noopener noreferrer'
+                                    aria-label='GitHub 个人主页（在新标签页打开）'
+                                    title='GitHub'
+                                    className='group inline-flex size-11 shrink-0 items-end justify-center focus-visible:outline-none'
+                                >
+                                    <span className='inline-flex size-7.5 items-center justify-center rounded-full bg-slate-100 text-lg text-slate-800 transition-colors group-hover:bg-slate-200 group-focus-visible:outline-2 group-focus-visible:outline-offset-2 group-focus-visible:outline-teal-600'>
+                                        <GithubOutlined aria-hidden='true' />
+                                    </span>
+                                </a>
+                                <a
+                                    href='https://space.bilibili.com/1519338'
+                                    target='_blank'
+                                    rel='noopener noreferrer'
+                                    aria-label='哔哩哔哩个人主页（在新标签页打开）'
+                                    title='Bilibili'
+                                    className='group inline-flex size-11 shrink-0 items-end justify-center focus-visible:outline-none'
+                                >
+                                    <span className='inline-flex size-7.5 items-center justify-center rounded-full bg-rose-50 text-rose-600 transition-colors group-hover:bg-rose-100 group-focus-visible:outline-2 group-focus-visible:outline-offset-2 group-focus-visible:outline-teal-600'>
+                                        <svg
+                                            aria-hidden='true'
+                                            focusable='false'
+                                            className='size-4.5'
+                                            viewBox='0 0 24 24'
+                                            fill='none'
+                                            stroke='currentColor'
+                                            strokeWidth='1.8'
+                                            strokeLinecap='round'
+                                            strokeLinejoin='round'
+                                        >
+                                            <rect x='2.75' y='7' width='18.5' height='12' rx='2.5' />
+                                            <path d='m7.5 3.5 3.5 3.5m2 0 3.5-3.5M6.5 19v1.5m11-1.5v1.5' />
+                                            <path d='m6.5 12.5 3-1m5 0 3 1m-8 2.5 1.25 1 1.25-1 1.25 1 1.25-1' />
+                                        </svg>
+                                    </span>
+                                </a>
                             </div>
-                        </AnimateInViewport>
-                        <div className='text-[#333] mr-6 lg:mr-0 mb-2 lg:mb-4 flex lg:justify-center gap-5 lg:gap-10 items-center'>
+                        </div>
+                        <div className='text-[#333] sm:mr-6 lg:mr-0 mb-2 lg:mb-4 flex lg:justify-center gap-5 lg:gap-10 items-center'>
                             <AnimateInViewport animateOnce>
                                 <div className='lg:font-bold lg:text-xl'>文章</div>
                                 <div className='text-center text-teal-500 text-sm lg:text-xl'>{staticsCount.postCount}</div>
@@ -113,7 +153,7 @@ const Home: NextPage<{ posts: API.ArticleSummary[]; staticsCount: API.PortalStat
 
                         <AnimateInViewport className='mx-auto w-1/2 hidden lg:block border-b border-slate-200 mb-6' />
 
-                        <div>
+                        <div className='min-w-0'>
                             <AnimateInViewport
                                 animateOnce
                                 className='text-md lg:text-lg xl:text-xl font-bold mb-2 lg:mb-0 text-teal-500 truncate'
@@ -306,17 +346,23 @@ const Home: NextPage<{ posts: API.ArticleSummary[]; staticsCount: API.PortalStat
 
                         <AnimateInViewport
                             animateOnce
-                            className='flex-1 relative h-56 sm:h-60 md:h-80 xl:h-96 rounded-lg mb-4 lg:mb-0 cursor-pointer shadow-md shadow-rose-300 brightness-95'
+                            className='flex-1 h-56 sm:h-60 md:h-80 xl:h-96 rounded-lg mb-4 lg:mb-0 shadow-md shadow-rose-300 brightness-95'
                         >
-                            <Image className='rounded-lg object-cover' fill sizes='(min-width: 1024px) 45vw, 91vw' src={linkImg} alt='' />
-                            <span
-                                className={classNames([
-                                    styles.link_text,
-                                    'text-shadow-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-teal-500 font-sans font-semibold tracking-widest opacity-80',
-                                ])}
+                            <button
+                                type='button'
+                                className='relative block h-full w-full cursor-pointer rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-teal-600'
+                                onClick={() => void message.info({ content: '敬请期待', key: 'friend-links' })}
                             >
-                                友链
-                            </span>
+                                <Image className='rounded-lg object-cover' fill sizes='(min-width: 1024px) 45vw, 91vw' src={linkImg} alt='' />
+                                <span
+                                    className={classNames([
+                                        styles.link_text,
+                                        'text-shadow-white text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-teal-500 font-sans font-semibold tracking-widest opacity-80',
+                                    ])}
+                                >
+                                    友链
+                                </span>
+                            </button>
                         </AnimateInViewport>
                     </div>
 

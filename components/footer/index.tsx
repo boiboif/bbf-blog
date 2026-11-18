@@ -4,7 +4,7 @@ const Footer = () => {
     return (
         <div className='pt-10 pb-5 px-2 lg:px-10 text-xs lg:text-sm'>
             <div className='flex justify-center gap-1 flex-wrap'>
-                © 2022 BBF Powered by
+                © 2026 BBF Powered by
                 <a href='https://nextjs.org/' target='_blank' rel='noreferrer'>
                     Next.js
                 </a>
