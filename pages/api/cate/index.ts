@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { Prisma } from '@/generated/prisma/client'
-import { getCateMany } from '@/service'
+import { getCateMany, getPostIds } from '@/service'
 import { listParams, namedRecordChange } from '@/utils/apiInput'
 import { requireUser } from '@/utils/jwt'
 import prisma from '@/utils/prismaClient'
@@ -40,7 +40,12 @@ export default async function index(req: NextApiRequest, res: NextApiResponse) {
                 break
             }
         }
-        await refreshBlogPages(res)
+        // Every article detail includes the full category list.
+        const posts = await getPostIds().catch(error => {
+            console.error('Failed to find article pages for category refresh', error)
+            return []
+        })
+        await refreshBlogPages(res, posts.map(post => post.id))
         return res.status(200).json({ success: true, data })
     } catch (error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {

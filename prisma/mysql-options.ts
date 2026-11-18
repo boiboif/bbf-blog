@@ -18,6 +18,12 @@ export function mysqlOptions(connectionString: string | undefined) {
         return Number(value)
     }
 
+    const acquireTimeout = (integer('pool_timeout') ?? 10) * 1000
+    // The MariaDB pool always schedules a Node timer for queued requests.
+    if (acquireTimeout === 0 || acquireTimeout > 2_147_483_647) {
+        throw new Error('MariaDB requires pool_timeout in DATABASE_URL to be between 1 and 2147483 seconds. Omit it to use 10 seconds.')
+    }
+
     const mode = params.get('sslaccept')
     if (mode !== null && mode !== 'strict' && mode !== 'accept_invalid_certs') {
         throw new Error('Invalid sslaccept in DATABASE_URL')
@@ -41,7 +47,7 @@ export function mysqlOptions(connectionString: string | undefined) {
         idleTimeout: integer('max_idle_connection_lifetime') ?? 300,
         prepareCacheLength: integer('statement_cache_size'),
         connectTimeout: (integer('connect_timeout') ?? 5) * 1000,
-        acquireTimeout: (integer('pool_timeout') ?? 10) * 1000,
+        acquireTimeout,
         socketTimeout: (integer('socket_timeout') ?? 0) * 1000,
         timezone: '+00:00',
         ssl: useTLS ? {

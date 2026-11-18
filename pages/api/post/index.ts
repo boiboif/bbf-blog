@@ -40,7 +40,7 @@ export default async function index(req: NextApiRequest, res: NextApiResponse) {
                 prisma.post.update({ where: { id: body.id }, data: { tags: { set: [] } } }),
                 prisma.post.delete({ where: { id: body.id } }),
             ])
-            await refreshBlogPages(res, body.id)
+            await refreshBlogPages(res, [body.id])
             return res.status(200).json({ success: true })
         }
         if (!validArticle(body, req.method === 'POST')) {
@@ -69,7 +69,7 @@ export default async function index(req: NextApiRequest, res: NextApiResponse) {
                 },
             })
         }
-        await refreshBlogPages(res, post.id)
+        await refreshBlogPages(res, [post.id])
         return res.status(200).json({ success: true, data: post })
     } catch (error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {

@@ -85,6 +85,9 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async ({ params }) => {
     const id = parsePostId(params?.id)
     if (id === null) return { notFound: true }
+    if (params?.id !== String(id)) {
+        return { redirect: { destination: `/article/${id}`, permanent: true } }
+    }
     const article = await getPostById(id)
     if (!article) return { notFound: true, revalidate: 60 }
     const allCate = await getCateMany()

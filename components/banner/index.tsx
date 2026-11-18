@@ -6,7 +6,6 @@ import { useControllableValue } from 'ahooks'
 import { useStore } from '@/store'
 import { observer } from 'mobx-react-lite'
 
-import AnimateInViewport from '@/components/animateInViewport'
 interface BannerProps {
     autoPlay?: boolean
     imgList?: (string | StaticImageData)[]
@@ -42,15 +41,10 @@ const Banner = (props: BannerProps) => {
 
     return (
         <div className={classNames([styles['banner-wrap']])}>
-            <AnimateInViewport
-                ready={!loading}
-                animateOnce
-                animateCssClass='animate__backInDown'
-                className='w-full absolute top-1/4 z-[5] text-center text-white text-shadow'
-            >
+            <div className='banner-title w-full absolute top-1/4 z-[5] text-center text-white text-shadow'>
                 <div className='text-5xl lg:text-7xl font-bold'>BBF&apos;s Blog</div>
                 <div className='text-2xl'>想做的事最优先~</div>
-            </AnimateInViewport>
+            </div>
             {imgList?.map((img, index) => {
                 return (
                     <div

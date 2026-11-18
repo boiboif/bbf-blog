@@ -17,11 +17,13 @@ corepack pnpm exec prisma generate
 
 Prisma CLI 和服务端共用 `DATABASE_URL`。服务端使用 `@prisma/adapter-mariadb`，TiDB Cloud 的 `?sslaccept=strict` 会启用 TLS 并验证服务器证书。使用私有 CA 时可附加 `sslcert`，相对路径从项目的 `prisma/` 目录解析，对应证书文件需要在部署产物中可读。
 
-在 Vercel 的各环境分别提供构建和运行所需的连接串。现有的 `connection_limit`、`connect_timeout`、`pool_timeout` 和 `socket_timeout` 参数继续生效，超时单位为秒。连接上限按运行实例计算。生成的客户端位于 `generated/prisma/`，由开发、检查类型和构建命令生成。
+在 Vercel 的各环境分别提供构建和运行所需的连接串。`connection_limit`、`connect_timeout`、`pool_timeout` 和 `socket_timeout` 仍可配置，超时单位为秒。MariaDB 驱动不支持 `pool_timeout=0` 的无限等待。升级已有配置时，删除该参数可使用默认的 10 秒，也可以配置 1 至 2147483 秒。连接上限按运行实例计算。生成的客户端位于 `generated/prisma/`，由开发、检查类型和构建命令生成。
 
 ## 管理员和发布
 
 首次建站时，将初始管理员密码放入进程环境变量 `ADMIN_PASSWORD`，可用 `ADMIN_USERNAME` 设置用户名，默认值为 `admin`。运行 `corepack pnpm db:bootstrap` 后即可清除初始密码环境变量。对已有管理员重复执行命令会保留原密码。
+
+从旧版升级时，核对数据库中带有 `admin` 角色的账号，并撤销未经授权的角色。使用旧版初始密码的管理员需要单独更换密码。
 
 ```sh
 corepack pnpm lint
@@ -30,7 +32,7 @@ corepack pnpm build
 corepack pnpm start
 ```
 
-生产服务默认监听 3000 端口。构建只生成 Prisma 客户端并读取页面数据。文章发布、修改和删除后，服务端刷新首页、分类、标签和对应的文章页。页面保留 60 秒的 ISR 周期，后台刷新出错时可在后续访问中重试。已有文章链接、分类查询参数 `cateId` 和标签查询参数 `tags` 可继续使用。
+生产服务默认监听 3000 端口。构建只生成 Prisma 客户端并读取页面数据。文章发布、修改和删除后，服务端刷新首页、分类、标签和对应的文章页。分类变更会刷新所有文章页的分类导航，标签重命名或删除会刷新关联的文章页。页面保留 60 秒的 ISR 周期，后台刷新出错时可在后续访问中重试。已有文章链接、分类查询参数 `cateId` 和标签查询参数 `tags` 可继续使用。
 
 ## Markdown 与图片
 

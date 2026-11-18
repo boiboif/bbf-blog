@@ -22,3 +22,11 @@ test('a plain local URL still works and malformed TLS settings fail before conne
     assert.throws(() => mysqlOptions('mysql://localhost/blog?sslaccept=typo'), /Invalid sslaccept/)
     assert.throws(() => mysqlOptions('mysql://localhost/blog?ssl=typo'), /Invalid ssl/)
 })
+
+test('the MariaDB pool uses a bounded, positive acquisition timeout', () => {
+    assert.equal(mysqlOptions('mysql://localhost/blog').acquireTimeout, 10000)
+    assert.equal(mysqlOptions('mysql://localhost/blog?pool_timeout=1').acquireTimeout, 1000)
+    assert.equal(mysqlOptions('mysql://localhost/blog?pool_timeout=2147483').acquireTimeout, 2147483000)
+    assert.throws(() => mysqlOptions('mysql://localhost/blog?pool_timeout=0'), /Omit it to use 10 seconds/)
+    assert.throws(() => mysqlOptions('mysql://localhost/blog?pool_timeout=2147484'), /between 1 and 2147483 seconds/)
+})

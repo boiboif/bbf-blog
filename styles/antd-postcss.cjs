@@ -10,8 +10,9 @@ module.exports = () => ({
         'antd-styles'(rule, { postcss }) {
             const css = extractStyle({
                 includes: [
-                    'App', 'Button', 'Dropdown', 'Empty', 'FloatButton', 'Form', 'Input', 'Layout',
-                    'Menu', 'Modal', 'Pagination', 'Popconfirm', 'Popover', 'Select', 'Space', 'Spin',
+                    // Form renders no grid until it contains a Form.Item, so extract Row and Col explicitly.
+                    'App', 'Button', 'Col', 'Dropdown', 'Empty', 'FloatButton', 'Form', 'Input', 'Layout',
+                    'Menu', 'Modal', 'Pagination', 'Popconfirm', 'Popover', 'Row', 'Select', 'Space', 'Spin',
                     'Table', 'Tooltip', 'message',
                 ],
                 customTheme: children => createElement(ConfigProvider, { theme }, children),

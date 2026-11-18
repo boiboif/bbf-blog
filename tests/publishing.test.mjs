@@ -35,6 +35,10 @@ test('publishing refreshes the public pages and preserves independent article vi
         fixtures.push({ path, id: item.id })
         return item
     }
+    async function remove(path, id) {
+        await api(path, { method: 'DELETE', token, data: { id } })
+        fixtures.splice(fixtures.findIndex(item => item.path === path && item.id === id), 1)
+    }
     try {
         const articles = []
         for (const suffix of ['A', 'B']) {
@@ -155,12 +159,49 @@ test('publishing refreshes the public pages and preserves independent article vi
         const detail = await api(`/api/post/${first.id}`)
         assert.equal(detail.viewCount, viewed.viewCount)
 
+        await t.test('taxonomy updates refresh already cached article pages', async () => {
+            const firstPath = `/article/${first.id}`
+            const secondPath = `/article/${second.id}`
+            const originalCategoryName = `Category-${label}-A`
+            assert.ok((await html(firstPath)).includes(originalCategoryName))
+            assert.ok((await html(secondPath)).includes(originalCategoryName), 'unrelated article includes the category list')
+
+            const alias = await fetch(new URL(`/article/0${first.id}`, origin), { redirect: 'manual' })
+            assert.equal(alias.status, 308)
+            assert.equal(new URL(alias.headers.get('location'), origin).pathname, firstPath)
+
+            const added = await create('/api/cate', { name: `Extra-Category-${label}` })
+            assert.ok((await html(firstPath)).includes(added.name))
+            assert.ok((await html(secondPath)).includes(added.name))
+            await remove('/api/cate', added.id)
+            assert.ok(!(await html(firstPath)).includes(added.name))
+            assert.ok(!(await html(secondPath)).includes(added.name))
+
+            const categoryName = `Renamed-Category-${label}`
+            await api('/api/cate', { method: 'PUT', token, data: { id: first.cateId, name: categoryName } })
+            for (const path of [firstPath, secondPath]) {
+                const page = await html(path)
+                assert.ok(page.includes(categoryName), path)
+                assert.ok(!page.includes(originalCategoryName), path)
+            }
+
+            const [tag] = detail.tags
+            assert.ok((await html(firstPath)).includes(tag.name))
+            const tagName = `Renamed-Tag-${label}`
+            await api('/api/tag', { method: 'PUT', token, data: { id: tag.id, name: tagName } })
+            const renamed = await html(firstPath)
+            assert.ok(renamed.includes(tagName))
+            assert.ok(!renamed.includes(tag.name))
+            await remove('/api/tag', tag.id)
+            assert.ok(!(await html(firstPath)).includes(tagName))
+            assert.ok((await html(secondPath)).includes(`Tag-${label}-B`))
+        })
+
         const title = `Updated-${label}`
         await api('/api/post', { method: 'PUT', token, data: { id: first.id, title } })
         assert.ok((await html(`/article/${first.id}`)).includes(title))
         assert.ok((await html('/')).includes(title))
-        await api('/api/post', { method: 'DELETE', token, data: { id: first.id } })
-        fixtures.splice(fixtures.findIndex(item => item.path === '/api/post' && item.id === first.id), 1)
+        await remove('/api/post', first.id)
         assert.equal((await fetch(new URL(`/article/${first.id}`, origin))).status, 404)
         assert.ok(!(await html('/')).includes(title))
     } finally {

@@ -1,5 +1,5 @@
 import { useDebounceFn, useRequest } from 'ahooks'
-import React, { PropsWithChildren, useEffect, useState } from 'react'
+import React, { PropsWithChildren, useCallback, useEffect, useState, useSyncExternalStore } from 'react'
 import style from './index.module.scss'
 import useRecord from '@/hook/useRecord'
 import { getUserInfoById } from '@/clientApi'
@@ -18,6 +18,17 @@ import Dot from '@/components/dot'
 
 const LoginModal = dynamic(() => import('@/components/login/loginModal'), { ssr: false })
 const Sakana = dynamic(() => import('sakana-react').then(module => module.SakanaReact), { ssr: false })
+const desktopViewport = '(min-width: 1024px)'
+
+function subscribeToDesktopViewport(onChange: () => void) {
+    const query = window.matchMedia(desktopViewport)
+    query.addEventListener('change', onChange)
+    return () => query.removeEventListener('change', onChange)
+}
+
+function isDesktopViewport() {
+    return window.matchMedia(desktopViewport).matches
+}
 
 const CustomLayout = (props: PropsWithChildren) => {
     const userId = isBrowser() ? localStorage.getItem('userId') : ''
@@ -27,6 +38,10 @@ const CustomLayout = (props: PropsWithChildren) => {
     const [isHidden, setIsHidden] = useState(false)
     const loginModal = useRecord()
     const router = useRouter()
+    const isDesktop = useSyncExternalStore(subscribeToDesktopViewport, isDesktopViewport, () => false)
+    const getBackTopTarget = useCallback(() => isDesktop
+        ? document.getElementById('custom-layout') ?? window
+        : window, [isDesktop])
 
     useScrollRestoration(router, 'custom-layout')
 
@@ -71,7 +86,7 @@ const CustomLayout = (props: PropsWithChildren) => {
 
     return (
         <>
-            <div className='fixed right-4 bottom-10 lg:right-28 lg:bottom-28 z-50 w-[100px] h-[100px] lg:w-[200px] lg:h-[200px]'>
+            <div className='fixed right-4 bottom-28 lg:right-28 z-50 w-[100px] h-[100px] lg:w-[200px] lg:h-[200px]'>
                 <Sakana width='100%' lineWidth={3} />
             </div>
 
@@ -87,11 +102,11 @@ const CustomLayout = (props: PropsWithChildren) => {
                 <FloatButton.BackTop
                     aria-label='返回顶部'
                     type='primary'
+                    disabled={menuVis}
                     className='!right-5 md:!right-[60px] lg:!right-[100px]'
+                    style={{ zIndex: 10 }}
                     styles={{ root: { background: 'var(--primary-color)' } }}
-                    target={() => window.matchMedia('(min-width: 1024px)').matches
-                        ? document.getElementById('custom-layout') ?? window
-                        : window}
+                    target={getBackTopTarget}
                 />
                 {loginModal.visible && <LoginModal visible={loginModal.visible} onCancel={loginModal.hide} />}
                 <Menu

@@ -98,14 +98,26 @@ export function useArticleImages() {
             }
         }
         return {
+            // The right toolbar is available in both split and tabbed editors.
             actions: [
-                { title: '插入网络图片', icon: urlIcon, handler: { type: 'action', click: ({ editor }) => setUrlEditor(editor) } },
-                { title: `上传本地图片（${imageFormatsHelp}）`, icon: uploadIcon, handler: {
-                    type: 'action', click: async ({ editor, selectFiles }) => {
-                        const files = await selectFiles({ accept: Object.keys(imageExtensions).join(','), multiple: true })
-                        if (files) await insertFiles(editor, Array.from(files))
+                {
+                    title: '插入网络图片',
+                    icon: urlIcon,
+                    position: 'right',
+                    handler: { type: 'action', click: ({ editor }) => setUrlEditor(editor) },
+                },
+                {
+                    title: `上传本地图片（${imageFormatsHelp}）`,
+                    icon: uploadIcon,
+                    position: 'right',
+                    handler: {
+                        type: 'action',
+                        click: async ({ editor, selectFiles }) => {
+                            const files = await selectFiles({ accept: Object.keys(imageExtensions).join(','), multiple: true })
+                            if (files) await insertFiles(editor, Array.from(files))
+                        },
                     },
-                } },
+                },
             ],
             editorEffect({ editor }) {
                 const onPaste = (_: Editor, event: ClipboardEvent) => {

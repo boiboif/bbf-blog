@@ -350,4 +350,21 @@ test('the editor inserts links, uploads, pasted and dropped images and saves the
     assert.ok(!saved.content.includes('oversize'))
     assert.ok(!saved.content.includes(uploadUrl))
     assert.deepEqual(direct, ['prepare', 'put', 'complete'])
+
+    await t.test('a narrow editor can open the file chooser and the image URL dialog', async () => {
+        await page.setViewportSize({ width: 390, height: 820 })
+        await page.getByRole('button', { name: /新\s*增/ }).click()
+        const narrowArticle = page.getByRole('dialog', { name: '新增' })
+        const narrowEditor = narrowArticle.locator('.bytemd')
+        assert.ok(await narrowEditor.evaluate(editor =>
+            editor.querySelector('.bytemd-status').getBoundingClientRect().bottom <= editor.getBoundingClientRect().bottom
+        ), 'a wrapping toolbar should leave room for the status row')
+        const [chooser] = await Promise.all([
+            page.waitForEvent('filechooser'),
+            narrowArticle.getByRole('button', { name: '上传本地图片' }).click(),
+        ])
+        await chooser.setFiles([])
+        await narrowArticle.getByRole('button', { name: '插入网络图片' }).click()
+        await page.getByRole('dialog', { name: '插入网络图片' }).waitFor()
+    })
 })

@@ -86,6 +86,21 @@
     min-height: 100%;
 }
 
+/* Keep the status row inside the editor when the toolbar wraps. */
+.bytemd:not(.bytemd-split) {
+    display: flex;
+    flex-direction: column;
+}
+
+.bytemd:not(.bytemd-split) .bytemd-body {
+    flex: 1;
+    min-height: 0;
+}
+
+.bytemd:not(.bytemd-split) .bytemd-status {
+    display: flow-root;
+}
+
 @media (prefers-color-scheme: dark) {
     :root {
         --markdown-zoom-background: #0d1117;

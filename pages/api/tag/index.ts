@@ -22,18 +22,22 @@ export default async function index(req: NextApiRequest, res: NextApiResponse) {
 
     try {
         let data
+        let posts: { id: number }[] = []
         switch (change.method) {
             case 'POST':
                 data = await addTag({ name: change.name })
                 break
-            case 'PUT':
-                data = await updateTag({ id: change.id, name: change.name })
+            case 'PUT': {
+                const updated = await updateTag({ id: change.id, name: change.name })
+                data = updated.tag
+                posts = updated.posts
                 break
+            }
             case 'DELETE':
-                await deleteTag({ id: change.id })
+                posts = await deleteTag({ id: change.id })
                 break
         }
-        await refreshBlogPages(res)
+        await refreshBlogPages(res, posts.map(post => post.id))
         return res.status(200).json({ success: true, data })
     } catch (error) {
         if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2025') {
