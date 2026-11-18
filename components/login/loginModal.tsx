@@ -2,7 +2,7 @@ import { login } from '@/clientApi'
 import { useStore } from '@/store'
 import { LockOutlined, UserOutlined } from '@ant-design/icons'
 import { useRequest } from 'ahooks'
-import { Modal, Form, Input, Button, message } from 'antd'
+import { App, Modal, Form, Input, Button } from 'antd'
 import { observer } from 'mobx-react-lite'
 
 interface ModalProps {
@@ -12,6 +12,7 @@ interface ModalProps {
 }
 
 const LoginModal = (props: ModalProps) => {
+    const { message } = App.useApp()
     const { visible, onCancel } = props
     const [form] = Form.useForm()
     const userInfoStore = useStore('userInfoStore')
@@ -37,7 +38,7 @@ const LoginModal = (props: ModalProps) => {
     }
 
     return (
-        <Modal className='!w-full lg:!w-[400px]' title={'登录'} open={visible} onCancel={handleCancel} footer={false} destroyOnClose>
+        <Modal width={{ xs: 'calc(100% - 32px)', lg: 400 }} title={'登录'} open={visible} onCancel={handleCancel} footer={false} destroyOnHidden>
             <Form form={form} name='normal_login' className='login-form' onFinish={onFinish}>
                 <Form.Item name='username' rules={[{ required: true, message: '请输入用户名!' }]}>
                     <Input prefix={<UserOutlined className='site-form-item-icon' />} placeholder='用户名' />

@@ -22,7 +22,7 @@ const CustomForm: FC<Props> = (props) => {
     }
 
     return (
-        <Form form={form} layout='inline' onFinish={onFinish}>
+        <Form name='manager-search' form={form} layout='inline' onFinish={onFinish}>
             {items.map((item) => {
                 return (
                     <Form.Item key={item.name} name={item.name} label={item.label} style={{ ...formItemStyle }}>

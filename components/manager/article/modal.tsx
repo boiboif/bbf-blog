@@ -1,4 +1,4 @@
-import { Button, Modal, Form, Input, message, Select, Space } from 'antd'
+import { App, Button, Modal, Form, Input, Select, Space } from 'antd'
 import { useState } from 'react'
 import { addArticle, putArticle } from '@/clientApi'
 import { Editor } from '@bytemd/react'
@@ -14,8 +14,6 @@ import gfmLocales from '@bytemd/plugin-gfm/locales/zh_Hans.json'
 import mermaidLocales from '@bytemd/plugin-mermaid/locales/zh_Hans.json'
 import 'highlight.js/styles/vs.css'
 import 'github-markdown-css' // placed after highlight styles to override `code` padding
-
-const { Option } = Select
 
 const plugins = [
     gfm({
@@ -40,6 +38,7 @@ interface ModalProps {
 }
 
 const ArticleModal = (props: ModalProps) => {
+    const { message } = App.useApp()
     const { visible, record, onCancel, title, callback, cateList, tagList } = props
     const [form] = Form.useForm()
     const [value, setValue] = useState(record?.content ?? '')
@@ -66,7 +65,7 @@ const ArticleModal = (props: ModalProps) => {
 
     return (
         <Modal
-            className='!w-full lg:!w-[1500px]'
+            width={{ xs: 'calc(100% - 32px)', lg: 1500 }}
             title={title ? title : record ? '编辑' : '新增'}
             open={visible}
             onCancel={onCancel}
@@ -81,9 +80,10 @@ const ArticleModal = (props: ModalProps) => {
                     </Space>
                 </div>
             }
-            destroyOnClose
+            destroyOnHidden
         >
             <Form
+                name='edit-article'
                 form={form}
                 initialValues={{
                     title: record?.title,
@@ -92,26 +92,15 @@ const ArticleModal = (props: ModalProps) => {
                 }}
             >
                 <Form.Item name='cateId' label='分类' rules={[{ required: true }]}>
-                    <Select>
-                        {cateList?.map((cate) => {
-                            return (
-                                <Option key={cate.id} value={cate.id}>
-                                    {cate.name}
-                                </Option>
-                            )
-                        })}
-                    </Select>
+                    <Select options={cateList?.map(cate => ({ label: cate.name, value: cate.id }))} />
                 </Form.Item>
                 <Form.Item name='tags' label='标签'>
-                    <Select showSearch optionFilterProp='children' mode='multiple' allowClear>
-                        {tagList?.map((cate) => {
-                            return (
-                                <Option key={cate.id} value={cate.id}>
-                                    {cate.name}
-                                </Option>
-                            )
-                        })}
-                    </Select>
+                    <Select
+                        mode='multiple'
+                        allowClear
+                        showSearch={{ optionFilterProp: 'label' }}
+                        options={tagList?.map(tag => ({ label: tag.name, value: tag.id }))}
+                    />
                 </Form.Item>
                 <Form.Item name='title' label='文章标题' rules={[{ required: true }]}>
                     <Input />

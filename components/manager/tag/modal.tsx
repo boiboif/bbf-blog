@@ -1,4 +1,4 @@
-import { Button, Modal, Form, Input, message, Space } from 'antd'
+import { App, Button, Modal, Form, Input, Space } from 'antd'
 import { useEffect } from 'react'
 import { addTag, putTag } from '@/clientApi'
 
@@ -11,6 +11,7 @@ interface ModalProps {
 }
 
 const TagModal = (props: ModalProps) => {
+    const { message } = App.useApp()
     const { visible, record, onCancel, title, callback } = props
     const [form] = Form.useForm()
 
@@ -44,7 +45,7 @@ const TagModal = (props: ModalProps) => {
 
     return (
         <Modal
-            className='!w-full lg:!w-[800px]'
+            width={{ xs: 'calc(100% - 32px)', lg: 800 }}
             title={title ? title : record ? '编辑' : '新增'}
             open={visible}
             onCancel={handleCancel}
@@ -58,10 +59,10 @@ const TagModal = (props: ModalProps) => {
                     </Space>
                 </div>
             }
-            destroyOnClose
+            destroyOnHidden
         >
-            <Form form={form}>
-                <Form.Item name='name' label='分类名称' rules={[{ required: true }]}>
+            <Form name='edit-tag' form={form}>
+                <Form.Item name='name' label='标签名称' rules={[{ required: true }]}>
                     <Input />
                 </Form.Item>
             </Form>

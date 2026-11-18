@@ -1,5 +1,5 @@
 import service, { codeMessage } from '@/utils/request'
-import { message } from 'antd'
+import { reportApiError } from './feedback'
 import type { AxiosRequestConfig, Method } from 'axios'
 import { set, merge } from 'lodash'
 import { skipErrorMessageHandler } from './util'
@@ -50,7 +50,7 @@ const createHandler = (createHandlerParams: CreateHandlerParams) => {
 
                 if (!success) {
                     if (!isSkipErrorMessage) {
-                        message.error(errorMessage)
+                        reportApiError(errorMessage)
                     }
 
                     errorHandler?.({ error: { errCode, errorMessage }, requestOption })
@@ -65,7 +65,7 @@ const createHandler = (createHandlerParams: CreateHandlerParams) => {
                     if (isSkipHttpErrorMssage) return
                     const errCode = error?.response?.status.toString()
                     const errorMessage = codeMessage[errCode]
-                    message.error(`${errCode}: ${errorMessage}`)
+                    reportApiError(`${errCode}: ${errorMessage}`)
 
                     errorHandler?.({ error: { errCode, errorMessage }, requestOption })
                     config?.errorHandler?.({ error: { errCode, errorMessage }, requestOption })

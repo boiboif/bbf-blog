@@ -10,13 +10,14 @@ import { useRouter } from 'next/router'
 import dynamic from 'next/dynamic'
 import classNames from 'classnames'
 import { observer } from 'mobx-react-lite'
-import { BackTop } from 'antd'
+import { FloatButton } from 'antd'
 
-const LoginModal = dynamic(() => import('@/components/login/loginModal'), { ssr: false })
 import Menu from '@/components/menu'
 import MenuButton from '@/components/menuButton'
 import Dot from '@/components/dot'
-const Sakana = dynamic(() => import('@/components/sakana'), { ssr: false })
+
+const LoginModal = dynamic(() => import('@/components/login/loginModal'), { ssr: false })
+const Sakana = dynamic(() => import('sakana-react').then(module => module.SakanaReact), { ssr: false })
 
 const CustomLayout = (props: PropsWithChildren) => {
     const userId = isBrowser() ? localStorage.getItem('userId') : ''
@@ -71,7 +72,7 @@ const CustomLayout = (props: PropsWithChildren) => {
     return (
         <>
             <div className='fixed right-4 bottom-10 lg:right-28 lg:bottom-28 z-50 w-[100px] h-[100px] lg:w-[200px] lg:h-[200px]'>
-                <Sakana />
+                <Sakana width='100%' lineWidth={3} />
             </div>
 
             <div
@@ -83,7 +84,15 @@ const CustomLayout = (props: PropsWithChildren) => {
                 style={{ '--bg': isHidden ? 'var(--primary-color)' : '#fff' } as React.CSSProperties}
             >
                 <Dot />
-                <BackTop target={() => document.getElementById('custom-layout')!}></BackTop>
+                <FloatButton.BackTop
+                    aria-label='返回顶部'
+                    type='primary'
+                    className='!right-5 md:!right-[60px] lg:!right-[100px]'
+                    styles={{ root: { background: 'var(--primary-color)' } }}
+                    target={() => window.matchMedia('(min-width: 1024px)').matches
+                        ? document.getElementById('custom-layout') ?? window
+                        : window}
+                />
                 {loginModal.visible && <LoginModal visible={loginModal.visible} onCancel={loginModal.hide} />}
                 <Menu
                     visible={menuVis}

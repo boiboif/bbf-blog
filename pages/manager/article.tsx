@@ -4,12 +4,13 @@ import CustomForm from '@/components/manager/customForm'
 import ManagerLayout from '@/components/manager/layout'
 import TableMoreAction from '@/components/manager/tableMoreAction'
 import { useRequest } from 'ahooks'
-import { Button, message, Space, Table } from 'antd'
-import { ColumnsType } from 'antd/lib/table'
+import { App, Button, Space, Table } from 'antd'
+import type { TableColumnsType } from 'antd'
 import ArticleModal from '@/components/manager/article/modal'
 import useRecord from '@/hook/useRecord'
 
 const Article = () => {
+    const { message } = App.useApp()
     const [searchParam, setSearchParams] = useState({ title: '' })
     const { data, refresh, loading } = useRequest(() => getArticleSummaries(searchParam).then((res) => res?.data), {
         refreshDeps: [searchParam],
@@ -22,7 +23,7 @@ const Article = () => {
     const { data: cateList } = useRequest(() => getCateAll().then((res) => res?.data))
     const { data: tagList } = useRequest(() => getTagAll().then((res) => res?.data))
 
-    const columns: ColumnsType<API.ArticleSummary> = [
+    const columns: TableColumnsType<API.ArticleSummary> = [
         { title: '编号', dataIndex: 'id' },
         { title: '文章标题', dataIndex: 'title' },
         {
@@ -71,7 +72,7 @@ const Article = () => {
                 </Button>
             </div>
 
-            <Table loading={loading} columns={columns} dataSource={data} rowKey='id' bordered size='middle'></Table>
+            <Table loading={loading} columns={columns} dataSource={data} rowKey='id' bordered size='medium'></Table>
         </div>
     )
 }

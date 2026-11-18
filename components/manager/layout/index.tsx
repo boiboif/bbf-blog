@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router'
+import Link from 'next/link'
 import React, { PropsWithChildren, useEffect } from 'react'
 import { Layout, Menu, Popconfirm } from 'antd'
 import { useRequest } from 'ahooks'
@@ -61,22 +62,20 @@ const ManagerLayout = (props: PropsWithChildren) => {
     }
 
     return (
-        <div className='h-screen overflow-hidden flex-col'>
+        <Layout className='h-screen'>
             <Header className='!px-4 flex items-center justify-between !text-white'>
                 <div className='text-2xl font-semibold'>后台管理</div>
                 <div className='flex gap-4'>
                     <div className='text-md flex-grow-0'>
                         <Popconfirm title='退出登录' onConfirm={logout} okText='确定' cancelText='取消'>
-                            <span className='cursor-pointer'>{userInfoStore.userInfo?.nickName ?? userInfoStore.userInfo?.username}</span>
+                            <button type='button'>{userInfoStore.userInfo?.nickName ?? userInfoStore.userInfo?.username}</button>
                         </Popconfirm>
                     </div>
-                    <div className='text-md cursor-pointer' onClick={() => router.replace('/')}>
-                        <span>返回门户</span>
-                    </div>
+                    <Link href='/' replace className='text-md !text-white'>返回门户</Link>
                 </div>
             </Header>
-            <div className='flex' style={{ background: '#f0f2f5' }}>
-                <Sider theme='light' breakpoint='lg' style={{ height: '300vh' }} collapsedWidth={0}>
+            <Layout hasSider className='min-h-0'>
+                <Sider theme='light' breakpoint='lg' collapsedWidth={0}>
                     <Menu
                         selectedKeys={[router.pathname]}
                         onClick={({ key }) => {
@@ -87,8 +86,8 @@ const ManagerLayout = (props: PropsWithChildren) => {
                     ></Menu>
                 </Sider>
                 <Content className='p-4 pb-0 overflow-auto'>{props.children}</Content>
-            </div>
-        </div>
+            </Layout>
+        </Layout>
     )
 }
 

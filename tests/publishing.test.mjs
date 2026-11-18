@@ -22,7 +22,7 @@ async function html(path) {
     return (await res.text()).replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, '')
 }
 
-test('publishing refreshes the public pages and preserves independent article views', async () => {
+test('publishing refreshes the public pages and preserves independent article views', async (t) => {
     const password = process.env.TEST_ADMIN_PASSWORD
     assert.ok(password, 'Set TEST_ADMIN_PASSWORD for the disposable database')
     const { token } = await api('/api/login', {
@@ -39,8 +39,8 @@ test('publishing refreshes the public pages and preserves independent article vi
         const articles = []
         for (const suffix of ['A', 'B']) {
             const name = `${label}-${suffix}`
-            const cate = await create('/api/cate', { name })
-            const tag = await create('/api/tag', { name })
+            const cate = await create('/api/cate', { name: `Category-${name}` })
+            const tag = await create('/api/tag', { name: `Tag-${name}` })
             const post = await create('/api/post', {
                 title: name, content: `## Heading-${name}\n\nBody-${name}`,
                 cateId: cate.id, tags: [tag.id],
@@ -58,6 +58,41 @@ test('publishing refreshes the public pages and preserves independent article vi
             assert.ok(page.includes(first.title), path)
             assert.ok(page.includes(second.title), path)
         }
+
+        await t.test('desktop and mobile readers can navigate and hydrate the same articles', {
+            skip: !process.env.TEST_BROWSER_PATH && 'Set TEST_BROWSER_PATH to a Chromium executable for browser checks',
+        }, async () => {
+            const { chromium } = await import('playwright-core')
+            const browser = await chromium.launch({ executablePath: process.env.TEST_BROWSER_PATH })
+            try {
+                for (const width of [1280, 390]) {
+                    const page = await browser.newPage({ viewport: { width, height: 850 } })
+                    const errors = []
+                    page.on('pageerror', error => errors.push(error.message))
+                    for (const article of articles) {
+                        await page.goto(new URL(`/category?cateId=${article.cateId}`, origin).href)
+                        const path = `/article/${article.id}`
+                        await page.waitForFunction(expected => {
+                            const links = document.querySelectorAll('a[href^="/article/"]')
+                            return links.length === 1 && links[0].getAttribute('href') === expected
+                        }, path)
+                        const title = page.locator(`a[href="${path}"]`).getByText(article.title, { exact: true })
+                        await Promise.all([page.waitForURL(new URL(path, origin).href), title.click()])
+                        await page.locator('.markdown-body').getByText(`Body-${article.title}`, { exact: true }).waitFor()
+                        assert.ok((await page.title()).includes(article.title))
+                    }
+                    assert.deepEqual(errors, [])
+                    await page.close()
+                }
+                const page = await browser.newPage({ javaScriptEnabled: false })
+                await page.goto(new URL(`/article/${first.id}`, origin).href)
+                assert.ok(await page.locator('.markdown-body').getByText(`Body-${first.title}`).isVisible())
+                // The server-rendered tag row relies on Ant Design's stylesheet.
+                assert.equal(await page.locator('.ant-space').first().evaluate(el => getComputedStyle(el).display), 'inline-flex')
+            } finally {
+                await browser.close()
+            }
+        })
 
         const before = await api(`/api/post/${first.id}`)
         const viewed = await api(`/api/post/${first.id}/view`, { method: 'POST' })

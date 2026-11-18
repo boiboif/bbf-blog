@@ -4,19 +4,20 @@ import CustomForm from '@/components/manager/customForm'
 import ManagerLayout from '@/components/manager/layout'
 import TableMoreAction from '@/components/manager/tableMoreAction'
 import { useRequest } from 'ahooks'
-import { Button, message, Space, Table } from 'antd'
-import { ColumnsType } from 'antd/lib/table'
+import { App, Button, Space, Table } from 'antd'
+import type { TableColumnsType } from 'antd'
 import CateModal from '@/components/manager/cate/modal'
 import useRecord from '@/hook/useRecord'
 
 const Cate = () => {
+    const { message } = App.useApp()
     const [searchParam, setSearchParams] = useState({ name: '' })
     const { data, refresh, loading } = useRequest(() => getCateAll(searchParam).then((res) => res?.data), {
         refreshDeps: [searchParam],
     })
     const cateModal = useRecord<API.Cate>()
 
-    const columns: ColumnsType<API.Cate> = [
+    const columns: TableColumnsType<API.Cate> = [
         { title: '编号', dataIndex: 'id' },
         { title: '分类名称', dataIndex: 'name' },
         {
@@ -24,7 +25,7 @@ const Cate = () => {
             render: (_, record) => {
                 return (
                     <Space>
-                        <a onClick={() => cateModal.show(record)}>编辑</a>
+                        <Button type='link' onClick={() => cateModal.show(record)}>编辑</Button>
                         <TableMoreAction
                             record={record}
                             menuList={[
@@ -58,7 +59,7 @@ const Cate = () => {
                 </Button>
             </div>
 
-            <Table loading={loading} columns={columns} dataSource={data} rowKey='id' bordered size='middle'></Table>
+            <Table loading={loading} columns={columns} dataSource={data} rowKey='id' bordered size='medium'></Table>
         </div>
     )
 }

@@ -1,6 +1,6 @@
 # BBF 的个人博客
 
-[bbfbbf.cn](https://bbfbbf.cn) 使用 Next.js Pages Router、TypeScript 和 Prisma。首页、文章、分类和标签采用增量静态生成（ISR）。
+[bbfbbf.cn](https://bbfbbf.cn) 使用 Next.js 16 Pages Router、React 19、Ant Design 6 和 Prisma。首页、文章、分类和标签采用增量静态生成（ISR）。首页的 Sakana 组件通过 npm 安装，源码维护在 [sakana-react](https://github.com/boiboif/sakana-react)。
 
 ## 本地开发
 
@@ -35,3 +35,5 @@ node --test tests/*.test.mjs
 ```
 
 默认测试地址为 `http://127.0.0.1:8010`，可通过 `TEST_BLOG_ORIGIN` 指向其他本机端口。发布回归会新建两篇带分类和标签的测试文章，验证首屏正文、摘要、浏览计数、编辑和删除后的缓存，结束时清理这些内容。
+
+设置 `TEST_BROWSER_PATH` 为 Chrome 或 Edge 的可执行文件路径，可同时验证桌面与手机宽度下的文章导航、React 水合和关闭 JavaScript 时的正文与样式。

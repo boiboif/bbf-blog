@@ -1,12 +1,13 @@
 import '../styles/globals.css'
+import antTheme from '@/styles/antd-theme.json'
 import type { AppProps } from 'next/app'
 import { NextPage } from 'next'
 import { ReactElement, ReactNode, useEffect, useState } from 'react'
-import { ConfigProvider } from 'antd'
-import zhCN from 'antd/lib/locale/zh_CN'
+import { App as AntApp, ConfigProvider } from 'antd'
+import zhCN from 'antd/locale/zh_CN'
+import { ApiFeedback } from '@/clientApi/feedback'
 import moment from 'moment'
 import 'moment/locale/zh-cn'
-import 'antd/dist/antd.min.css'
 import '@/components/menuButton/index.scss'
 import 'bytemd/dist/index.min.css'
 import NProgress from 'nprogress'
@@ -44,10 +45,13 @@ function MyApp({ Component, pageProps, router }: AppPropsWithLayout) {
     const getLayout = Component.getLayout ?? ((page) => <CustomLayout>{page}</CustomLayout>)
 
     return (
-        <ConfigProvider locale={zhCN}>
-            <RootContext.Provider value={store}>
-                {getLayout(<Component {...pageProps} />)}
-            </RootContext.Provider>
+        <ConfigProvider locale={zhCN} theme={{ ...antTheme, zeroRuntime: true }}>
+            <AntApp>
+                <ApiFeedback />
+                <RootContext.Provider value={store}>
+                    {getLayout(<Component {...pageProps} />)}
+                </RootContext.Provider>
+            </AntApp>
         </ConfigProvider>
     )
 }

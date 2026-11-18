@@ -1,4 +1,5 @@
 @tailwind base;
+@antd-styles;
 @tailwind components;
 @tailwind utilities;
 
@@ -68,10 +69,6 @@ a.link:hover {
     .bytemd {
         height: 500px !important;
     }
-}
-
-.ant-back-top-content {
-    background: #f0555a !important;
 }
 
 .ant-form.login-form {
